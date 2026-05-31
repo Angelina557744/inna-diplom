@@ -486,58 +486,81 @@
             }
         }
 
-        async function loadSubmissions() {
-            const filterCourse = document.getElementById('filterCourseSelect').value;
-            const result = await getAllSubmissions();
-            const container = document.getElementById('submissionsList');
-            if (result.success && result.submissions) {
-                let filtered = result.submissions;
-                if (filterCourse !== 'all') {
-                    filtered = filtered.filter(s => s.course_id == filterCourse);
-                }
-                currentSubmissions = filtered;
-                if (filtered.length === 0) {
-                    container.innerHTML = '<div class="text-center text-gray p-5">Нет работ для проверки</div>';
-                    return;
-                }
-                container.innerHTML = '';
-                filtered.forEach(sub => {
-                    const card = document.createElement('div');
-                    card.className = `submission-card ${sub.status}`;
-                    const studentName = escapeHtml(sub.student_name || sub.student_fullname || 'Студент');
-                    const title = escapeHtml(sub.title);
-                    const date = new Date(sub.submitted_at).toLocaleString('ru-RU');
-                    let leftHtml = `
-                        <div class="font-bold">${studentName}</div>
-                        <div class="text-sm"><strong>${title}</strong></div>
-                        <div class="text-xs text-gray"><i class="far fa-calendar-alt"></i> ${date}</div>
-                    `;
-                    if (sub.file_data) {
-                        leftHtml += `<a href="${escapeHtml(sub.file_data)}" class="file-link" download><i class="fas fa-download"></i> Скачать файл</a>`;
-                    }
-                    if (sub.comment) {
-                        leftHtml += `<div class="comment-text"><i class="fas fa-comment"></i> ${escapeHtml(sub.comment)}</div>`;
-                    }
-                    const gradeBadge = sub.grade !== null 
-                        ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Оценка: ${sub.grade}</span>`
-                        : '<span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> На проверке</span>';
-                    card.innerHTML = `
-                        <div class="flex justify-between items-start flex-wrap gap-2">
-                            <div style="flex:1;">${leftHtml}</div>
-                            <div class="text-right">
-                                ${gradeBadge}
-                                <button class="btn btn-sm btn-primary mt-1" onclick='openGradeModal(${sub.id}, ${JSON.stringify(studentName)}, ${JSON.stringify(title)}, ${sub.grade !== null ? sub.grade : ''}, ${JSON.stringify(sub.comment || '')})'>
-                                    <i class="fas fa-star"></i> Оценить
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(card);
-                });
-            } else {
-                container.innerHTML = '<div class="text-center text-gray p-5">Ошибка загрузки работ</div>';
-            }
+       async function loadSubmissions() {
+    const filterCourse = document.getElementById('filterCourseSelect').value;
+    const result = await getAllSubmissions();
+    const container = document.getElementById('submissionsList');
+    if (result.success && result.submissions) {
+        let filtered = result.submissions;
+        if (filterCourse !== 'all') {
+            filtered = filtered.filter(s => s.course_id == filterCourse);
         }
+        currentSubmissions = filtered;
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="text-center text-gray p-5">Нет работ для проверки</div>';
+            return;
+        }
+        container.innerHTML = '';
+        filtered.forEach(sub => {
+            const card = document.createElement('div');
+            card.className = `submission-card ${sub.status}`;
+            const studentName = escapeHtml(sub.student_name || sub.student_fullname || 'Студент');
+            const title = escapeHtml(sub.title);
+            const date = new Date(sub.submitted_at).toLocaleString('ru-RU');
+            let leftHtml = `
+                <div class="font-bold">${studentName}</div>
+                <div class="text-sm"><strong>${title}</strong></div>
+                <div class="text-xs text-gray"><i class="far fa-calendar-alt"></i> ${date}</div>
+            `;
+            if (sub.file_data) {
+                leftHtml += `<a href="${escapeHtml(sub.file_data)}" class="file-link" download><i class="fas fa-download"></i> Скачать файл</a>`;
+            }
+            if (sub.comment) {
+                leftHtml += `<div class="comment-text"><i class="fas fa-comment"></i> ${escapeHtml(sub.comment)}</div>`;
+            }
+            const gradeBadge = sub.grade !== null 
+                ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Оценка: ${sub.grade}</span>`
+                : '<span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> На проверке</span>';
+
+            // Создаём кнопку с data-атрибутами
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-sm btn-primary mt-1 grade-btn';
+            btn.innerHTML = '<i class="fas fa-star"></i> Оценить';
+            btn.dataset.id = sub.id;
+            btn.dataset.student = sub.student_name || sub.student_fullname || 'Студент';
+            btn.dataset.title = sub.title;
+            btn.dataset.grade = sub.grade !== null ? sub.grade : '';
+            btn.dataset.comment = sub.comment || '';
+
+            card.innerHTML = `
+                <div class="flex justify-between items-start flex-wrap gap-2">
+                    <div style="flex:1;">${leftHtml}</div>
+                    <div class="text-right">
+                        ${gradeBadge}
+                    </div>
+                </div>
+            `;
+            // Добавляем кнопку в правую часть
+            const rightDiv = card.querySelector('.text-right');
+            rightDiv.appendChild(btn);
+            container.appendChild(card);
+        });
+        // Вешаем обработчик на все кнопки
+        document.querySelectorAll('.grade-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                openGradeModal(
+                    parseInt(btn.dataset.id),
+                    btn.dataset.student,
+                    btn.dataset.title,
+                    btn.dataset.grade,
+                    btn.dataset.comment
+                );
+            });
+        });
+    } else {
+        container.innerHTML = '<div class="text-center text-gray p-5">Ошибка загрузки работ</div>';
+    }
+}
 
         window.openGradeModal = function(id, studentName, title, currentGrade, currentComment) {
             currentGradeSubId = id;

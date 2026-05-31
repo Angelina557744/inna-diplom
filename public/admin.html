@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>КонсПресс — Админ-панель v3.0</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --sidebar-w: 280px;
@@ -20,9 +22,15 @@
             --warning: #f59e0b;
             --danger: #ef4444;
             --info: #3b82f6;
-            --shadow: 0 1px 3px rgba(0,0,0,0.06);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background: var(--bg);
@@ -38,322 +46,737 @@
             background: #0f172a;
             color: #e2e8f0;
             position: fixed;
-            top: 0; left: 0; bottom: 0;
-            display: flex; flex-direction: column;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
             z-index: 100;
             overflow-y: auto;
             transition: transform 0.3s;
         }
+
         .sidebar-header {
             padding: 1.5rem;
             border-bottom: 1px solid #1e293b;
         }
+
         .sidebar-logo {
-            font-size: 1.3rem; font-weight: 800;
-            display: flex; align-items: center; gap: 0.6rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
+
         .sidebar-logo .icon {
-            width: 2.2rem; height: 2.2rem;
-            background: var(--primary); border-radius: 0.6rem;
-            display: flex; align-items: center; justify-content: center;
+            width: 2.2rem;
+            height: 2.2rem;
+            background: var(--primary);
+            border-radius: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 1rem;
         }
+
         .sidebar-nav {
-            flex: 1; padding: 0.75rem;
+            flex: 1;
+            padding: 0.75rem;
         }
+
         .nav-section {
             margin-bottom: 0.5rem;
         }
+
         .nav-section-title {
-            font-size: 0.7rem; text-transform: uppercase;
-            letter-spacing: 0.08em; color: #64748b;
-            padding: 0.6rem 0.8rem 0.3rem; font-weight: 600;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #64748b;
+            padding: 0.6rem 0.8rem 0.3rem;
+            font-weight: 600;
         }
+
         .nav-item {
-            display: flex; align-items: center; gap: 0.7rem;
-            padding: 0.65rem 0.8rem; border-radius: 0.6rem;
-            cursor: pointer; transition: all 0.15s;
-            font-size: 0.88rem; color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.65rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 0.88rem;
+            color: #cbd5e1;
             text-decoration: none;
         }
-        .nav-item:hover { background: #1e293b; color: white; }
+
+        .nav-item:hover {
+            background: #1e293b;
+            color: white;
+        }
+
         .nav-item.active {
-            background: var(--primary); color: white;
-            font-weight: 600; box-shadow: 0 4px 12px rgba(220,38,38,0.3);
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         }
+
         .nav-item .badge {
-            margin-left: auto; background: rgba(255,255,255,0.2);
-            padding: 0.15rem 0.5rem; border-radius: 1rem;
-            font-size: 0.7rem; font-weight: 600;
+            margin-left: auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
-        .nav-item .badge.danger { background: var(--danger); }
+
+        .nav-item .badge.danger {
+            background: var(--danger);
+        }
+
         .sidebar-footer {
-            padding: 1rem 1.5rem; border-top: 1px solid #1e293b;
-            font-size: 0.8rem; color: #64748b;
+            padding: 1rem 1.5rem;
+            border-top: 1px solid #1e293b;
+            font-size: 0.8rem;
+            color: #64748b;
         }
+
         .sidebar-footer .user-info {
-            display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 0.6rem;
         }
+
         .sidebar-footer .avatar {
-            width: 2rem; height: 2rem; background: var(--primary);
-            border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; font-weight: 700; font-size: 0.8rem;
+            width: 2rem;
+            height: 2rem;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
         }
 
         /* ===== MAIN CONTENT ===== */
         .main {
             margin-left: var(--sidebar-w);
-            flex: 1; padding: 1.5rem;
+            flex: 1;
+            padding: 1.5rem;
             min-height: 100vh;
         }
+
         .page-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
+
         .page-title {
-            font-size: 1.6rem; font-weight: 700;
-            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .page-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        .page-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
 
         /* ===== CARDS ===== */
         .card {
-            background: var(--card); border-radius: 1rem;
-            padding: 1.5rem; border: 1px solid var(--border);
-            box-shadow: var(--shadow); margin-bottom: 1.5rem;
+            background: var(--card);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
         }
+
         .card-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
         }
-        .card-title { font-weight: 700; font-size: 1.1rem; }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
 
         /* ===== STATS GRID ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem; margin-bottom: 1.5rem;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
+
         .stat-card {
-            background: var(--card); padding: 1.25rem;
-            border-radius: 1rem; border: 1px solid var(--border);
+            background: var(--card);
+            padding: 1.25rem;
+            border-radius: 1rem;
+            border: 1px solid var(--border);
             box-shadow: var(--shadow);
         }
+
         .stat-card .stat-icon {
-            width: 2.5rem; height: 2.5rem; border-radius: 0.75rem;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.3rem; margin-bottom: 0.75rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
         }
-        .stat-card .stat-value { font-size: 2rem; font-weight: 800; }
-        .stat-card .stat-label { font-size: 0.8rem; color: var(--text-muted); }
-        .stat-card .stat-change { font-size: 0.75rem; margin-top: 0.3rem; }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .stat-card .stat-change {
+            font-size: 0.75rem;
+            margin-top: 0.3rem;
+        }
 
         /* ===== TABLES ===== */
-        .table-wrap { overflow-x: auto; }
-        table {
-            width: 100%; border-collapse: collapse;
+        .table-wrap {
+            overflow-x: auto;
         }
-        th, td {
-            padding: 0.75rem 1rem; text-align: left;
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 0.75rem 1rem;
+            text-align: left;
             border-bottom: 1px solid var(--border);
         }
-        th { background: #f8fafc; font-weight: 600; font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
-        tr:hover { background: #f8fafc; }
-        .status-badge {
-            padding: 0.2rem 0.7rem; border-radius: 1rem;
-            font-size: 0.7rem; font-weight: 600; white-space: nowrap;
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            white-space: nowrap;
         }
-        .status-active { background: #d1fae5; color: #065f46; }
-        .status-blocked { background: #fee2e2; color: #991b1b; }
-        .status-pending { background: #fef3c7; color: #92400e; }
-        .status-accepted { background: #dbeafe; color: #1e40af; }
-        .status-rejected { background: #fce7f3; color: #9d174d; }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 0.2rem 0.7rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-blocked {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-accepted {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-rejected {
+            background: #fce7f3;
+            color: #9d174d;
+        }
 
         /* ===== BUTTONS ===== */
         .btn {
-            padding: 0.55rem 1.1rem; border-radius: 0.6rem;
-            font-weight: 600; font-size: 0.85rem; cursor: pointer;
-            border: none; transition: all 0.15s; display: inline-flex;
-            align-items: center; gap: 0.4rem; white-space: nowrap;
+            padding: 0.55rem 1.1rem;
+            border-radius: 0.6rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            white-space: nowrap;
         }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
-        .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
-        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-info { background: var(--info); color: white; }
-        .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.75rem; border-radius: 0.4rem; }
-        .btn-group { display: flex; gap: 0.3rem; }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--info);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.75rem;
+            border-radius: 0.4rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.3rem;
+        }
 
         /* ===== FORMS ===== */
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.35rem; color: var(--text-muted); }
-        .form-input, .form-select, .form-textarea {
-            width: 100%; padding: 0.6rem 0.9rem; border-radius: 0.6rem;
-            border: 1px solid var(--border); font-size: 0.88rem;
-            font-family: inherit; transition: 0.15s; background: white;
+        .form-group {
+            margin-bottom: 1rem;
         }
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
-            outline: none; border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(220,38,38,0.08);
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem;
+            color: var(--text-muted);
         }
-        .form-textarea { resize: vertical; min-height: 80px; }
-        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.6rem;
+            border: 1px solid var(--border);
+            font-size: 0.88rem;
+            font-family: inherit;
+            transition: 0.15s;
+            background: white;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
 
         /* ===== MODAL ===== */
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(4px); z-index: 200;
-            display: none; align-items: center; justify-content: center;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
-        .modal-overlay.active { display: flex; }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
         .modal {
-            background: white; border-radius: 1.25rem;
-            max-width: 600px; width: 92%; max-height: 85vh;
-            overflow-y: auto; padding: 1.5rem;
+            background: white;
+            border-radius: 1.25rem;
+            max-width: 600px;
+            width: 92%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.5rem;
         }
+
         .modal-header {
-            display: flex; justify-content: space-between;
-            align-items: center; margin-bottom: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
         }
-        .modal-title { font-size: 1.2rem; font-weight: 700; }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
         .modal-close {
-            width: 2rem; height: 2rem; border-radius: 50%;
-            border: none; background: #f1f5f9; cursor: pointer;
-            font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            border-radius: 50%;
+            border: none;
+            background: #f1f5f9;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-.level-badge {
-    display: inline-block;
-    padding: 0.2rem 0.5rem;
-    border-radius: 0.5rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-}
 
-.level-badge-beginner {
-    background: rgba(34,197,94,0.2);
-    color: #22c55e;
-}
+        .level-badge {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
 
-.level-badge-intermediate {
-    background: rgba(245,158,11,0.2);
-    color: #f59e0b;
-}
+        .level-badge-beginner {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
 
-.level-badge-advanced {
-    background: rgba(239,68,68,0.2);
-    color: #ef4444;
-}
+        .level-badge-intermediate {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .level-badge-advanced {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
         /* ===== TABS ===== */
-        .tabs { display: flex; gap: 0.3rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .tabs {
+            display: flex;
+            gap: 0.3rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
         .tab {
-            padding: 0.5rem 1.1rem; border-radius: 0.6rem;
-            cursor: pointer; font-size: 0.85rem; font-weight: 500;
-            border: 1px solid var(--border); background: white;
+            padding: 0.5rem 1.1rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: white;
             transition: 0.15s;
         }
-        .tab:hover { border-color: var(--primary); }
-        .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+
+        .tab:hover {
+            border-color: var(--primary);
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
 
         /* ===== CHAT ===== */
         .chat-container {
-            display: flex; height: 500px; border-radius: 1rem;
-            overflow: hidden; border: 1px solid var(--border);
+            display: flex;
+            height: 500px;
+            border-radius: 1rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
         }
+
         .chat-list {
-            width: 260px; background: #f8fafc; border-right: 1px solid var(--border);
-            overflow-y: auto; flex-shrink: 0;
+            width: 260px;
+            background: #f8fafc;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            flex-shrink: 0;
         }
+
         .chat-list-item {
-            padding: 0.8rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border);
-            transition: 0.1s; display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border);
+            transition: 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
         }
-        .chat-list-item:hover, .chat-list-item.active { background: #e2e8f0; }
+
+        .chat-list-item:hover,
+        .chat-list-item.active {
+            background: #e2e8f0;
+        }
+
         .chat-list-item .dot {
-            width: 0.55rem; height: 0.55rem; border-radius: 50%; flex-shrink: 0;
+            width: 0.55rem;
+            height: 0.55rem;
+            border-radius: 50%;
+            flex-shrink: 0;
         }
-        .dot.online { background: var(--success); }
-        .dot.offline { background: #94a3b8; }
+
+        .dot.online {
+            background: var(--success);
+        }
+
+        .dot.offline {
+            background: #94a3b8;
+        }
+
         .chat-main {
-            flex: 1; display: flex; flex-direction: column;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
         }
+
         .chat-messages {
-            flex: 1; overflow-y: auto; padding: 1rem;
-            display: flex; flex-direction: column; gap: 0.6rem;
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
         }
+
         .chat-msg {
-            max-width: 75%; padding: 0.6rem 0.9rem; border-radius: 0.8rem;
-            font-size: 0.85rem; line-height: 1.4;
+            max-width: 75%;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.8rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
         }
+
         .chat-msg.sent {
-            background: var(--primary); color: white;
-            align-self: flex-end; border-bottom-right-radius: 0.2rem;
+            background: var(--primary);
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 0.2rem;
         }
+
         .chat-msg.received {
-            background: #e2e8f0; color: var(--text);
-            align-self: flex-start; border-bottom-left-radius: 0.2rem;
+            background: #e2e8f0;
+            color: var(--text);
+            align-self: flex-start;
+            border-bottom-left-radius: 0.2rem;
         }
-        .chat-msg .time { font-size: 0.65rem; opacity: 0.7; margin-top: 0.25rem; }
+
+        .chat-msg .time {
+            font-size: 0.65rem;
+            opacity: 0.7;
+            margin-top: 0.25rem;
+        }
+
         .chat-input-area {
-            padding: 0.8rem; border-top: 1px solid var(--border);
-            display: flex; gap: 0.5rem;
+            padding: 0.8rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.5rem;
         }
-        .chat-input-area input { flex: 1; }
+
+        .chat-input-area input {
+            flex: 1;
+        }
 
         /* ===== LIVE PREVIEW ===== */
         .preview-frame {
-            width: 100%; height: 500px; border: 1px solid var(--border);
-            border-radius: 0.75rem; background: white;
+            width: 100%;
+            height: 500px;
+            border: 1px solid var(--border);
+            border-radius: 0.75rem;
+            background: white;
         }
 
         /* ===== GAME EDITOR ===== */
         .game-card {
-            background: #f8fafc; border-radius: 0.8rem;
-            padding: 1rem; border: 1px solid var(--border);
+            background: #f8fafc;
+            border-radius: 0.8rem;
+            padding: 1rem;
+            border: 1px solid var(--border);
         }
-        .game-card h4 { margin-bottom: 0.5rem; }
+
+        .game-card h4 {
+            margin-bottom: 0.5rem;
+        }
 
         /* ===== TOAST ===== */
         .toast {
-            position: fixed; bottom: 1.5rem; right: 1.5rem;
-            background: #1e293b; color: white; padding: 0.8rem 1.5rem;
-            border-radius: 0.8rem; font-size: 0.85rem; z-index: 300;
-            opacity: 0; transform: translateY(10px); transition: 0.2s;
-            pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.8rem;
+            font-size: 0.85rem;
+            z-index: 300;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: 0.2s;
+            pointer-events: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
-        .toast.show { opacity: 1; transform: translateY(0); }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
-            .sidebar { transform: translateX(-100%); }
-            .sidebar.open { transform: translateX(0); }
-            .main { margin-left: 0; }
-            .mobile-menu-btn { display: block !important; }
-            .chat-container { flex-direction: column; height: auto; }
-            .chat-list { width: 100%; max-height: 150px; }
-        }
-        .mobile-menu-btn {
-            display: none; position: fixed; top: 1rem; left: 1rem;
-            z-index: 110; background: var(--primary); color: white;
-            border: none; width: 2.5rem; height: 2.5rem; border-radius: 0.6rem;
-            font-size: 1.3rem; cursor: pointer; box-shadow: 0 4px 12px rgba(220,38,38,0.3);
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .mobile-menu-btn {
+                display: block !important;
+            }
+
+            .chat-container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .chat-list {
+                width: 100%;
+                max-height: 150px;
+            }
         }
 
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .text-muted { color: var(--text-muted); }
-        .mb-1 { margin-bottom: 0.5rem; }
-        .mb-2 { margin-bottom: 1rem; }
-        .mt-1 { margin-top: 0.5rem; }
-        .mt-2 { margin-top: 1rem; }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        .gap-1 { gap: 0.5rem; }
-        .hidden { display: none !important; }
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 110;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.6rem;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        .mb-1 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-2 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-1 {
+            margin-top: 0.5rem;
+        }
+
+        .mt-2 {
+            margin-top: 1rem;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .gap-1 {
+            gap: 0.5rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
+
 <body>
 
     <!-- Mobile menu button -->
@@ -374,9 +797,9 @@
                 <a class="nav-item active" data-page="dashboard">
                     📊 Дашборд
                 </a>
-<a class="nav-item" data-page="live-preview">
-    <i class="fas fa-eye"></i> Просмотр сайта
-</a>
+                <a class="nav-item" data-page="live-preview">
+                    <i class="fas fa-eye"></i> Просмотр сайта
+                </a>
             </div>
             <div class="nav-section">
                 <div class="nav-section-title">Пользователи</div>
@@ -428,15 +851,16 @@
                     <p style="font-size:0.7rem;">admin@cons.ru</p>
                 </div>
             </div>
-<button class="btn btn-outline btn-sm" style="width:100%;color:white;border-color:#334155;" onclick="logout()">
-    🚪 Выйти
-</button>
+            <button class="btn btn-outline btn-sm" style="width:100%;color:white;border-color:#334155;"
+                onclick="logout()">
+                🚪 Выйти
+            </button>
         </div>
     </aside>
 
     <!-- ===== MAIN ===== -->
     <main class="main" id="mainContent">
-        
+
         <!-- Дашборд -->
         <div class="tab-content active" id="page-dashboard">
             <div class="page-header">
@@ -446,13 +870,17 @@
             <div class="stats-grid" id="dashboardStats"></div>
             <div class="grid-2">
                 <div class="card">
-                    <div class="card-header"><h3 class="card-title">🟢 Активность онлайн</h3></div>
+                    <div class="card-header">
+                        <h3 class="card-title">🟢 Активность онлайн</h3>
+                    </div>
                     <div id="onlineActivity" style="max-height:250px;overflow-y:auto;">
                         <p class="text-muted">Загрузка...</p>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header"><h3 class="card-title">📈 Последние действия</h3></div>
+                    <div class="card-header">
+                        <h3 class="card-title">📈 Последние действия</h3>
+                    </div>
                     <div id="recentActivity" style="max-height:250px;overflow-y:auto;">
                         <p class="text-muted">Загрузка...</p>
                     </div>
@@ -466,14 +894,14 @@
                 <h1 class="page-title">👁️ Просмотр сайта</h1>
                 <div class="page-actions">
                     <select class="form-select" style="width:auto;" id="previewPageSelect" onchange="updatePreview()">
-    <option value="index.html">Главная</option>
-    <option value="kurs.html">Курсы</option>
-    <option value="spesial.html">Специализация</option>
-    <option value="lickab.html">Личный кабинет</option>
-    <option value="teacher.html">Панель преподавателя</option>
-    <option value="igra.html">Игры</option>
-    <option value="admin.html">Админ-панель</option>
-</select>
+                        <option value="index.html">Главная</option>
+                        <option value="kurs.html">Курсы</option>
+                        <option value="spesial.html">Специализация</option>
+                        <option value="lickab.html">Личный кабинет</option>
+                        <option value="teacher.html">Панель преподавателя</option>
+                        <option value="igra.html">Игры</option>
+                        <option value="admin.html">Админ-панель</option>
+                    </select>
                     <button class="btn btn-outline" onclick="updatePreview()">🔄 Обновить</button>
                     <button class="btn btn-outline" onclick="openInNewTab()">🔗 Открыть</button>
                 </div>
@@ -488,7 +916,8 @@
             <div class="page-header">
                 <h1 class="page-title">👨‍🎓 Управление студентами</h1>
                 <div class="page-actions">
-                    <input type="text" class="form-input" style="width:200px;" placeholder="🔍 Поиск..." id="studentSearch" oninput="renderStudents()">
+                    <input type="text" class="form-input" style="width:200px;" placeholder="🔍 Поиск..."
+                        id="studentSearch" oninput="renderStudents()">
                     <select class="form-select" style="width:auto;" id="studentGroupFilter" onchange="renderStudents()">
                         <option value="all">Все группы</option>
                     </select>
@@ -498,10 +927,17 @@
             <div class="card">
                 <div class="table-wrap">
                     <table>
-                        <thead><tr>
-                            <th>ID</th><th>ФИО</th><th>Email</th><th>Группа</th>
-                            <th>Рейтинг</th><th>Статус</th><th>Действия</th>
-                        </tr></thead>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ФИО</th>
+                                <th>Email</th>
+                                <th>Группа</th>
+                                <th>Рейтинг</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
                         <tbody id="studentsTableBody"></tbody>
                     </table>
                 </div>
@@ -513,17 +949,24 @@
             <div class="page-header">
                 <h1 class="page-title">👨‍🏫 Управление преподавателями</h1>
                 <div class="page-actions">
-                    <input type="text" class="form-input" style="width:200px;" placeholder="🔍 Поиск..." id="teacherSearch" oninput="renderTeachers()">
+                    <input type="text" class="form-input" style="width:200px;" placeholder="🔍 Поиск..."
+                        id="teacherSearch" oninput="renderTeachers()">
                     <button class="btn btn-primary" onclick="openUserModal('teacher')">+ Добавить</button>
                 </div>
             </div>
             <div class="card">
                 <div class="table-wrap">
                     <table>
-                        <thead><tr>
-                            <th>ID</th><th>ФИО</th><th>Email</th><th>Специализация</th>
-                            <th>Статус</th><th>Действия</th>
-                        </tr></thead>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>ФИО</th>
+                                <th>Email</th>
+                                <th>Специализация</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
                         <tbody id="teachersTableBody"></tbody>
                     </table>
                 </div>
@@ -546,10 +989,17 @@
             <div class="card">
                 <div class="table-wrap">
                     <table>
-                        <thead><tr>
-                            <th>ID</th><th>Отправитель</th><th>Тип</th>
-                            <th>Содержание</th><th>Дата</th><th>Статус</th><th>Действия</th>
-                        </tr></thead>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Отправитель</th>
+                                <th>Тип</th>
+                                <th>Содержание</th>
+                                <th>Дата</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
                         <tbody id="applicationsTableBody"></tbody>
                     </table>
                 </div>
@@ -561,7 +1011,8 @@
             <div class="page-header">
                 <h1 class="page-title">📡 Управление трансляциями</h1>
                 <div class="page-actions">
-                  <button class="btn btn-primary" onclick="openStreamModal()"><i class="fas fa-plus"></i> Новая трансляция</button>
+                    <button class="btn btn-primary" onclick="openStreamModal()"><i class="fas fa-plus"></i> Новая
+                        трансляция</button>
                 </div>
             </div>
             <div class="grid-2" id="streamsGrid"></div>
@@ -577,14 +1028,19 @@
             </div>
             <div class="grid-2">
                 <div class="card">
-                    <div class="card-header"><h3 class="card-title">🏃 Code Jumper</h3></div>
+                    <div class="card-header">
+                        <h3 class="card-title">🏃 Code Jumper</h3>
+                    </div>
                     <div id="jumperConfig" class="game-card">
                         <div class="form-group">
                             <label>Скорость игры (легкий/норм/сложный)</label>
                             <div class="form-row">
-                                <input type="number" class="form-input" id="jumperSpeedEasy" placeholder="Easy (3.2)" value="3.2" step="0.1">
-                                <input type="number" class="form-input" id="jumperSpeedNormal" placeholder="Normal (4.2)" value="4.2" step="0.1">
-                                <input type="number" class="form-input" id="jumperSpeedHard" placeholder="Hard (5.2)" value="5.2" step="0.1">
+                                <input type="number" class="form-input" id="jumperSpeedEasy" placeholder="Easy (3.2)"
+                                    value="3.2" step="0.1">
+                                <input type="number" class="form-input" id="jumperSpeedNormal"
+                                    placeholder="Normal (4.2)" value="4.2" step="0.1">
+                                <input type="number" class="form-input" id="jumperSpeedHard" placeholder="Hard (5.2)"
+                                    value="5.2" step="0.1">
                             </div>
                         </div>
                         <div class="form-group">
@@ -596,7 +1052,9 @@
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header"><h3 class="card-title">💻 Code Runner</h3></div>
+                    <div class="card-header">
+                        <h3 class="card-title">💻 Code Runner</h3>
+                    </div>
                     <div id="runnerConfig" class="game-card">
                         <div class="form-group">
                             <label>Скорость игры</label>
@@ -612,81 +1070,101 @@
                 </div>
             </div>
             <div class="card mt-2">
-                <div class="card-header"><h3 class="card-title">📊 Прогресс игроков</h3></div>
+                <div class="card-header">
+                    <h3 class="card-title">📊 Прогресс игроков</h3>
+                </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Игрок</th><th>Игра</th><th>Рекорд</th><th>Вопросов отвечено</th><th>Последняя игра</th></tr></thead>
+                        <thead>
+                            <tr>
+                                <th>Игрок</th>
+                                <th>Игра</th>
+                                <th>Рекорд</th>
+                                <th>Вопросов отвечено</th>
+                                <th>Последняя игра</th>
+                            </tr>
+                        </thead>
                         <tbody id="gameProgressTable"></tbody>
                     </table>
                 </div>
             </div>
             <div class="card mt-4">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-question-circle"></i> Управление вопросами</h3>
-        <button class="btn btn-sm btn-primary" onclick="openGameQuestionModal()"><i class="fas fa-plus"></i> Добавить вопрос</button>
-    </div>
-    <div class="table-wrap">
-        <table style="width: 100%;">
-            <thead>
-                <tr><th>ID</th><th>Игра</th><th>Сложность</th><th>Вопрос</th><th>Действия</th></tr>
-            </thead>
-            <tbody id="gameQuestionsTable">
-                <tr><td colspan="5" class="text-center">Загрузка...</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-question-circle"></i> Управление вопросами</h3>
+                    <button class="btn btn-sm btn-primary" onclick="openGameQuestionModal()"><i class="fas fa-plus"></i>
+                        Добавить вопрос</button>
+                </div>
+                <div class="table-wrap">
+                    <table style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Игра</th>
+                                <th>Сложность</th>
+                                <th>Вопрос</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gameQuestionsTable">
+                            <tr>
+                                <td colspan="5" class="text-center">Загрузка...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <div class="modal-overlay" id="editQuestionModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h2 class="modal-title" id="editQuestionModalTitle">Редактировать вопрос</h2>
-            <button class="modal-close" onclick="closeModal('editQuestionModal')">&times;</button>
+            <div class="modal">
+                <div class="modal-header">
+                    <h2 class="modal-title" id="editQuestionModalTitle">Редактировать вопрос</h2>
+                    <button class="modal-close" onclick="closeModal('editQuestionModal')">&times;</button>
+                </div>
+                <input type="hidden" id="editQuestionId">
+                <div class="form-group">
+                    <label>Игра</label>
+                    <select id="editQuestionGame" class="form-select">
+                        <option value="jumper">Code Jumper</option>
+                        <option value="runner">Code Runner</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Сложность</label>
+                    <select id="editQuestionDifficulty" class="form-select">
+                        <option value="easy">Лёгкий</option>
+                        <option value="normal">Нормальный</option>
+                        <option value="hard">Сложный</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Вопрос</label>
+                    <textarea id="editQuestionText" class="form-textarea" rows="3"
+                        placeholder="Текст вопроса..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Вариант 1 (правильный)</label>
+                    <input type="text" id="editOpt1" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Вариант 2</label>
+                    <input type="text" id="editOpt2" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Вариант 3</label>
+                    <input type="text" id="editOpt3" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Вариант 4</label>
+                    <input type="text" id="editOpt4" class="form-input">
+                </div>
+                <div class="flex gap-2 justify-end mt-4">
+                    <button class="btn btn-outline" onclick="closeModal('editQuestionModal')">Отмена</button>
+                    <button class="btn btn-primary" id="updateQuestionBtn">Сохранить</button>
+                    <button class="btn btn-danger" id="deleteQuestionBtn">Удалить</button>
+                </div>
+            </div>
         </div>
-        <input type="hidden" id="editQuestionId">
-        <div class="form-group">
-            <label>Игра</label>
-            <select id="editQuestionGame" class="form-select">
-                <option value="jumper">Code Jumper</option>
-                <option value="runner">Code Runner</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Сложность</label>
-            <select id="editQuestionDifficulty" class="form-select">
-                <option value="easy">Лёгкий</option>
-                <option value="normal">Нормальный</option>
-                <option value="hard">Сложный</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Вопрос</label>
-            <textarea id="editQuestionText" class="form-textarea" rows="3" placeholder="Текст вопроса..."></textarea>
-        </div>
-        <div class="form-group">
-            <label>Вариант 1 (правильный)</label>
-            <input type="text" id="editOpt1" class="form-input">
-        </div>
-        <div class="form-group">
-            <label>Вариант 2</label>
-            <input type="text" id="editOpt2" class="form-input">
-        </div>
-        <div class="form-group">
-            <label>Вариант 3</label>
-            <input type="text" id="editOpt3" class="form-input">
-        </div>
-        <div class="form-group">
-            <label>Вариант 4</label>
-            <input type="text" id="editOpt4" class="form-input">
-        </div>
-        <div class="flex gap-2 justify-end mt-4">
-            <button class="btn btn-outline" onclick="closeModal('editQuestionModal')">Отмена</button>
-            <button class="btn btn-primary" id="updateQuestionBtn">Сохранить</button>
-            <button class="btn btn-danger" id="deleteQuestionBtn">Удалить</button>
-        </div>
-    </div>
-</div>
 
         <!-- Чат -->
         <div class="tab-content" id="page-chat">
@@ -699,10 +1177,12 @@
                     <div class="chat-list" id="chatTeacherList"></div>
                     <div class="chat-main">
                         <div class="chat-messages" id="chatMessages">
-                            <p class="text-muted" style="text-align:center;padding:2rem;">Выберите преподавателя для начала чата</p>
+                            <p class="text-muted" style="text-align:center;padding:2rem;">Выберите преподавателя для
+                                начала чата</p>
                         </div>
                         <div class="chat-input-area">
-                            <input type="text" class="form-input" id="chatInput" placeholder="Введите сообщение..." onkeydown="if(event.key==='Enter')sendChatMessage()">
+                            <input type="text" class="form-input" id="chatInput" placeholder="Введите сообщение..."
+                                onkeydown="if(event.key==='Enter')sendChatMessage()">
                             <button class="btn btn-primary" onclick="sendChatMessage()">📨</button>
                         </div>
                     </div>
@@ -761,7 +1241,8 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Пароль</label>
-                    <input type="password" class="form-input" id="userPassword" placeholder="Оставьте пустым, чтобы не менять">
+                    <input type="password" class="form-input" id="userPassword"
+                        placeholder="Оставьте пустым, чтобы не менять">
                 </div>
                 <div class="form-group" id="userGroupField">
                     <label>Группа</label>
@@ -824,55 +1305,56 @@
                 <input type="text" class="form-input" placeholder="Вариант 3">
                 <input type="text" class="form-input" placeholder="Вариант 4">
             </div>
-            <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveQuestion()">💾 Сохранить вопрос</button>
+            <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveQuestion()">💾 Сохранить
+                вопрос</button>
         </div>
     </div>
 
-    
+
 
     <div class="toast" id="toast"></div>
 
-<!-- Модальное окно создания трансляции -->
-<div class="modal-overlay" id="streamModal">
-    <div class="modal">
-        <div class="modal-header">
-            <h2 class="modal-title"><i class="fas fa-video"></i> Новая трансляция</h2>
-            <button class="modal-close" onclick="closeStreamModal()">&times;</button>
-        </div>
-        <div class="form-group">
-            <label>Название трансляции *</label>
-            <input type="text" id="streamTitle" class="form-input" placeholder="Например: Лекция по C++">
-        </div>
-        <div class="form-group">
-            <label>Преподаватель</label>
-            <select id="streamTeacher" class="form-select">
-                <option value="">Выберите преподавателя</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Курс</label>
-            <select id="streamCourse" class="form-select">
-                <option value="">Выберите курс</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Дата и время начала</label>
-            <input type="datetime-local" id="streamDateTime" class="form-input">
-        </div>
-        <div class="form-group">
-            <label>Статус</label>
-            <select id="streamStatus" class="form-select">
-                <option value="planned">Запланирована</option>
-                <option value="active">В эфире</option>
-                <option value="ended">Завершена</option>
-            </select>
-        </div>
-        <div class="flex gap-2 justify-end mt-4">
-            <button class="btn btn-outline" onclick="closeStreamModal()">Отмена</button>
-            <button class="btn btn-primary" id="saveStreamBtn">Сохранить</button>
+    <!-- Модальное окно создания трансляции -->
+    <div class="modal-overlay" id="streamModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title"><i class="fas fa-video"></i> Новая трансляция</h2>
+                <button class="modal-close" onclick="closeStreamModal()">&times;</button>
+            </div>
+            <div class="form-group">
+                <label>Название трансляции *</label>
+                <input type="text" id="streamTitle" class="form-input" placeholder="Например: Лекция по C++">
+            </div>
+            <div class="form-group">
+                <label>Преподаватель</label>
+                <select id="streamTeacher" class="form-select">
+                    <option value="">Выберите преподавателя</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Курс</label>
+                <select id="streamCourse" class="form-select">
+                    <option value="">Выберите курс</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Дата и время начала</label>
+                <input type="datetime-local" id="streamDateTime" class="form-input">
+            </div>
+            <div class="form-group">
+                <label>Статус</label>
+                <select id="streamStatus" class="form-select">
+                    <option value="planned">Запланирована</option>
+                    <option value="active">В эфире</option>
+                    <option value="ended">Завершена</option>
+                </select>
+            </div>
+            <div class="flex gap-2 justify-end mt-4">
+                <button class="btn btn-outline" onclick="closeStreamModal()">Отмена</button>
+                <button class="btn btn-primary" id="saveStreamBtn">Сохранить</button>
+            </div>
         </div>
     </div>
-</div>
 
     <script>
         // ===== DATA STORE =====
@@ -890,27 +1372,27 @@
         const API_BASE = '';
 
         // ===== INIT =====
- async function init() {
-    loadAllFromStorage();
-    
-    await Promise.all([
-        loadUsersFromServer(),
-        loadCoursesFromServer(),
-        loadPartnersFromServer(),
-        loadContentFromServer(),
-        loadApplicationsFromServer(),
-        loadStreamsFromServer(),
-        loadGameQuestions(),      // уже есть
-        loadGameProgressFromServer()   // ДОБАВИТЬ ЭТУ СТРОКУ
-    ]);
-    
-    setupNavigation();
-    renderDashboard();
-    updateDateTime();
-    setInterval(updateDateTime, 30000);
-    updateApplicationBadge();
-    updateChatBadge();
-}
+        async function init() {
+            loadAllFromStorage();
+
+            await Promise.all([
+                loadUsersFromServer(),
+                loadCoursesFromServer(),
+                loadPartnersFromServer(),
+                loadContentFromServer(),
+                loadApplicationsFromServer(),
+                loadStreamsFromServer(),
+                loadGameQuestions(),      // уже есть
+                loadGameProgressFromServer()   // ДОБАВИТЬ ЭТУ СТРОКУ
+            ]);
+
+            setupNavigation();
+            renderDashboard();
+            updateDateTime();
+            setInterval(updateDateTime, 30000);
+            updateApplicationBadge();
+            updateChatBadge();
+        }
 
         function loadAllFromStorage() {
             const saved = key => localStorage.getItem(key);
@@ -925,7 +1407,7 @@
                 gameProgressData = JSON.parse(saved('admin_game_progress') || '[]');
                 chatMessagesData = JSON.parse(saved('admin_chat_messages') || '{}');
                 activityLog = JSON.parse(saved('admin_activity_log') || '[]');
-            } catch(e) { console.warn('Storage parse error', e); }
+            } catch (e) { console.warn('Storage parse error', e); }
         }
 
         async function loadAllFromServer() {
@@ -957,7 +1439,7 @@
                 if (statsRes.status === 'fulfilled' && statsRes.value.success) {
                     window.serverStats = statsRes.value.stats;
                 }
-            } catch(e) { console.log('Server not available, using localStorage'); }
+            } catch (e) { console.log('Server not available, using localStorage'); }
 
             if (coursesSlider.length === 0) coursesSlider = [
                 { title: "Старт в IT без кода", link: "#", img: "https://picsum.photos/id/0/400/500" },
@@ -1060,8 +1542,8 @@
                 'partners': renderPartners
             };
             if (page === 'chat') {
-    loadTeachersForAdminChat();
-}
+                loadTeachersForAdminChat();
+            }
             if (renderers[page]) renderers[page]();
             if (page === 'live-preview') updatePreview();
         }
@@ -1104,14 +1586,14 @@
         }
 
         // ===== LIVE PREVIEW =====
-       function updatePreview() {
-    const page = document.getElementById('previewPageSelect').value;
-    let url = page;
-    if (page === 'index.html') {
-        url = 'index.html';
-    }
-    document.getElementById('previewFrame').src = url;
-}
+        function updatePreview() {
+            const page = document.getElementById('previewPageSelect').value;
+            let url = page;
+            if (page === 'index.html') {
+                url = 'index.html';
+            }
+            document.getElementById('previewFrame').src = url;
+        }
         function openInNewTab() {
             window.open(document.getElementById('previewPageSelect').value, '_blank');
         }
@@ -1120,9 +1602,9 @@
         function renderStudents() {
             const search = (document.getElementById('studentSearch')?.value || '').toLowerCase();
             const groupFilter = document.getElementById('studentGroupFilter')?.value || 'all';
-            
+
             let filtered = usersData.filter(u => u.role === 'student');
-            if (search) filtered = filtered.filter(u => (u.fullName||'').toLowerCase().includes(search) || (u.email||'').toLowerCase().includes(search));
+            if (search) filtered = filtered.filter(u => (u.fullName || '').toLowerCase().includes(search) || (u.email || '').toLowerCase().includes(search));
             if (groupFilter !== 'all') filtered = filtered.filter(u => u.group_name === groupFilter);
 
             const groups = [...new Set(usersData.filter(u => u.role === 'student').map(u => u.group_name).filter(Boolean))];
@@ -1152,7 +1634,7 @@
         function renderTeachers() {
             const search = (document.getElementById('teacherSearch')?.value || '').toLowerCase();
             let filtered = usersData.filter(u => u.role === 'teacher');
-            if (search) filtered = filtered.filter(u => (u.fullName||'').toLowerCase().includes(search) || (u.email||'').toLowerCase().includes(search));
+            if (search) filtered = filtered.filter(u => (u.fullName || '').toLowerCase().includes(search) || (u.email || '').toLowerCase().includes(search));
 
             document.getElementById('teachersTableBody').innerHTML = filtered.map(u => `
                 <tr>
@@ -1175,7 +1657,7 @@
         function openUserModal(type, id = null) {
             const modal = document.getElementById('userModal');
             document.getElementById('editUserType').value = type;
-            
+
             if (id) {
                 const user = usersData.find(u => u.id === id);
                 if (user) {
@@ -1200,121 +1682,121 @@
                 document.getElementById('userModalTitle').innerText = '➕ Добавить';
                 document.getElementById('deleteUserBtn').style.display = 'none';
             }
-            
+
             document.getElementById('userGroupField').style.display = type === 'student' ? 'block' : 'none';
             modal.classList.add('active');
         }
 
         async function saveUser() {
-    const id = document.getElementById('editUserId').value;
-    const type = document.getElementById('editUserType').value;
-    const fullName = document.getElementById('userFullname').value.trim();
-    const email = document.getElementById('userEmail').value.trim();
-    const password = document.getElementById('userPassword').value;
-    const group = document.getElementById('userGroup').value;
-    const status = document.getElementById('userStatus').value;
-    const blockUntil = document.getElementById('userBlockUntil').value;
+            const id = document.getElementById('editUserId').value;
+            const type = document.getElementById('editUserType').value;
+            const fullName = document.getElementById('userFullname').value.trim();
+            const email = document.getElementById('userEmail').value.trim();
+            const password = document.getElementById('userPassword').value;
+            const group = document.getElementById('userGroup').value;
+            const status = document.getElementById('userStatus').value;
+            const blockUntil = document.getElementById('userBlockUntil').value;
 
-    if (!fullName || !email) {
-        showToast('Заполните обязательные поля', 'error');
-        return;
-    }
+            if (!fullName || !email) {
+                showToast('Заполните обязательные поля', 'error');
+                return;
+            }
 
-    try {
-        let result;
-        
-        if (id) {
-            result = await fetch('/api/users/' + id, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fullName: fullName,
-                    email: email,
-                    group_name: group,
-                    status: status,
-                    block_until: blockUntil,
-                    password: password || undefined
-                }),
-                credentials: 'include'
-            });
-        } else {
-            result = await fetch('/api/users', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    fullName: fullName,
-                    email: email,
-                    password: password || '123456',
-                    role: type,
-                    group_name: group,
-                    status: status,
-                    block_until: blockUntil
-                }),
-                credentials: 'include'
-            });
+            try {
+                let result;
+
+                if (id) {
+                    result = await fetch('/api/users/' + id, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fullName: fullName,
+                            email: email,
+                            group_name: group,
+                            status: status,
+                            block_until: blockUntil,
+                            password: password || undefined
+                        }),
+                        credentials: 'include'
+                    });
+                } else {
+                    result = await fetch('/api/users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fullName: fullName,
+                            email: email,
+                            password: password || '123456',
+                            role: type,
+                            group_name: group,
+                            status: status,
+                            block_until: blockUntil
+                        }),
+                        credentials: 'include'
+                    });
+                }
+
+                const data = await result.json();
+
+                if (data.success) {
+                    showToast('Пользователь сохранен', 'success');
+                    closeModal('userModal');
+                    await loadUsersFromServer();
+                    renderStudents();
+                    renderTeachers();
+                } else {
+                    showToast(data.error || 'Ошибка сохранения', 'error');
+                }
+            } catch (err) {
+                showToast('Ошибка сети', 'error');
+            }
         }
-        
-        const data = await result.json();
-        
-        if (data.success) {
-            showToast('Пользователь сохранен', 'success');
-            closeModal('userModal');
-            await loadUsersFromServer();
-            renderStudents();
-            renderTeachers();
-        } else {
-            showToast(data.error || 'Ошибка сохранения', 'error');
-        }
-    } catch (err) {
-        showToast('Ошибка сети', 'error');
-    }
-}
 
         async function toggleBlock(id) {
-    try {
-        const result = await fetch('/api/users/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status: 'blocked' }),
-            credentials: 'include'
-        });
-        const data = await result.json();
-        
-        if (data.success) {
-            showToast('Статус обновлен', 'success');
-            await loadUsersFromServer();
-            renderStudents();
-            renderTeachers();
-        } else {
-            showToast(data.error || 'Ошибка обновления', 'error');
-        }
-    } catch (err) {
-        showToast('Ошибка сети', 'error');
-    }
-}
+            try {
+                const result = await fetch('/api/users/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'blocked' }),
+                    credentials: 'include'
+                });
+                const data = await result.json();
 
-async function deleteUserById(id) {
-    if (!confirm('Удалить пользователя навсегда?')) return;
-    
-    try {
-        const result = await fetch('/api/users/' + id, {
-            method: 'DELETE',
-            credentials: 'include'
-        });
-        const data = await result.json();
-        
-        if (data.success) {
-            showToast('Пользователь удален', 'success');
-            await loadUsersFromServer();
-            renderStudents();
-            renderTeachers();
-        } else {
-            showToast(data.error || 'Ошибка удаления', 'error');
+                if (data.success) {
+                    showToast('Статус обновлен', 'success');
+                    await loadUsersFromServer();
+                    renderStudents();
+                    renderTeachers();
+                } else {
+                    showToast(data.error || 'Ошибка обновления', 'error');
+                }
+            } catch (err) {
+                showToast('Ошибка сети', 'error');
+            }
         }
-    } catch (err) {
-        showToast('Ошибка сети', 'error');
-    }
-}
+
+        async function deleteUserById(id) {
+            if (!confirm('Удалить пользователя навсегда?')) return;
+
+            try {
+                const result = await fetch('/api/users/' + id, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                const data = await result.json();
+
+                if (data.success) {
+                    showToast('Пользователь удален', 'success');
+                    await loadUsersFromServer();
+                    renderStudents();
+                    renderTeachers();
+                } else {
+                    showToast(data.error || 'Ошибка удаления', 'error');
+                }
+            } catch (err) {
+                showToast('Ошибка сети', 'error');
+            }
+        }
 
         function deleteUser() {
             const id = document.getElementById('editUserId').value;
@@ -1322,36 +1804,36 @@ async function deleteUserById(id) {
         }
 
         // ===== APPLICATIONS =====
-       function renderApplications() {
-    const filter = document.getElementById('appFilter')?.value || 'all';
-    let filtered = applicationsData;
-    if (filter !== 'all') {
-        filtered = applicationsData.filter(a => a.status === filter);
-    }
+        function renderApplications() {
+            const filter = document.getElementById('appFilter')?.value || 'all';
+            let filtered = applicationsData;
+            if (filter !== 'all') {
+                filtered = applicationsData.filter(a => a.status === filter);
+            }
 
-    if (filtered.length === 0) {
-        document.getElementById('applicationsTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;">Нет заявок</td></tr>';
-        return;
-    }
+            if (filtered.length === 0) {
+                document.getElementById('applicationsTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;">Нет заявок</td></tr>';
+                return;
+            }
 
-    document.getElementById('applicationsTableBody').innerHTML = filtered.map(a => {
-        let typeLabel = a.type;
-        let typeBadge = '';
-        if (a.type === 'course_enrollment') {
-            typeLabel = 'Запись на курс';
-            typeBadge = '<span class="badge badge-info" style="margin-left: 0.5rem;">🎓</span>';
-        } else if (a.type === 'question') typeLabel = 'Вопрос';
-        else if (a.type === 'complaint') typeLabel = 'Жалоба';
-        else typeLabel = a.type || 'Обращение';
+            document.getElementById('applicationsTableBody').innerHTML = filtered.map(a => {
+                let typeLabel = a.type;
+                let typeBadge = '';
+                if (a.type === 'course_enrollment') {
+                    typeLabel = 'Запись на курс';
+                    typeBadge = '<span class="badge badge-info" style="margin-left: 0.5rem;">🎓</span>';
+                } else if (a.type === 'question') typeLabel = 'Вопрос';
+                else if (a.type === 'complaint') typeLabel = 'Жалоба';
+                else typeLabel = a.type || 'Обращение';
 
-        // Дополнительная информация для заявки на курс
-        let extraHtml = '';
-        if (a.type === 'course_enrollment' && a.content) {
-            const courseMatch = a.content.match(/ID курса:\s*(\d+)/);
-            if (courseMatch) extraHtml = `<div class="text-xs text-gray">Курс ID: ${courseMatch[1]}</div>`;
-        }
+                // Дополнительная информация для заявки на курс
+                let extraHtml = '';
+                if (a.type === 'course_enrollment' && a.content) {
+                    const courseMatch = a.content.match(/ID курса:\s*(\d+)/);
+                    if (courseMatch) extraHtml = `<div class="text-xs text-gray">Курс ID: ${courseMatch[1]}</div>`;
+                }
 
-        return `
+                return `
             <tr>
                 <td>${a.id}</td>
                 <td>${escapeHtml(a.sender_name || a.sender)}</td>
@@ -1369,131 +1851,131 @@ async function deleteUserById(id) {
                 </td>
             </tr>
         `;
-    }).join('');
+            }).join('');
 
-    updateApplicationBadge();
-}
-
-      async function updateApplication(id, status) {
-    try {
-        const app = applicationsData.find(a => a.id === id);
-        if (!app) {
-            showToast('Заявка не найдена', 'error');
-            return;
+            updateApplicationBadge();
         }
 
-        // Если заявка на курс и статус "accepted" – зачисляем студента
-        if (app.type === 'course_enrollment' && status === 'accepted') {
-            const courseMatch = app.content.match(/ID курса:\s*(\d+)/);
-            if (!courseMatch) {
-                showToast('Не удалось определить курс из заявки', 'error');
-                return;
-            }
-            const courseId = parseInt(courseMatch[1]);
-            const studentEmail = app.sender_email;
-            if (!studentEmail) {
-                showToast('У заявки нет email отправителя', 'error');
-                return;
-            }
+        async function updateApplication(id, status) {
+            try {
+                const app = applicationsData.find(a => a.id === id);
+                if (!app) {
+                    showToast('Заявка не найдена', 'error');
+                    return;
+                }
 
-            const enrollRes = await fetch('/api/admin/enroll-student', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, studentEmail }),
-                credentials: 'include'
-            });
-            const enrollData = await enrollRes.json();
-            if (!enrollData.success) {
-                showToast(enrollData.error || 'Ошибка зачисления', 'error');
-                return;
-            }
-        }
+                // Если заявка на курс и статус "accepted" – зачисляем студента
+                if (app.type === 'course_enrollment' && status === 'accepted') {
+                    const courseMatch = app.content.match(/ID курса:\s*(\d+)/);
+                    if (!courseMatch) {
+                        showToast('Не удалось определить курс из заявки', 'error');
+                        return;
+                    }
+                    const courseId = parseInt(courseMatch[1]);
+                    const studentEmail = app.sender_email;
+                    if (!studentEmail) {
+                        showToast('У заявки нет email отправителя', 'error');
+                        return;
+                    }
 
-        // Обновляем статус заявки
-        const response = await fetch(API_BASE + '/api/content/applications/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status, admin_comment: '' }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast(status === 'accepted' ? 'Заявка принята' : 'Заявка отклонена');
-            await loadApplicationsFromServer();
-            renderApplications();
-            renderDashboard();
-            logActivity(`Заявка #${id} ${status === 'accepted' ? 'принята' : 'отклонена'}`);
-        } else {
-            showToast(data.error || 'Ошибка обновления', 'error');
-        }
-    } catch(e) {
-        showToast('Ошибка сети', 'error');
-        console.log('Update application error:', e);
-    }
-}
+                    const enrollRes = await fetch('/api/admin/enroll-student', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ courseId, studentEmail }),
+                        credentials: 'include'
+                    });
+                    const enrollData = await enrollRes.json();
+                    if (!enrollData.success) {
+                        showToast(enrollData.error || 'Ошибка зачисления', 'error');
+                        return;
+                    }
+                }
 
-   async function updateApplication(id, status) {
-    try {
-        // Находим заявку в текущих данных
-        const app = applicationsData.find(a => a.id === id);
-        if (!app) {
-            showToast('Заявка не найдена', 'error');
-            return;
-        }
+                // Обновляем статус заявки
+                const response = await fetch(API_BASE + '/api/content/applications/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status, admin_comment: '' }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
 
-        // Если заявка на курс и статус "accepted" – зачисляем студента
-        if (app.type === 'course_enrollment' && status === 'accepted') {
-            // Извлекаем ID курса из поля content
-            const courseMatch = app.content.match(/ID курса:\s*(\d+)/);
-            if (!courseMatch) {
-                showToast('Не удалось определить курс из заявки', 'error');
-                return;
-            }
-            const courseId = parseInt(courseMatch[1]);
-            const studentEmail = app.sender_email;
-            if (!studentEmail) {
-                showToast('У заявки нет email отправителя', 'error');
-                return;
-            }
-
-            // Отправляем запрос на зачисление студента (отдельный API)
-            const enrollRes = await fetch('/api/admin/enroll-student', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ courseId, studentEmail }),
-                credentials: 'include'
-            });
-            const enrollData = await enrollRes.json();
-            if (!enrollData.success) {
-                showToast(enrollData.error || 'Ошибка зачисления студента', 'error');
-                return;
+                if (data.success) {
+                    showToast(status === 'accepted' ? 'Заявка принята' : 'Заявка отклонена');
+                    await loadApplicationsFromServer();
+                    renderApplications();
+                    renderDashboard();
+                    logActivity(`Заявка #${id} ${status === 'accepted' ? 'принята' : 'отклонена'}`);
+                } else {
+                    showToast(data.error || 'Ошибка обновления', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+                console.log('Update application error:', e);
             }
         }
 
-        // Обновляем статус заявки
-        const response = await fetch('/api/content/applications/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status, admin_comment: '' }),
-            credentials: 'include'
-        });
-        const data = await response.json();
+        async function updateApplication(id, status) {
+            try {
+                // Находим заявку в текущих данных
+                const app = applicationsData.find(a => a.id === id);
+                if (!app) {
+                    showToast('Заявка не найдена', 'error');
+                    return;
+                }
 
-        if (data.success) {
-            showToast(status === 'accepted' ? 'Заявка принята' : 'Заявка отклонена');
-            await loadApplicationsFromServer();  // перезагружаем список заявок
-            renderApplications();               // обновляем таблицу
-            renderDashboard();                  // обновляем дашборд (счётчики)
-            logActivity(`Заявка #${id} ${status === 'accepted' ? 'принята' : 'отклонена'}`);
-        } else {
-            showToast(data.error || 'Ошибка обновления', 'error');
+                // Если заявка на курс и статус "accepted" – зачисляем студента
+                if (app.type === 'course_enrollment' && status === 'accepted') {
+                    // Извлекаем ID курса из поля content
+                    const courseMatch = app.content.match(/ID курса:\s*(\d+)/);
+                    if (!courseMatch) {
+                        showToast('Не удалось определить курс из заявки', 'error');
+                        return;
+                    }
+                    const courseId = parseInt(courseMatch[1]);
+                    const studentEmail = app.sender_email;
+                    if (!studentEmail) {
+                        showToast('У заявки нет email отправителя', 'error');
+                        return;
+                    }
+
+                    // Отправляем запрос на зачисление студента (отдельный API)
+                    const enrollRes = await fetch('/api/admin/enroll-student', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ courseId, studentEmail }),
+                        credentials: 'include'
+                    });
+                    const enrollData = await enrollRes.json();
+                    if (!enrollData.success) {
+                        showToast(enrollData.error || 'Ошибка зачисления студента', 'error');
+                        return;
+                    }
+                }
+
+                // Обновляем статус заявки
+                const response = await fetch('/api/content/applications/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status, admin_comment: '' }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast(status === 'accepted' ? 'Заявка принята' : 'Заявка отклонена');
+                    await loadApplicationsFromServer();  // перезагружаем список заявок
+                    renderApplications();               // обновляем таблицу
+                    renderDashboard();                  // обновляем дашборд (счётчики)
+                    logActivity(`Заявка #${id} ${status === 'accepted' ? 'принята' : 'отклонена'}`);
+                } else {
+                    showToast(data.error || 'Ошибка обновления', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+                console.error('Update application error:', e);
+            }
         }
-    } catch (e) {
-        showToast('Ошибка сети', 'error');
-        console.error('Update application error:', e);
-    }
-}
         function updateApplicationBadge() {
             const count = applicationsData.filter(a => a.status === 'pending').length;
             const badge = document.getElementById('appBadge');
@@ -1505,15 +1987,15 @@ async function deleteUserById(id) {
 
         // ===== STREAMS =====
         function renderStreams() {
-    const container = document.getElementById('streamsGrid');
-    if (!container) return;
-    
-    if (!streamsData || streamsData.length === 0) {
-        container.innerHTML = '<div class="card text-center"><p class="text-muted">Нет трансляций. Создайте первую трансляцию.</p></div>';
-        return;
-    }
-    
-    container.innerHTML = streamsData.map(s => `
+            const container = document.getElementById('streamsGrid');
+            if (!container) return;
+
+            if (!streamsData || streamsData.length === 0) {
+                container.innerHTML = '<div class="card text-center"><p class="text-muted">Нет трансляций. Создайте первую трансляцию.</p></div>';
+                return;
+            }
+
+            container.innerHTML = streamsData.map(s => `
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">${escapeHtml(s.title)}</h3>
@@ -1536,76 +2018,76 @@ async function deleteUserById(id) {
             </div>
         </div>
     `).join('');
-}
-async function openStreamModal() {
-    // Загружаем список преподавателей и курсов
-    const teachers = usersData.filter(u => u.role === 'teacher');
-    const teacherSelect = document.getElementById('streamTeacher');
-    teacherSelect.innerHTML = '<option value="">Выберите преподавателя</option>';
-    for (let teacher of teachers) {
-        teacherSelect.innerHTML += `<option value="${teacher.id}">${escapeHtml(teacher.fullName)}</option>`;
-    }
-    
-    const coursesResult = await fetch(API_BASE + '/api/courses', { credentials: 'include' });
-    const coursesData = await coursesResult.json();
-    const courseSelect = document.getElementById('streamCourse');
-    courseSelect.innerHTML = '<option value="">Выберите курс</option>';
-    if (coursesData.success && coursesData.courses) {
-        for (let course of coursesData.courses) {
-            courseSelect.innerHTML += `<option value="${course.id}">${escapeHtml(course.name)}</option>`;
         }
-    }
-    
-    document.getElementById('streamTitle').value = '';
-    document.getElementById('streamDateTime').value = '';
-    document.getElementById('streamStatus').value = 'planned';
-    document.getElementById('streamModal').classList.add('active');
-}
+        async function openStreamModal() {
+            // Загружаем список преподавателей и курсов
+            const teachers = usersData.filter(u => u.role === 'teacher');
+            const teacherSelect = document.getElementById('streamTeacher');
+            teacherSelect.innerHTML = '<option value="">Выберите преподавателя</option>';
+            for (let teacher of teachers) {
+                teacherSelect.innerHTML += `<option value="${teacher.id}">${escapeHtml(teacher.fullName)}</option>`;
+            }
 
-function closeStreamModal() {
-    document.getElementById('streamModal').classList.remove('active');
-}
+            const coursesResult = await fetch(API_BASE + '/api/courses', { credentials: 'include' });
+            const coursesData = await coursesResult.json();
+            const courseSelect = document.getElementById('streamCourse');
+            courseSelect.innerHTML = '<option value="">Выберите курс</option>';
+            if (coursesData.success && coursesData.courses) {
+                for (let course of coursesData.courses) {
+                    courseSelect.innerHTML += `<option value="${course.id}">${escapeHtml(course.name)}</option>`;
+                }
+            }
 
-async function saveStream() {
-    const title = document.getElementById('streamTitle').value.trim();
-    const teacherId = document.getElementById('streamTeacher').value;
-    const courseId = document.getElementById('streamCourse').value;
-    const scheduledFor = document.getElementById('streamDateTime').value;
-    const status = document.getElementById('streamStatus').value;
-    
-    if (!title) {
-        showToast('Введите название трансляции', 'error');
-        return;
-    }
-    
-    try {
-        const response = await fetch(API_BASE + '/api/streams', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                title, 
-                teacher_id: teacherId || null, 
-                course_id: courseId || null, 
-                scheduled_for: scheduledFor ? new Date(scheduledFor).toISOString() : null,
-                status: status
-            }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Трансляция создана', 'success');
-            closeStreamModal();
-            await loadStreamsFromServer();
-            renderStreams();
-            renderDashboard();
-        } else {
-            showToast(data.error || 'Ошибка создания', 'error');
+            document.getElementById('streamTitle').value = '';
+            document.getElementById('streamDateTime').value = '';
+            document.getElementById('streamStatus').value = 'planned';
+            document.getElementById('streamModal').classList.add('active');
         }
-    } catch(e) {
-        showToast('Ошибка сети', 'error');
-    }
-}
+
+        function closeStreamModal() {
+            document.getElementById('streamModal').classList.remove('active');
+        }
+
+        async function saveStream() {
+            const title = document.getElementById('streamTitle').value.trim();
+            const teacherId = document.getElementById('streamTeacher').value;
+            const courseId = document.getElementById('streamCourse').value;
+            const scheduledFor = document.getElementById('streamDateTime').value;
+            const status = document.getElementById('streamStatus').value;
+
+            if (!title) {
+                showToast('Введите название трансляции', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(API_BASE + '/api/streams', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title,
+                        teacher_id: teacherId || null,
+                        course_id: courseId || null,
+                        scheduled_for: scheduledFor ? new Date(scheduledFor).toISOString() : null,
+                        status: status
+                    }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Трансляция создана', 'success');
+                    closeStreamModal();
+                    await loadStreamsFromServer();
+                    renderStreams();
+                    renderDashboard();
+                } else {
+                    showToast(data.error || 'Ошибка создания', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+            }
+        }
 
         function stopStream(id) {
             const stream = streamsData.find(s => s.id === id);
@@ -1618,50 +2100,50 @@ async function saveStream() {
             }
         }
 
-       async function editStreamOverlay(id) {
-    const text = prompt('Текст для наложения на трансляцию:');
-    if (!text) return;
-    
-    try {
-        const response = await fetch(API_BASE + '/api/streams/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ overlay_text: text }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Текст наложен на трансляцию', 'success');
-            await loadStreamsFromServer();
-        } else {
-            showToast(data.error || 'Ошибка', 'error');
+        async function editStreamOverlay(id) {
+            const text = prompt('Текст для наложения на трансляцию:');
+            if (!text) return;
+
+            try {
+                const response = await fetch(API_BASE + '/api/streams/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ overlay_text: text }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Текст наложен на трансляцию', 'success');
+                    await loadStreamsFromServer();
+                } else {
+                    showToast(data.error || 'Ошибка', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+            }
         }
-    } catch(e) {
-        showToast('Ошибка сети', 'error');
-    }
-}
-async function deleteStream(id) {
-    if (!confirm('Удалить трансляцию?')) return;
-    
-    try {
-        const response = await fetch(API_BASE + '/api/streams/' + id, {
-            method: 'DELETE',
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Трансляция удалена', 'success');
-            await loadStreamsFromServer();
-            renderDashboard();
-        } else {
-            showToast(data.error || 'Ошибка удаления', 'error');
+        async function deleteStream(id) {
+            if (!confirm('Удалить трансляцию?')) return;
+
+            try {
+                const response = await fetch(API_BASE + '/api/streams/' + id, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Трансляция удалена', 'success');
+                    await loadStreamsFromServer();
+                    renderDashboard();
+                } else {
+                    showToast(data.error || 'Ошибка удаления', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+            }
         }
-    } catch(e) {
-        showToast('Ошибка сети', 'error');
-    }
-}
 
         // ===== GAMES =====
         function renderGames() {
@@ -1674,12 +2156,12 @@ async function deleteStream(id) {
             document.getElementById('runnerHealth').value = gc.runner?.health || 3;
 
             const allQ = { ...(gc.jumper?.questions || {}) };
-            document.getElementById('jumperQuestionsList').innerHTML = ['easy','normal','hard'].map(diff => {
+            document.getElementById('jumperQuestionsList').innerHTML = ['easy', 'normal', 'hard'].map(diff => {
                 const qs = allQ[diff] || [];
                 return `<div class="mt-1"><strong>${diff === 'easy' ? '🟢 Лёгкий' : diff === 'normal' ? '🟡 Нормальный' : '🔴 Сложный'}</strong>: ${qs.length} вопросов</div>`;
             }).join('');
 
-            document.getElementById('runnerObstaclesList').innerHTML = (gc.runner?.obstacles || []).map((o,i) => `
+            document.getElementById('runnerObstaclesList').innerHTML = (gc.runner?.obstacles || []).map((o, i) => `
                 <div class="game-card">${o.symbol} ${o.name} — <button class="btn btn-danger btn-sm" onclick="deleteObstacle(${i})">🗑️</button></div>
             `).join('') || '<p class="text-muted">Нет препятствий</p>';
 
@@ -1733,7 +2215,7 @@ async function deleteStream(id) {
             if (!gameConfigData[game]) gameConfigData[game] = {};
             if (!gameConfigData[game].questions) gameConfigData[game].questions = {};
             if (!gameConfigData[game].questions[difficulty]) gameConfigData[game].questions[difficulty] = [];
-            
+
             gameConfigData[game].questions[difficulty].push({ q: text, options, correct: options.findIndex(o => o.correct) });
             saveAllToStorage();
             closeModal('questionModal');
@@ -1741,7 +2223,7 @@ async function deleteStream(id) {
             logActivity(`Добавлен вопрос в ${game} (${difficulty})`);
             showToast('✅ Вопрос добавлен');
         }
-        
+
 
         function deleteObstacle(index) {
             if (confirm('Удалить препятствие?')) {
@@ -1753,67 +2235,67 @@ async function deleteStream(id) {
 
         // ===== CHAT =====
         function renderChat() {
-    // Очищаем список преподавателей, он будет загружен отдельно
-    document.getElementById('chatTeacherList').innerHTML = '<div class="text-center p-3">Загрузка...</div>';
-    loadTeachersForAdminChat();
-}
+            // Очищаем список преподавателей, он будет загружен отдельно
+            document.getElementById('chatTeacherList').innerHTML = '<div class="text-center p-3">Загрузка...</div>';
+            loadTeachersForAdminChat();
+        }
 
-       async function selectChatTeacher(email) {
-    document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
-    document.querySelector(`.chat-list-item[data-email="${email}"]`)?.classList.add('active');
-    
-    window.activeChatTeacher = email;
-    
-    try {
-        const response = await fetch(`/api/chat/${encodeURIComponent(email)}`, { credentials: 'include' });
-        const data = await response.json();
-        const messagesContainer = document.getElementById('chatMessages');
-        
-        if (data.success && data.messages && data.messages.length > 0) {
-            messagesContainer.innerHTML = data.messages.map(msg => `
+        async function selectChatTeacher(email) {
+            document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.chat-list-item[data-email="${email}"]`)?.classList.add('active');
+
+            window.activeChatTeacher = email;
+
+            try {
+                const response = await fetch(`/api/chat/${encodeURIComponent(email)}`, { credentials: 'include' });
+                const data = await response.json();
+                const messagesContainer = document.getElementById('chatMessages');
+
+                if (data.success && data.messages && data.messages.length > 0) {
+                    messagesContainer.innerHTML = data.messages.map(msg => `
                 <div class="chat-msg ${msg.sender_email === 'admin@cons.ru' ? 'sent' : 'received'}">
                     ${escapeHtml(msg.message_text)}
                     <div class="time">${new Date(msg.created_at).toLocaleTimeString()}</div>
                 </div>
             `).join('');
-        } else {
-            messagesContainer.innerHTML = '<p class="text-muted" style="text-align:center;padding:2rem;">Нет сообщений. Напишите первым!</p>';
+                } else {
+                    messagesContainer.innerHTML = '<p class="text-muted" style="text-align:center;padding:2rem;">Нет сообщений. Напишите первым!</p>';
+                }
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (e) {
+                console.error('Load messages error:', e);
+                document.getElementById('chatMessages').innerHTML = '<p class="text-muted" style="text-align:center;padding:2rem;">Ошибка загрузки сообщений</p>';
+            }
         }
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    } catch (e) {
-        console.error('Load messages error:', e);
-        document.getElementById('chatMessages').innerHTML = '<p class="text-muted" style="text-align:center;padding:2rem;">Ошибка загрузки сообщений</p>';
-    }
-}
 
-      async function sendChatMessage() {
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
-    const teacherEmail = window.activeChatTeacher;
-    
-    if (!text || !teacherEmail) {
-        if (!teacherEmail) showToast('Выберите преподавателя', 'error');
-        return;
-    }
-    
-    try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ receiver_email: teacherEmail, message_text: text }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.success) {
-            input.value = '';
-            // Не обновляем чат — сообщение придёт через WebSocket
-        } else {
-            showToast(data.error || 'Ошибка отправки', 'error');
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            const teacherEmail = window.activeChatTeacher;
+
+            if (!text || !teacherEmail) {
+                if (!teacherEmail) showToast('Выберите преподавателя', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ receiver_email: teacherEmail, message_text: text }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    input.value = '';
+                    // Не обновляем чат — сообщение придёт через WebSocket
+                } else {
+                    showToast(data.error || 'Ошибка отправки', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+            }
         }
-    } catch (e) {
-        showToast('Ошибка сети', 'error');
-    }
-}
 
         function updateChatBadge() {
             const badge = document.getElementById('chatBadge');
@@ -1827,42 +2309,42 @@ async function deleteStream(id) {
             }
         }
 
-       function setupSocketIO() {
-    // Проверяем, что текущий пользователь – администратор (email известен)
-    const adminEmail = 'admin@cons.ru'; // или получить из currentUser
-    const socket = io({
-        auth: { userId: adminEmail, userRole: 'admin' }
-    });
-    socket.on('connect', () => {
-        document.getElementById('chatStatus').innerHTML = '🟢 Подключён';
-    });
-    socket.on('disconnect', () => {
-        document.getElementById('chatStatus').innerHTML = '🔴 Отключён';
-    });
-    socket.on('chat-message', (data) => {
-        // Если сообщение адресовано админу или отправлено текущим выбранным преподавателем
-        if (data.to === adminEmail || data.from === window.activeChatTeacher) {
-            // Обновляем окно чата
-            if (window.activeChatTeacher) {
-                selectChatTeacher(window.activeChatTeacher);
-            }
-            // Обновить бейдж (количество непрочитанных – можно реализовать позже)
-            updateChatBadge();
+        function setupSocketIO() {
+            // Проверяем, что текущий пользователь – администратор (email известен)
+            const adminEmail = 'admin@cons.ru'; // или получить из currentUser
+            const socket = io({
+                auth: { userId: adminEmail, userRole: 'admin' }
+            });
+            socket.on('connect', () => {
+                document.getElementById('chatStatus').innerHTML = '🟢 Подключён';
+            });
+            socket.on('disconnect', () => {
+                document.getElementById('chatStatus').innerHTML = '🔴 Отключён';
+            });
+            socket.on('chat-message', (data) => {
+                // Если сообщение адресовано админу или отправлено текущим выбранным преподавателем
+                if (data.to === adminEmail || data.from === window.activeChatTeacher) {
+                    // Обновляем окно чата
+                    if (window.activeChatTeacher) {
+                        selectChatTeacher(window.activeChatTeacher);
+                    }
+                    // Обновить бейдж (количество непрочитанных – можно реализовать позже)
+                    updateChatBadge();
+                }
+            });
+            window.adminSocket = socket;
         }
-    });
-    window.adminSocket = socket;
-}
 
         // ===== COURSES =====
-       function renderCourses() {
+        function renderCourses() {
     const container = document.getElementById('coursesGrid');
     if (!container) return;
-    
-    if (coursesSlider.length === 0) {
+
+    if (!coursesSlider || coursesSlider.length === 0) {
         container.innerHTML = '<div class="card text-center">Нет курсов. Добавьте первый курс</div>';
         return;
     }
-    
+
     container.innerHTML = coursesSlider.map((c, i) => `
         <div class="card">
             <img src="${c.img || '/foto/course-default.jpg'}" style="width:100%;height:160px;object-fit:cover;border-radius:0.5rem;margin-bottom:0.75rem;" onerror="this.src='/foto/course-default.jpg'">
@@ -1876,41 +2358,47 @@ async function deleteStream(id) {
                 <option value="advanced" ${c.level === 'advanced' ? 'selected' : ''}>Продвинутый</option>
             </select>
             <div class="flex gap-1">
-                <input type="number" class="form-input" value="${c.sort_order || i}" placeholder="Порядок" data-index="${i}" data-field="sort_order" onchange="updateCourseField(this)" style="width:80px;">
+                <input type="number" class="form-input" value="${c.sort_order !== undefined ? c.sort_order : i}" placeholder="Порядок" data-index="${i}" data-field="sort_order" onchange="updateCourseField(this)" style="width:80px;">
                 <button class="btn btn-danger btn-sm" onclick="removeCourseFromSlider(${i})">Удалить</button>
             </div>
         </div>
     `).join('');
 }
 
-        async function updateCourseField(input) {
+       async function updateCourseField(input) {
     const index = parseInt(input.dataset.index);
     const field = input.dataset.field;
     let value = input.value;
-    
+
     if (field === 'sort_order') {
         value = parseInt(value) || 0;
     }
-    
+
     coursesSlider[index][field] = value;
-    saveAllToStorage();
-    
-    const response = await fetch(API_BASE + '/api/content/slider-courses', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(coursesSlider),
-        credentials: 'include'
-    });
-    
-    const data = await response.json();
-    if (data.success) {
-        showToast('Сохранено');
-    } else {
-        showToast('Ошибка сохранения', 'error');
+
+    try {
+        const response = await fetch(API_BASE + '/api/content/slider-courses', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(coursesSlider),
+            credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            showToast('Сохранено');
+            // Перезагружаем данные с сервера, чтобы порядок не сбился
+            await loadCoursesFromServer();
+            renderCourses();
+        } else {
+            showToast('Ошибка сохранения', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
     }
 }
 
-        async function addCourseCard() {
+       async function addCourseCard() {
     const newCourse = {
         title: 'Новый курс',
         description: 'Описание курса',
@@ -1918,51 +2406,61 @@ async function deleteStream(id) {
         link: '#',
         sort_order: coursesSlider.length
     };
-    coursesSlider.push(newCourse);
-    saveAllToStorage();
-    
-    const response = await fetch(API_BASE + '/api/content/slider-courses', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(coursesSlider),
-        credentials: 'include'
-    });
-    
-    const data = await response.json();
-    if (data.success) {
-        renderCourses();
-        renderDashboard();
-        showToast('Курс добавлен');
-    } else {
-        showToast('Ошибка добавления', 'error');
-    }
-}
-function removeCourse(index) {
-    if (!confirm('Удалить курс?')) return;
-    coursesSlider.splice(index, 1);
-    
-    for (let i = 0; i < coursesSlider.length; i++) {
-        coursesSlider[i].sort_order = i;
-    }
-    
-    saveAllToStorage();
-    
-    fetch(API_BASE + '/api/content/slider-courses', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(coursesSlider),
-        credentials: 'include'
-    }).then(response => response.json()).then(data => {
+
+    try {
+        const response = await fetch(API_BASE + '/api/content/slider-courses', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify([...coursesSlider, newCourse]),
+            credentials: 'include'
+        });
+        const data = await response.json();
+
         if (data.success) {
+            showToast('Курс добавлен', 'success');
+            // Перезагружаем список с сервера, чтобы получить актуальные данные (включая sort_order)
+            await loadCoursesFromServer();
             renderCourses();
             renderDashboard();
-            showToast('Курс удален');
         } else {
-            showToast('Ошибка удаления', 'error');
+            showToast(data.error || 'Ошибка добавления', 'error');
         }
-    }).catch(() => {
+    } catch(e) {
         showToast('Ошибка сети', 'error');
-    });
+    }
+}
+
+
+       async function removeCourseFromSlider(index) {
+    if (!confirm('Удалить курс?')) return;
+
+    const updatedList = [...coursesSlider];
+    updatedList.splice(index, 1);
+    // Пересчитываем порядок
+    for (let i = 0; i < updatedList.length; i++) {
+        updatedList[i].sort_order = i;
+    }
+
+    try {
+        const response = await fetch(API_BASE + '/api/content/slider-courses', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updatedList),
+            credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            showToast('Курс удален', 'success');
+            await loadCoursesFromServer();
+            renderCourses();
+            renderDashboard();
+        } else {
+            showToast(data.error || 'Ошибка удаления', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+    }
 }
 
         // ===== SITE CONTENT =====
@@ -1981,10 +2479,10 @@ function removeCourse(index) {
             document.getElementById('siteContentEditor').innerHTML = fields.map(f => `
                 <div class="form-group">
                     <label>${f.label}</label>
-                    ${f.type === 'textarea' 
-                        ? `<textarea class="form-textarea" data-content-key="${f.key}">${escapeHtml(siteContentData[f.key] || '')}</textarea>`
-                        : `<input type="text" class="form-input" data-content-key="${f.key}" value="${escapeHtml(siteContentData[f.key] || '')}">`
-                    }
+                    ${f.type === 'textarea'
+                    ? `<textarea class="form-textarea" data-content-key="${f.key}">${escapeHtml(siteContentData[f.key] || '')}</textarea>`
+                    : `<input type="text" class="form-input" data-content-key="${f.key}" value="${escapeHtml(siteContentData[f.key] || '')}">`
+                }
                 </div>
             `).join('');
         }
@@ -2036,178 +2534,178 @@ function removeCourse(index) {
 
         // ===== SYNC TO SERVER =====
         // Синхронизация пользователей с сервером
-async function syncToServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/admin/users', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ users: usersData }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (!data.success) console.error('Sync failed:', data.error);
-    } catch(e) { console.log('Sync users failed:', e); }
-}
+        async function syncToServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/admin/users', {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ users: usersData }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (!data.success) console.error('Sync failed:', data.error);
+            } catch (e) { console.log('Sync users failed:', e); }
+        }
 
-// Загрузка пользователей с сервера
-async function loadUsersFromServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/users', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.success) {
-            usersData = data.users;
-            saveAllToStorage();
-            renderStudents();
-            renderTeachers();
+        // Загрузка пользователей с сервера
+        async function loadUsersFromServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/users', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    usersData = data.users;
+                    saveAllToStorage();
+                    renderStudents();
+                    renderTeachers();
+                    renderDashboard();
+                }
+            } catch (e) { console.log('Load users failed:', e); }
+        }
+
+        // Загрузка курсов с сервера
+        async function loadCoursesFromServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/content/slider-courses', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success && data.courses) {
+                    coursesSlider = data.courses;
+                    saveAllToStorage();
+                    renderCourses();
+                }
+            } catch (e) { console.log('Load courses failed:', e); }
+        }
+
+        // Загрузка партнёров с сервера
+        async function loadPartnersFromServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/partners', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success && data.partners) {
+                    partnersList = data.partners;
+                    saveAllToStorage();
+                    renderPartners();
+                }
+            } catch (e) { console.log('Load partners failed:', e); }
+        }
+
+        // Загрузка контента с сервера
+        async function loadContentFromServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/site-content', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success && data.content) {
+                    siteContentData = data.content;
+                    saveAllToStorage();
+                    renderSiteContent();
+                }
+            } catch (e) { console.log('Load content failed:', e); }
+        }
+
+        // Загрузка заявок с сервера
+        async function loadApplicationsFromServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/content/applications', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                console.log('Applications loaded:', data);
+
+                if (data.success) {
+                    applicationsData = data.applications;
+                    saveAllToStorage();
+                    renderApplications();
+                    updateApplicationBadge();
+                } else {
+                    console.error('Failed to load applications:', data.error);
+                }
+            } catch (e) {
+                console.log('Load applications failed:', e);
+            }
+        }
+
+        // Загрузка трансляций с сервера
+        async function loadStreamsFromServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/streams', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                console.log('Streams loaded:', data);
+
+                if (data.success) {
+                    streamsData = data.streams;
+                    saveAllToStorage();
+                    renderStreams();
+                } else {
+                    console.error('Failed to load streams:', data.error);
+                }
+            } catch (e) {
+                console.log('Load streams failed:', e);
+            }
+        }
+
+        // Обновлённая инициализация
+        async function init() {
+            loadAllFromStorage();
+
+            // Загружаем все данные с сервера
+            await Promise.all([
+                loadUsersFromServer(),
+                loadCoursesFromServer(),
+                loadPartnersFromServer(),
+                loadContentFromServer(),
+                loadApplicationsFromServer(),
+                loadStreamsFromServer()
+            ]);
+
+            setupNavigation();
             renderDashboard();
-        }
-    } catch(e) { console.log('Load users failed:', e); }
-}
-
-// Загрузка курсов с сервера
-async function loadCoursesFromServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/content/slider-courses', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.success && data.courses) {
-            coursesSlider = data.courses;
-            saveAllToStorage();
-            renderCourses();
-        }
-    } catch(e) { console.log('Load courses failed:', e); }
-}
-
-// Загрузка партнёров с сервера
-async function loadPartnersFromServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/partners', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.success && data.partners) {
-            partnersList = data.partners;
-            saveAllToStorage();
-            renderPartners();
-        }
-    } catch(e) { console.log('Load partners failed:', e); }
-}
-
-// Загрузка контента с сервера
-async function loadContentFromServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/site-content', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.success && data.content) {
-            siteContentData = data.content;
-            saveAllToStorage();
-            renderSiteContent();
-        }
-    } catch(e) { console.log('Load content failed:', e); }
-}
-
-// Загрузка заявок с сервера
-async function loadApplicationsFromServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/content/applications', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        console.log('Applications loaded:', data);
-        
-        if (data.success) {
-            applicationsData = data.applications;
-            saveAllToStorage();
-            renderApplications();
+            updateDateTime();
+            setInterval(updateDateTime, 30000);
             updateApplicationBadge();
-        } else {
-            console.error('Failed to load applications:', data.error);
+            updateChatBadge();
         }
-    } catch(e) { 
-        console.log('Load applications failed:', e); 
-    }
-}
+        async function updateStreamStatus(id, status) {
+            try {
+                const response = await fetch(API_BASE + '/api/streams/' + id, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
 
-// Загрузка трансляций с сервера
-async function loadStreamsFromServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/streams', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        console.log('Streams loaded:', data);
-        
-        if (data.success) {
-            streamsData = data.streams;
-            saveAllToStorage();
-            renderStreams();
-        } else {
-            console.error('Failed to load streams:', data.error);
+                if (data.success) {
+                    showToast('Статус обновлен', 'success');
+                    await loadStreamsFromServer();
+                    renderDashboard();
+                } else {
+                    showToast(data.error || 'Ошибка обновления', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+            }
         }
-    } catch(e) { 
-        console.log('Load streams failed:', e); 
-    }
-}
-
-// Обновлённая инициализация
-async function init() {
-    loadAllFromStorage();
-    
-    // Загружаем все данные с сервера
-    await Promise.all([
-        loadUsersFromServer(),
-        loadCoursesFromServer(),
-        loadPartnersFromServer(),
-        loadContentFromServer(),
-        loadApplicationsFromServer(),
-        loadStreamsFromServer()
-    ]);
-    
-    setupNavigation();
-    renderDashboard();
-    updateDateTime();
-    setInterval(updateDateTime, 30000);
-    updateApplicationBadge();
-    updateChatBadge();
-}
-async function updateStreamStatus(id, status) {
-    try {
-        const response = await fetch(API_BASE + '/api/streams/' + id, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ status }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Статус обновлен', 'success');
-            await loadStreamsFromServer();
-            renderDashboard();
-        } else {
-            showToast(data.error || 'Ошибка обновления', 'error');
+        // Создание пользователя через API
+        async function createUserOnServer(userData) {
+            try {
+                const response = await fetch(API_BASE + '/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData),
+                    credentials: 'include'
+                });
+                return await response.json();
+            } catch (e) { return { success: false }; }
         }
-    } catch(e) {
-        showToast('Ошибка сети', 'error');
-    }
-}
-// Создание пользователя через API
-async function createUserOnServer(userData) {
-    try {
-        const response = await fetch(API_BASE + '/api/users', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(userData),
-            credentials: 'include'
-        });
-        return await response.json();
-    } catch(e) { return { success: false }; }
-}
 
         // ===== UTILS =====
         function showToast(msg) {
@@ -2225,30 +2723,30 @@ async function createUserOnServer(userData) {
             if (!str) return '';
             return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
         }
-async function logout() {
-    try {
-        await fetch('/api/auth/logout', {
-            method: 'POST',
-            credentials: 'include'
-        });
-    } catch(e) {
-        console.log('Logout error:', e);
-    }
-    
-    localStorage.removeItem('consPress_current_complete');
-    localStorage.removeItem('admin_users');
-    localStorage.removeItem('admin_courses_slider');
-    localStorage.removeItem('admin_partners_list');
-    localStorage.removeItem('admin_site_content');
-    localStorage.removeItem('admin_applications');
-    localStorage.removeItem('admin_streams');
-    localStorage.removeItem('admin_game_config');
-    localStorage.removeItem('admin_game_progress');
-    localStorage.removeItem('admin_chat_messages');
-    localStorage.removeItem('admin_activity_log');
-    
-    window.location.href = '/';
-}
+        async function logout() {
+            try {
+                await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch (e) {
+                console.log('Logout error:', e);
+            }
+
+            localStorage.removeItem('consPress_current_complete');
+            localStorage.removeItem('admin_users');
+            localStorage.removeItem('admin_courses_slider');
+            localStorage.removeItem('admin_partners_list');
+            localStorage.removeItem('admin_site_content');
+            localStorage.removeItem('admin_applications');
+            localStorage.removeItem('admin_streams');
+            localStorage.removeItem('admin_game_config');
+            localStorage.removeItem('admin_game_progress');
+            localStorage.removeItem('admin_chat_messages');
+            localStorage.removeItem('admin_activity_log');
+
+            window.location.href = '/';
+        }
 
         // ===== KEYBOARD SHORTCUTS =====
         document.addEventListener('keydown', (e) => {
@@ -2273,57 +2771,57 @@ async function logout() {
         document.addEventListener('DOMContentLoaded', init);
     </script>
     <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(let registration of registrations) {
-                registration.unregister();
-            }
-        });
-    }
-// ===== УПРАВЛЕНИЕ ВОПРОСАМИ ИГР =====
-let gameQuestions = [];
-
-async function loadGameQuestions() {
-    try {
-        const response = await fetch(API_BASE + '/api/games/questions', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        console.log('Game questions loaded:', data);
-        
-        if (data.success) {
-            gameQuestions = [];
-            for (const game in data.questions) {
-                for (const difficulty in data.questions[game]) {
-                    for (const q of data.questions[game][difficulty]) {
-                        gameQuestions.push({
-                            id: q.id,
-                            game: game,
-                            difficulty: difficulty,
-                            question_text: q.q,
-                            options: q.options,
-                            correct_index: q.correct
-                        });
-                    }
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    registration.unregister();
                 }
-            }
-            renderGameQuestionsTable();
+            });
         }
-    } catch(e) {
-        console.log('Load game questions failed:', e);
-    }
-}
+        // ===== УПРАВЛЕНИЕ ВОПРОСАМИ ИГР =====
+        let gameQuestions = [];
 
-function renderGameQuestionsTable() {
-    const container = document.getElementById('gameQuestionsTable');
-    if (!container) return;
-    
-    if (gameQuestions.length === 0) {
-        container.innerHTML = '<tr><td colspan="5" class="text-center">Нет вопросов. Добавьте первый вопрос</td></tr>';
-        return;
-    }
-    
-    container.innerHTML = gameQuestions.map(q => `
+        async function loadGameQuestions() {
+            try {
+                const response = await fetch(API_BASE + '/api/games/questions', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                console.log('Game questions loaded:', data);
+
+                if (data.success) {
+                    gameQuestions = [];
+                    for (const game in data.questions) {
+                        for (const difficulty in data.questions[game]) {
+                            for (const q of data.questions[game][difficulty]) {
+                                gameQuestions.push({
+                                    id: q.id,
+                                    game: game,
+                                    difficulty: difficulty,
+                                    question_text: q.q,
+                                    options: q.options,
+                                    correct_index: q.correct
+                                });
+                            }
+                        }
+                    }
+                    renderGameQuestionsTable();
+                }
+            } catch (e) {
+                console.log('Load game questions failed:', e);
+            }
+        }
+
+        function renderGameQuestionsTable() {
+            const container = document.getElementById('gameQuestionsTable');
+            if (!container) return;
+
+            if (gameQuestions.length === 0) {
+                container.innerHTML = '<tr><td colspan="5" class="text-center">Нет вопросов. Добавьте первый вопрос</td></tr>';
+                return;
+            }
+
+            container.innerHTML = gameQuestions.map(q => `
         <tr>
             <td>${q.id}</td>
             <td>${q.game === 'jumper' ? 'Code Jumper' : 'Code Runner'}</td>
@@ -2334,139 +2832,139 @@ function renderGameQuestionsTable() {
             </td>
         </tr>
     `).join('');
-}
-
-function openGameQuestionModal() {
-    document.getElementById('editQuestionId').value = '';
-    document.getElementById('editQuestionGame').value = 'jumper';
-    document.getElementById('editQuestionDifficulty').value = 'normal';
-    document.getElementById('editQuestionText').value = '';
-    document.getElementById('editOpt1').value = '';
-    document.getElementById('editOpt2').value = '';
-    document.getElementById('editOpt3').value = '';
-    document.getElementById('editOpt4').value = '';
-    document.getElementById('editQuestionModalTitle').innerText = 'Добавить вопрос';
-    document.getElementById('deleteQuestionBtn').style.display = 'none';
-    document.getElementById('editQuestionModal').classList.add('active');
-}
-
-async function editGameQuestion(id) {
-    const question = gameQuestions.find(q => q.id === id);
-    if (!question) return;
-    
-    document.getElementById('editQuestionId').value = question.id;
-    document.getElementById('editQuestionGame').value = question.game;
-    document.getElementById('editQuestionDifficulty').value = question.difficulty;
-    document.getElementById('editQuestionText').value = question.question_text;
-    document.getElementById('editOpt1').value = question.options[0] || '';
-    document.getElementById('editOpt2').value = question.options[1] || '';
-    document.getElementById('editOpt3').value = question.options[2] || '';
-    document.getElementById('editOpt4').value = question.options[3] || '';
-    document.getElementById('editQuestionModalTitle').innerText = 'Редактировать вопрос';
-    document.getElementById('deleteQuestionBtn').style.display = 'inline-flex';
-    document.getElementById('editQuestionModal').classList.add('active');
-}
-
-async function saveGameQuestion() {
-    const id = document.getElementById('editQuestionId').value;
-    const game = document.getElementById('editQuestionGame').value;
-    const difficulty = document.getElementById('editQuestionDifficulty').value;
-    const questionText = document.getElementById('editQuestionText').value.trim();
-    const options = [
-        document.getElementById('editOpt1').value.trim(),
-        document.getElementById('editOpt2').value.trim(),
-        document.getElementById('editOpt3').value.trim(),
-        document.getElementById('editOpt4').value.trim()
-    ];
-    
-    if (!questionText) {
-        showToast('Введите текст вопроса', 'error');
-        return;
-    }
-    if (!options[0]) {
-        showToast('Первый вариант ответа обязателен', 'error');
-        return;
-    }
-    
-    const url = id ? `/api/games/questions/${id}` : '/api/games/questions';
-    const method = id ? 'PUT' : 'POST';
-    
-    try {
-        const response = await fetch(API_BASE + url, {
-            method: method,
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                game: game,
-                difficulty: difficulty,
-                question_text: questionText,
-                options: options,
-                correct_index: 0
-            }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast(id ? 'Вопрос обновлен' : 'Вопрос добавлен', 'success');
-            closeModal('editQuestionModal');
-            await loadGameQuestions();
-        } else {
-            showToast(data.error || 'Ошибка', 'error');
         }
-    } catch(e) {
-        showToast('Ошибка сети', 'error');
-    }
-}
 
-async function deleteGameQuestion() {
-    const id = document.getElementById('editQuestionId').value;
-    if (!id) return;
-    if (!confirm('Удалить вопрос?')) return;
-    
-    try {
-        const response = await fetch(API_BASE + '/api/games/questions/' + id, {
-            method: 'DELETE',
-            credentials: 'include'
-        });
-        const data = await response.json();
-        
-        if (data.success) {
-            showToast('Вопрос удален', 'success');
-            closeModal('editQuestionModal');
-            await loadGameQuestions();
-        } else {
-            showToast(data.error || 'Ошибка удаления', 'error');
+        function openGameQuestionModal() {
+            document.getElementById('editQuestionId').value = '';
+            document.getElementById('editQuestionGame').value = 'jumper';
+            document.getElementById('editQuestionDifficulty').value = 'normal';
+            document.getElementById('editQuestionText').value = '';
+            document.getElementById('editOpt1').value = '';
+            document.getElementById('editOpt2').value = '';
+            document.getElementById('editOpt3').value = '';
+            document.getElementById('editOpt4').value = '';
+            document.getElementById('editQuestionModalTitle').innerText = 'Добавить вопрос';
+            document.getElementById('deleteQuestionBtn').style.display = 'none';
+            document.getElementById('editQuestionModal').classList.add('active');
         }
-    } catch(e) {
-        showToast('Ошибка сети', 'error');
-    }
-}
-async function loadGameProgressFromServer() {
-    try {
-        const response = await fetch(API_BASE + '/api/games/progress', {
-            credentials: 'include'
-        });
-        const data = await response.json();
-        console.log('Game progress loaded:', data);
-        
-        if (data.success) {
-            gameProgressData = data.progress;
-            saveAllToStorage();
-            renderGames(); // обновить таблицу прогресса
-        } else {
-            console.error('Failed to load game progress:', data.error);
+
+        async function editGameQuestion(id) {
+            const question = gameQuestions.find(q => q.id === id);
+            if (!question) return;
+
+            document.getElementById('editQuestionId').value = question.id;
+            document.getElementById('editQuestionGame').value = question.game;
+            document.getElementById('editQuestionDifficulty').value = question.difficulty;
+            document.getElementById('editQuestionText').value = question.question_text;
+            document.getElementById('editOpt1').value = question.options[0] || '';
+            document.getElementById('editOpt2').value = question.options[1] || '';
+            document.getElementById('editOpt3').value = question.options[2] || '';
+            document.getElementById('editOpt4').value = question.options[3] || '';
+            document.getElementById('editQuestionModalTitle').innerText = 'Редактировать вопрос';
+            document.getElementById('deleteQuestionBtn').style.display = 'inline-flex';
+            document.getElementById('editQuestionModal').classList.add('active');
         }
-    } catch(e) {
-        console.log('Load game progress failed:', e);
-    }
-}
-async function loadTeachersForAdminChat() {
-    try {
-        const response = await fetch('/api/users?role=teacher', { credentials: 'include' });
-        const data = await response.json();
-        const container = document.getElementById('chatTeacherList');
-        if (data.success && data.users && data.users.length > 0) {
-            container.innerHTML = data.users.map(teacher => `
+
+        async function saveGameQuestion() {
+            const id = document.getElementById('editQuestionId').value;
+            const game = document.getElementById('editQuestionGame').value;
+            const difficulty = document.getElementById('editQuestionDifficulty').value;
+            const questionText = document.getElementById('editQuestionText').value.trim();
+            const options = [
+                document.getElementById('editOpt1').value.trim(),
+                document.getElementById('editOpt2').value.trim(),
+                document.getElementById('editOpt3').value.trim(),
+                document.getElementById('editOpt4').value.trim()
+            ];
+
+            if (!questionText) {
+                showToast('Введите текст вопроса', 'error');
+                return;
+            }
+            if (!options[0]) {
+                showToast('Первый вариант ответа обязателен', 'error');
+                return;
+            }
+
+            const url = id ? `/api/games/questions/${id}` : '/api/games/questions';
+            const method = id ? 'PUT' : 'POST';
+
+            try {
+                const response = await fetch(API_BASE + url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        game: game,
+                        difficulty: difficulty,
+                        question_text: questionText,
+                        options: options,
+                        correct_index: 0
+                    }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast(id ? 'Вопрос обновлен' : 'Вопрос добавлен', 'success');
+                    closeModal('editQuestionModal');
+                    await loadGameQuestions();
+                } else {
+                    showToast(data.error || 'Ошибка', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+            }
+        }
+
+        async function deleteGameQuestion() {
+            const id = document.getElementById('editQuestionId').value;
+            if (!id) return;
+            if (!confirm('Удалить вопрос?')) return;
+
+            try {
+                const response = await fetch(API_BASE + '/api/games/questions/' + id, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast('Вопрос удален', 'success');
+                    closeModal('editQuestionModal');
+                    await loadGameQuestions();
+                } else {
+                    showToast(data.error || 'Ошибка удаления', 'error');
+                }
+            } catch (e) {
+                showToast('Ошибка сети', 'error');
+            }
+        }
+        async function loadGameProgressFromServer() {
+            try {
+                const response = await fetch(API_BASE + '/api/games/progress', {
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                console.log('Game progress loaded:', data);
+
+                if (data.success) {
+                    gameProgressData = data.progress;
+                    saveAllToStorage();
+                    renderGames(); // обновить таблицу прогресса
+                } else {
+                    console.error('Failed to load game progress:', data.error);
+                }
+            } catch (e) {
+                console.log('Load game progress failed:', e);
+            }
+        }
+        async function loadTeachersForAdminChat() {
+            try {
+                const response = await fetch('/api/users?role=teacher', { credentials: 'include' });
+                const data = await response.json();
+                const container = document.getElementById('chatTeacherList');
+                if (data.success && data.users && data.users.length > 0) {
+                    container.innerHTML = data.users.map(teacher => `
                 <div class="chat-list-item" onclick="selectChatTeacher('${teacher.email}')" data-email="${teacher.email}">
                     <span class="dot ${teacher.status === 'blocked' ? 'offline' : 'online'}"></span>
                     <div>
@@ -2475,21 +2973,22 @@ async function loadTeachersForAdminChat() {
                     </div>
                 </div>
             `).join('');
-        } else {
-            container.innerHTML = '<p class="text-muted text-center p-3">Нет преподавателей</p>';
+                } else {
+                    container.innerHTML = '<p class="text-muted text-center p-3">Нет преподавателей</p>';
+                }
+            } catch (e) {
+                console.error('Load teachers for chat error:', e);
+                document.getElementById('chatTeacherList').innerHTML = '<p class="text-muted text-center p-3">Ошибка загрузки</p>';
+            }
         }
-    } catch (e) {
-        console.error('Load teachers for chat error:', e);
-        document.getElementById('chatTeacherList').innerHTML = '<p class="text-muted text-center p-3">Ошибка загрузки</p>';
-    }
-}
 
-document.getElementById('updateQuestionBtn').addEventListener('click', saveGameQuestion);
-document.getElementById('deleteQuestionBtn').addEventListener('click', deleteGameQuestion);
-    document.getElementById('saveStreamBtn').addEventListener('click', saveStream);
-</script>
+        document.getElementById('updateQuestionBtn').addEventListener('click', saveGameQuestion);
+        document.getElementById('deleteQuestionBtn').addEventListener('click', deleteGameQuestion);
+        document.getElementById('saveStreamBtn').addEventListener('click', saveStream);
+    </script>
 
 
 
 </body>
+
 </html>

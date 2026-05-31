@@ -910,6 +910,24 @@ app.post('/api/admin/enroll-student', async (req, res) => {
     }
 });
 
+app.put('/api/content/slider-courses', async (req, res) => {
+    const courses = Array.isArray(req.body) ? req.body : req.body.courses || [];
+    try {
+        await pool.query('DELETE FROM slider_courses');
+        for (let i = 0; i < courses.length; i++) {
+            const c = courses[i];
+            await pool.query(
+                'INSERT INTO slider_courses (title, img, link, sort_order) VALUES (?, ?, ?, ?)',
+                [c.title, c.img || '/foto/course-default.jpg', c.link || '#', i]
+            );
+        }
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Update slider courses error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка сохранения курсов' });
+    }
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/foto', express.static(path.join(__dirname, 'public', 'foto')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
