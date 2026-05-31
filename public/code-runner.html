@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>КонсПресс - Игровой портал</title>
+    <title>КонсПресс - Code Runner</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
@@ -84,9 +84,6 @@
             border-bottom: 1px solid #e5e7eb;
             transition: background 0.2s;
         }
-        .leaderboard-item:hover {
-            background: #f8fafc;
-        }
         .leaderboard-item:last-child {
             border-bottom: none;
         }
@@ -103,45 +100,33 @@
             font-weight: 700;
             color: #f59e0b;
         }
-        .question-modal .modal-content {
-            max-width: 450px;
+        .code-modal .modal-content {
+            max-width: 550px;
             background: linear-gradient(135deg, #1e293b, #0f172a);
             color: white;
         }
-        .question-options {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin: 1rem 0;
-        }
-        .question-option {
-            padding: 0.75rem;
-            background: rgba(255,255,255,0.1);
+        .code-editor {
+            background: #0f172a;
             border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.1);
+            padding: 0.75rem;
+            margin: 1rem 0;
+            border: 1px solid #334155;
         }
-        .question-option:hover {
-            background: rgba(220,38,38,0.3);
-            border-color: #dc2626;
-            transform: scale(1.02);
+        .code-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #e2e8f0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            outline: none;
+            resize: vertical;
+            white-space: pre-wrap;
         }
-        .question-option.correct {
-            background: #22c55e;
-            color: white;
-        }
-        .question-option.wrong {
-            background: #ef4444;
-            color: white;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(0.98); }
-        }
-        .combo-effect {
-            animation: pulse 0.3s ease;
+        .code-hint {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
         }
         .difficulty-badge {
             display: inline-block;
@@ -153,6 +138,13 @@
         .difficulty-easy { background: #22c55e; color: white; }
         .difficulty-normal { background: #f59e0b; color: white; }
         .difficulty-hard { background: #ef4444; color: white; }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+        }
+        .combo-effect {
+            animation: pulse 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -179,12 +171,14 @@
             <div class="breadcrumb">
                 <a href="/">Главная</a>
                 <span>/</span>
-                <span>Игры</span>
+                <a href="/igra.html">Игры</a>
+                <span>/</span>
+                <span>Code Runner</span>
             </div>
 
             <div class="text-center mb-5">
-                <h1 class="mb-2"><i class="fas fa-gamepad"></i> Code Jumper</h1>
-                <p class="text-gray">Прыгай, уклоняйся, отвечай на вопросы и набирай очки!</p>
+                <h1 class="mb-2"><i class="fas fa-code"></i> Code Runner</h1>
+                <p class="text-gray">Пиши код, чтобы преодолеть препятствия и набрать очки!</p>
             </div>
 
             <div class="grid-2" style="gap: 1.5rem;">
@@ -192,7 +186,7 @@
                     <div class="game-container">
                         <div class="flex justify-between items-center mb-3">
                             <div>
-                                <span class="difficulty-badge difficulty-easy" id="difficultyBadge" style="display: none;">Легкий</span>
+                                <span class="difficulty-badge difficulty-normal" id="difficultyBadge">⚡ Нормальный</span>
                             </div>
                             <div class="flex gap-2">
                                 <select id="difficultySelect" class="select" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2);">
@@ -206,26 +200,26 @@
                             <canvas id="gameCanvas"></canvas>
                         </div>
                         <div class="game-stats">
-    <div class="game-stat">
-        <div class="game-stat-value" id="scoreDisplay">0</div>
-        <div class="game-stat-label">ОЧКИ</div>
-    </div>
-    <div class="game-stat">
-        <div class="game-stat-value" id="comboDisplay">x1</div>
-        <div class="game-stat-label">КОМБО</div>
-    </div>
-    <div class="game-stat">
-        <div class="game-stat-value" id="healthDisplay">3</div>
-        <div class="game-stat-label">ЖИЗНИ</div>
-    </div>
-</div>
+                            <div class="game-stat">
+                                <div class="game-stat-value" id="scoreDisplay">0</div>
+                                <div class="game-stat-label">ОЧКИ</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value" id="comboDisplay">x1</div>
+                                <div class="game-stat-label">КОМБО</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value" id="healthDisplay">3</div>
+                                <div class="game-stat-label">ЖИЗНИ</div>
+                            </div>
+                        </div>
                         <div class="game-controls">
                             <button id="startGameBtn" class="btn btn-primary"><i class="fas fa-play"></i> Старт</button>
                             <button id="pauseGameBtn" class="btn btn-outline"><i class="fas fa-pause"></i> Пауза</button>
                             <button id="resetGameBtn" class="btn btn-outline"><i class="fas fa-redo"></i> Сброс</button>
                         </div>
                         <p class="text-xs text-center text-white mt-2 opacity-75">
-                            <i class="fas fa-keyboard"></i> Пробел или ↑ - прыжок | <i class="fas fa-bolt"></i> Каждые 10 прыжков - вопрос!
+                            <i class="fas fa-keyboard"></i> Пробел или ↑ - прыжок | <i class="fas fa-terminal"></i> Каждые 10 прыжков - задание по программированию!
                         </p>
                     </div>
                 </div>
@@ -248,25 +242,19 @@
                 </div>
             </div>
         </div>
-        <div class="card mt-4 text-center">
-    <a href="/code-runner.html" class="btn btn-primary btn-block">
-        <i class="fas fa-code"></i> Играть в Code Runner
-    </a>
-    <p class="text-sm text-gray mt-2">Пиши код, чтобы победить!</p>
-</div>
     </main>
 
-    <div id="questionModal" class="modal">
-        <div class="modal-content question-modal">
-            <div class="modal-header">
-                <h3 class="font-bold"><i class="fas fa-question-circle"></i> Программист, внимание!</h3>
-                <button class="modal-close" onclick="closeQuestionModal()">&times;</button>
-            </div>
-            <div id="questionText" class="text-center mb-3" style="font-size: 1rem;"></div>
-            <div id="questionOptions" class="question-options"></div>
-            <div id="questionFeedback" class="text-center text-sm"></div>
+    <div id="codeModal" class="modal">
+    <div class="modal-content code-modal">
+        <div class="modal-header">
+            <h3 class="font-bold"><i class="fas fa-terminal"></i> Программист, внимание!</h3>
+            <button class="modal-close" onclick="closeCodeModal()">&times;</button>
         </div>
+        <div id="questionText" class="text-center mb-3" style="font-size: 1rem;"></div>
+        <div id="questionOptions" class="question-options"></div>
+        <div id="codeFeedback" class="text-center text-sm mt-2"></div>
     </div>
+</div>
 
     <footer class="footer">
         <div class="container">
@@ -279,14 +267,14 @@
     <script>
         const API_URL = window.location.origin;
         let currentUser = null;
-        let currentGame = 'jumper';
+        let currentGame = 'runner';
         let gameRunning = false;
         let gamePaused = false;
         let animationId = null;
         let currentScore = 0;
         let currentCombo = 1;
         let currentHealth = 3;
-        let currentQuestions = { easy: [], normal: [], hard: [] };
+        let currentQuestions = [];
         let currentDifficulty = 'normal';
         let canvas = document.getElementById('gameCanvas');
         let ctx = canvas.getContext('2d');
@@ -299,8 +287,7 @@
         let frameCount = 0;
         let gameSpeed = 4;
         let jumpCount = 0;
-        let pendingQuestion = false;
-        let bgOffset = 0;
+        let pendingCode = false;
 
         for (let i = 0; i < 50; i++) {
             stars.push({ x: Math.random() * 1000, y: Math.random() * height, size: Math.random() * 2 + 1 });
@@ -361,20 +348,20 @@
             return apiRequest('/api/games/config');
         }
 
-       function resizeCanvas() {
-    const wrapper = canvas.parentElement;
-    width = wrapper.clientWidth;
-    height = wrapper.clientHeight;
-    canvas.width = width;
-    canvas.height = height;
-    const groundY = height - 45;
-    player.y = groundY - player.height;
-}
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            width = wrapper.clientWidth;
+            height = wrapper.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+            const groundY = height - 45;
+            player.y = groundY - player.height;
+        }
 
         async function updateGameSpeed() {
             const result = await getGameConfig();
             if (result.success && result.config) {
-                const speedConfig = result.config.jumper_speed;
+                const speedConfig = result.config.runner_speed;
                 if (speedConfig) {
                     if (currentDifficulty === 'easy') gameSpeed = speedConfig.easy || 3.2;
                     else if (currentDifficulty === 'hard') gameSpeed = speedConfig.hard || 5.2;
@@ -390,48 +377,43 @@
             if (currentDifficulty === 'easy') {
                 badge.textContent = '🌿 Легкий';
                 badge.className = 'difficulty-badge difficulty-easy';
-                badge.style.display = 'inline-block';
             } else if (currentDifficulty === 'normal') {
                 badge.textContent = '⚡ Нормальный';
                 badge.className = 'difficulty-badge difficulty-normal';
-                badge.style.display = 'inline-block';
             } else {
                 badge.textContent = '🔥 Сложный';
                 badge.className = 'difficulty-badge difficulty-hard';
-                badge.style.display = 'inline-block';
             }
         }
 
         function spawnObstacle() {
-    const types = ['bug', 'virus', 'error'];
-    const type = types[Math.floor(Math.random() * types.length)];
-    let color, icon, obstacleHeight;
-    
-    if (type === 'bug') {
-        color = '#ef4444';
-        icon = '🐛';
-        obstacleHeight = 30;
-    } else if (type === 'virus') {
-        color = '#8b5cf6';
-        icon = '🦠';
-        obstacleHeight = 35;
-    } else {
-        color = '#f59e0b';
-        icon = '⚠️';
-        obstacleHeight = 28;
-    }
-    
-    const groundY = height - 45;
-    obstacles.push({
-        x: width,
-        y: groundY - obstacleHeight,
-        width: 28,
-        height: obstacleHeight,
-        color: color,
-        icon: icon,
-        type: type
-    });
-}
+            const types = ['block', 'fire', 'spike'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            let color, icon, obstacleHeight;
+            if (type === 'block') {
+                color = '#ef4444';
+                icon = '🧱';
+                obstacleHeight = 30;
+            } else if (type === 'fire') {
+                color = '#f97316';
+                icon = '🔥';
+                obstacleHeight = 35;
+            } else {
+                color = '#8b5cf6';
+                icon = '⚡';
+                obstacleHeight = 28;
+            }
+            const groundY = height - 45;
+            obstacles.push({
+                x: width,
+                y: groundY - obstacleHeight,
+                width: 28,
+                height: obstacleHeight,
+                color: color,
+                icon: icon,
+                type: type
+            });
+        }
 
         function addParticles(x, y, color) {
             for (let i = 0; i < 10; i++) {
@@ -469,162 +451,206 @@
             ctx.globalAlpha = 1;
         }
 
-      function checkCollision() {
-    for (let i = 0; i < obstacles.length; i++) {
-        const obs = obstacles[i];
-        if (player.x < obs.x + obs.width && player.x + player.width > obs.x &&
-            player.y < obs.y + obs.height && player.y + player.height > obs.y) {
-            currentHealth--;
-            console.log('Collision! Health now:', currentHealth);
-            currentCombo = 1;
-            addParticles(player.x, player.y, '#ef4444');
-            updateUI();
-            obstacles.splice(i, 1);
-            if (currentHealth <= 0) {
-                gameOver();
-            }
-            return; // важно: выходим после первого столкновения
-        }
-        if (obs.x + obs.width < 0) {
-            obstacles.splice(i, 1);
-            i--;
-            currentScore += 10 * currentCombo;
-            currentCombo = Math.min(currentCombo + 0.2, 3);
-            addParticles(player.x, player.y, '#facc15');
-            updateUI();
-        }
-    }
-}
-
-        function updatePhysics() {
-    player.vy += 0.55;
-    player.y += player.vy;
-    const groundY = height - 45;
-    if (player.y + player.height >= groundY) {
-        player.y = groundY - player.height;
-        player.vy = 0;
-        player.grounded = true;
-    } else {
-        player.grounded = false;
-    }
-    
-    if (player.grounded) {
-        player.rotation = Math.sin(Date.now() * 0.01) * 0.1;
-    } else {
-        player.rotation += 0.1;
-    }
-}
-
-        function jump() {
-            if (player.grounded && gameRunning && !gamePaused && !pendingQuestion) {
-                player.vy = -10.5;
-                player.grounded = false;
-                jumpCount++;
-                addParticles(player.x + player.width/2, player.y + player.height, '#3b82f6');
-                
-                const interval = 10;
-                if (jumpCount % interval === 0 && jumpCount > 0) {
-                    showRandomQuestion();
+        function checkCollision() {
+            for (let i = 0; i < obstacles.length; i++) {
+                const obs = obstacles[i];
+                if (player.x < obs.x + obs.width && player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height && player.y + player.height > obs.y) {
+                    currentHealth--;
+                    currentCombo = 1;
+                    addParticles(player.x, player.y, '#ef4444');
+                    updateUI();
+                    obstacles.splice(i, 1);
+                    if (currentHealth <= 0) gameOver();
+                    return;
+                }
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(i, 1);
+                    i--;
+                    currentScore += 10 * currentCombo;
+                    currentCombo = Math.min(currentCombo + 0.2, 3);
+                    addParticles(player.x, player.y, '#facc15');
+                    updateUI();
                 }
             }
         }
 
-        async function showRandomQuestion() {
-            if (pendingQuestion) return;
-            
-            let questions = currentQuestions[currentDifficulty] || currentQuestions.normal;
-            if (questions.length === 0) {
-                await loadQuestions();
-                questions = currentQuestions[currentDifficulty] || currentQuestions.normal;
-                if (questions.length === 0) return;
+        function updatePhysics() {
+            player.vy += 0.55;
+            player.y += player.vy;
+            const groundY = height - 45;
+            if (player.y + player.height >= groundY) {
+                player.y = groundY - player.height;
+                player.vy = 0;
+                player.grounded = true;
+            } else {
+                player.grounded = false;
             }
-            
-            pendingQuestion = true;
-            gamePaused = true;
-            
-            const q = questions[Math.floor(Math.random() * questions.length)];
-            document.getElementById('questionText').innerHTML = q.q;
-            
-            const container = document.getElementById('questionOptions');
-            container.innerHTML = '';
-            
-            q.options.forEach((opt, idx) => {
-                const div = document.createElement('div');
-                div.className = 'question-option';
-                div.innerHTML = opt;
-                div.onclick = () => {
-                    if (idx === q.correct) {
-                        currentScore += 30 * currentCombo;
-                        document.getElementById('questionFeedback').innerHTML = '<i class="fas fa-check-circle"></i> Правильно! +30 очков';
-                        addParticles(width/2, height/2, '#22c55e');
-                        updateUI();
-                    } else {
-                        currentHealth = Math.max(0, currentHealth - 1);
-                        document.getElementById('questionFeedback').innerHTML = `<i class="fas fa-times-circle"></i> Неправильно! Правильный ответ: ${escapeHtml(q.options[q.correct])}`;
-                        addParticles(width/2, height/2, '#ef4444');
-                        updateUI();
-                        if (currentHealth <= 0) gameOver();
-                    }
-                    setTimeout(() => {
-                        closeQuestionModal();
-                        pendingQuestion = false;
-                        gamePaused = false;
-                        if (gameRunning && !gamePaused && currentHealth > 0) {
-                            updateGame();
-                        }
-                    }, 1500);
-                };
-                container.appendChild(div);
-            });
-            
-            document.getElementById('questionModal').classList.add('active');
+            if (player.grounded) {
+                player.rotation = Math.sin(Date.now() * 0.01) * 0.1;
+            } else {
+                player.rotation += 0.1;
+            }
         }
 
-        function closeQuestionModal() {
-            document.getElementById('questionModal').classList.remove('active');
-            document.getElementById('questionFeedback').innerHTML = '';
+        function jump() {
+            if (player.grounded && gameRunning && !gamePaused && !pendingCode) {
+                player.vy = -10.5;
+                player.grounded = false;
+                jumpCount++;
+                addParticles(player.x + player.width/2, player.y + player.height, '#3b82f6');
+                const interval = 10;
+                if (jumpCount % interval === 0 && jumpCount > 0) {
+                    showCodingChallenge();
+                }
+            }
         }
 
-      function updateUI() {
-    document.getElementById('scoreDisplay').textContent = Math.floor(currentScore);
-    document.getElementById('comboDisplay').innerHTML = `x${currentCombo.toFixed(1)}`;
-    document.getElementById('healthDisplay').textContent = currentHealth;
-    
-    const scoreDisplay = document.getElementById('scoreDisplay');
-    scoreDisplay.classList.add('combo-effect');
-    setTimeout(() => scoreDisplay.classList.remove('combo-effect'), 300);
+        async function loadQuestions() {
+    const result = await getGameQuestions();
+    if (result.success && result.questions && result.questions.runner) {
+        const all = result.questions.runner;
+        currentQuestions = (all[currentDifficulty] || []).map(q => ({
+            id: q.id,
+            q: q.q,
+            options: q.options,
+            correct: q.correct
+        }));
+    }
+    if (currentQuestions.length === 0) {
+        // Фейковые вопросы на случай пустой БД
+        currentQuestions = [
+            { q: "Что такое JavaScript?", options: ["Язык программирования", "База данных", "Стиль", "Фреймворк"], correct: 0 },
+            { q: "Какой тег используется для ссылки в HTML?", options: ["<a>", "<link>", "<href>", "<url>"], correct: 0 }
+        ];
+    }
 }
 
-        function drawStars() {
+       async function showCodingChallenge() {
+    if (pendingCode) return;
+    if (currentQuestions.length === 0) await loadQuestions();
+    const q = currentQuestions[Math.floor(Math.random() * currentQuestions.length)];
+    if (!q) return;
+
+    pendingCode = true;
+    gamePaused = true;
+    document.getElementById('questionText').innerHTML = q.q;
+    const container = document.getElementById('questionOptions');
+    container.innerHTML = '';
+    q.options.forEach((opt, idx) => {
+        const div = document.createElement('div');
+        div.className = 'question-option';
+        div.innerHTML = opt;
+        div.onclick = () => {
+            if (idx === q.correct) {
+                currentScore += 30 * currentCombo;
+                currentCombo = Math.min(currentCombo + 0.2, 3);
+                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-check-circle"></i> Правильно! +30 очков';
+                addParticles(width/2, height/2, '#22c55e');
+                updateUI();
+                setTimeout(() => closeCodeModal(), 1000);
+            } else {
+                currentHealth--;
+                currentCombo = 1;
+                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-times-circle"></i> Неправильно! -1 жизнь';
+                addParticles(width/2, height/2, '#ef4444');
+                updateUI();
+                if (currentHealth <= 0) {
+                    setTimeout(() => {
+                        closeCodeModal();
+                        gameOver();
+                    }, 1000);
+                } else {
+                    setTimeout(() => closeCodeModal(), 1000);
+                }
+            }
+        };
+        container.appendChild(div);
+    });
+    document.getElementById('codeFeedback').innerHTML = '';
+    document.getElementById('codeModal').classList.add('active');
+}
+
+function closeCodeModal() {
+    document.getElementById('codeModal').classList.remove('active');
+    pendingCode = false;
+    gamePaused = false;
+    if (gameRunning && !gamePaused && currentHealth > 0) {
+        updateGame();
+    }
+}
+
+        function evaluateCode() {
+            const code = document.getElementById('codeInput').value.trim();
+            const challenge = window.currentChallenge;
+            if (!challenge) return;
+
+            let isCorrect = false;
+            try {
+                // Простейшая проверка: сравнение с ожидаемым кодом (можно расширить)
+                const expected = challenge.expected || '';
+                isCorrect = code.replace(/\s/g, '') === expected.replace(/\s/g, '');
+                // Можно добавить eval для проверки функции (осторожно!)
+                // Для простоты используем сравнение строк.
+            } catch(e) { isCorrect = false; }
+
+            if (isCorrect) {
+                currentScore += 30 * currentCombo;
+                currentCombo = Math.min(currentCombo + 0.2, 3);
+                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-check-circle"></i> Правильно! +30 очков';
+                addParticles(width/2, height/2, '#22c55e');
+                updateUI();
+                setTimeout(() => {
+                    closeCodeModal();
+                }, 1000);
+            } else {
+                currentHealth--;
+                currentCombo = 1;
+                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-times-circle"></i> Неправильно! -1 жизнь';
+                addParticles(width/2, height/2, '#ef4444');
+                updateUI();
+                if (currentHealth <= 0) {
+                    setTimeout(() => {
+                        closeCodeModal();
+                        gameOver();
+                    }, 1000);
+                } else {
+                    setTimeout(() => {
+                        closeCodeModal();
+                    }, 1000);
+                }
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('scoreDisplay').textContent = Math.floor(currentScore);
+            document.getElementById('comboDisplay').innerHTML = `x${currentCombo.toFixed(1)}`;
+            document.getElementById('healthDisplay').textContent = currentHealth;
+            const scoreDisplay = document.getElementById('scoreDisplay');
+            scoreDisplay.classList.add('combo-effect');
+            setTimeout(() => scoreDisplay.classList.remove('combo-effect'), 300);
+        }
+
+        function drawBackground() {
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, width, height);
             for (let star of stars) {
                 ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + Math.sin(Date.now() * 0.001 + star.x) * 0.2})`;
                 ctx.fillRect(star.x, star.y, star.size, star.size);
             }
         }
 
-        function drawBackground() {
-            bgOffset = (bgOffset + 0.5) % 100;
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, width, height);
-            
-            for (let i = 0; i < 20; i++) {
-                ctx.fillStyle = `rgba(100, 100, 200, ${0.05 + Math.sin(bgOffset + i) * 0.03})`;
-                ctx.fillRect(0, i * 30 + bgOffset, width, 2);
+        function drawGround() {
+            const groundY = height - 45;
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, groundY, width, 40);
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(0, groundY - 2, width, 4);
+            for (let i = 0; i < width; i += 30) {
+                ctx.fillStyle = `rgba(255,255,255,${0.2 + Math.sin(Date.now() * 0.005 + i) * 0.1})`;
+                ctx.fillRect(i + (frameCount % 30), groundY + 2, 5, 3);
             }
         }
-
-        function drawGround() {
-    const groundY = height - 45;
-    ctx.fillStyle = '#334155';
-    ctx.fillRect(0, groundY, width, 40);
-    ctx.fillStyle = '#475569';
-    ctx.fillRect(0, groundY - 2, width, 4);
-    
-    for (let i = 0; i < width; i += 30) {
-        ctx.fillStyle = `rgba(255,255,255,${0.2 + Math.sin(Date.now() * 0.005 + i) * 0.1})`;
-        ctx.fillRect(i + (bgOffset % 30), groundY + 2, 5, 3);
-    }
-}
 
         function drawPlayer() {
             ctx.save();
@@ -638,7 +664,6 @@
             ctx.font = 'bold 20px monospace';
             ctx.fillText('</>', -12, -8);
             ctx.restore();
-            
             if (player.grounded) {
                 ctx.fillStyle = 'rgba(59,130,246,0.3)';
                 ctx.beginPath();
@@ -654,7 +679,6 @@
                 ctx.fillStyle = 'white';
                 ctx.font = '20px monospace';
                 ctx.fillText(obs.icon, obs.x + 4, obs.y + obs.height - 8);
-                
                 ctx.fillStyle = `rgba(0,0,0,0.3)`;
                 ctx.fillRect(obs.x + 2, obs.y + 2, obs.width - 4, 4);
             }
@@ -662,7 +686,6 @@
 
         function draw() {
             drawBackground();
-            drawStars();
             drawGround();
             drawObstacles();
             drawPlayer();
@@ -674,71 +697,63 @@
                 draw();
                 return;
             }
-            
             updatePhysics();
             updateParticles();
-            
             frameCount++;
             let spawnRate = currentDifficulty === 'hard' ? 70 : currentDifficulty === 'easy' ? 130 : 100;
             if (frameCount % spawnRate === 0) spawnObstacle();
-            
             for (let i = 0; i < obstacles.length; i++) {
                 obstacles[i].x -= gameSpeed;
             }
-            
             checkCollision();
             draw();
-            
             animationId = requestAnimationFrame(updateGame);
         }
 
-       async function startGame() {
-    if (gameRunning && !gamePaused) return;
-    gameRunning = true;
-    gamePaused = false;
-    currentScore = 0;
-    currentHealth = 3;
-    currentCombo = 1;
-    jumpCount = 0;
-    obstacles = [];
-    particles = [];
-    frameCount = 0;
-    const groundY = height - 45;
-    player.y = groundY - player.height;
-    player.vy = 0;
-    player.rotation = 0;
-    await updateGameSpeed();
-    updateUI();
-    if (animationId) cancelAnimationFrame(animationId);
-    updateGame();
-}
+        async function startGame() {
+            if (gameRunning && !gamePaused) return;
+            gameRunning = true;
+            gamePaused = false;
+            currentScore = 0;
+            currentHealth = 3;
+            currentCombo = 1;
+            jumpCount = 0;
+            obstacles = [];
+            particles = [];
+            frameCount = 0;
+            const groundY = height - 45;
+            player.y = groundY - player.height;
+            player.vy = 0;
+            player.rotation = 0;
+            await updateGameSpeed();
+            updateUI();
+            if (animationId) cancelAnimationFrame(animationId);
+            updateGame();
+        }
 
         function pauseGame() {
             if (!gameRunning) return;
             gamePaused = !gamePaused;
             if (!gamePaused) updateGame();
         }
-function resetGame() {
-    gameRunning = false;
-    gamePaused = false;
-    if (animationId) cancelAnimationFrame(animationId);
-    const groundY = height - 45;
-    player.y = groundY - player.height;
-    startGame();
-}
+
+        function resetGame() {
+            gameRunning = false;
+            gamePaused = false;
+            if (animationId) cancelAnimationFrame(animationId);
+            startGame();
+        }
 
         async function gameOver() {
             gameRunning = false;
             gamePaused = false;
             if (animationId) cancelAnimationFrame(animationId);
             showToast(`Игра окончена! Очки: ${Math.floor(currentScore)}`, 'warning');
-            
             if (currentUser && currentScore > 0) {
                 await updateGameProgress(currentGame, Math.floor(currentScore), Math.floor(jumpCount / 10));
                 await loadLeaderboard();
                 await loadUserStats();
             }
-            
             draw();
             ctx.fillStyle = 'rgba(0,0,0,0.8)';
             ctx.fillRect(0, 0, width, height);
@@ -758,9 +773,8 @@ function resetGame() {
         async function loadLeaderboard() {
             const result = await getGameProgress();
             const container = document.getElementById('leaderboardList');
-            
             if (result.success && result.progress && result.progress.length > 0) {
-                const topScores = result.progress.slice(0, 8);
+                const topScores = result.progress.filter(p => p.game === 'runner').slice(0, 8);
                 if (topScores.length > 0) {
                     container.innerHTML = topScores.map((p, idx) => {
                         let medal = '';
@@ -788,17 +802,14 @@ function resetGame() {
                 document.getElementById('userStats').innerHTML = '<p class="text-center text-gray">Войдите, чтобы видеть свою статистику</p>';
                 return;
             }
-            
             const result = await getGameProgress();
-            const container = document.getElementById('userStats');
-            
             if (result.success && result.progress) {
-                const userProgress = result.progress.filter(p => p.player_name === currentUser.fullName);
+                const userProgress = result.progress.filter(p => p.player_name === currentUser.fullName && p.game === 'runner');
                 if (userProgress.length > 0) {
                     const totalScore = userProgress.reduce((sum, p) => sum + p.high_score, 0);
                     const totalQuestions = userProgress.reduce((sum, p) => sum + (p.questions_answered || 0), 0);
                     const bestScore = Math.max(...userProgress.map(p => p.high_score), 0);
-                    container.innerHTML = `
+                    document.getElementById('userStats').innerHTML = `
                         <div class="flex justify-between mb-2 p-2 bg-gray-50 rounded">
                             <span><i class="fas fa-trophy"></i> Лучший результат:</span>
                             <span class="font-bold text-primary">${bestScore}</span>
@@ -808,20 +819,13 @@ function resetGame() {
                             <span class="font-bold">${totalScore}</span>
                         </div>
                         <div class="flex justify-between p-2 bg-gray-50 rounded">
-                            <span><i class="fas fa-question-circle"></i> Отвечено вопросов:</span>
+                            <span><i class="fas fa-code"></i> Заданий решено:</span>
                             <span class="font-bold">${totalQuestions}</span>
                         </div>
                     `;
                 } else {
-                    container.innerHTML = '<p class="text-center text-gray p-3">Пока нет статистики. Сыграйте!</p>';
+                    document.getElementById('userStats').innerHTML = '<p class="text-center text-gray p-3">Пока нет статистики. Сыграйте!</p>';
                 }
-            }
-        }
-
-        async function loadQuestions() {
-            const result = await getGameQuestions();
-            if (result.success && result.questions && result.questions.jumper) {
-                currentQuestions = result.questions.jumper;
             }
         }
 
@@ -830,15 +834,12 @@ function resetGame() {
             if (userResult.success && userResult.user) {
                 currentUser = userResult.user;
             }
-            
             await loadQuestions();
             await loadLeaderboard();
             await loadUserStats();
             await updateGameSpeed();
-            
             resizeCanvas();
             window.addEventListener('resize', resizeCanvas);
-            
             startGame();
         }
 
@@ -852,6 +853,15 @@ function resetGame() {
         });
         document.getElementById('profileIcon').addEventListener('click', () => {
             window.location.href = '/lickab.html';
+        });
+        document.getElementById('submitCodeBtn').addEventListener('click', evaluateCode);
+        document.getElementById('skipCodeBtn').addEventListener('click', () => {
+            currentHealth--;
+            currentCombo = 1;
+            updateUI();
+            showToast('Задание пропущено, -1 жизнь', 'error');
+            if (currentHealth <= 0) gameOver();
+            closeCodeModal();
         });
 
         window.addEventListener('keydown', (e) => {

@@ -269,6 +269,22 @@
                     <button id="addGroupBtn" class="btn btn-outline btn-block mt-3"><i class="fas fa-plus"></i> Добавить группу</button>
                 </div>
             </div>
+            <div class="card mt-5">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-comments"></i> Чат со студентами и администратором</h3>
+    </div>
+    <div class="flex gap-2 mb-2">
+        <select id="chatUserSelect" class="select" style="width: auto;">
+            <option value="">-- Выберите собеседника --</option>
+        </select>
+        <button id="refreshChatBtn" class="btn btn-sm btn-outline"><i class="fas fa-sync-alt"></i> Обновить</button>
+    </div>
+    <div id="chatBox" style="height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem; margin-bottom: 0.5rem;"></div>
+    <div class="flex gap-2">
+        <input type="text" id="chatInput" class="input" placeholder="Напишите сообщение..." style="flex: 1;">
+        <button id="sendChatBtn" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+    </div>
+</div>
 
             <div class="card mt-5">
     <div class="card-header">
@@ -825,8 +841,22 @@ async function loadSubmissions() {
                 await loadCourses();
                 await loadGroups();
                 await loadSubmissions();
+                await initTeacherChat();
             }
         }
+
+        function initChatSocket() {
+    if (window.io && currentUser) {
+        chatSocket = io({
+            auth: { userId: currentUser.email, userRole: currentUser.role }
+        });
+        chatSocket.on('chat-message', (data) => {
+            if (data.from === currentTeacherEmail || data.to === currentTeacherEmail) {
+                loadChatMessages();
+            }
+        });
+    }
+}
 
         init();
 
@@ -969,6 +999,107 @@ window.addEventListener('beforeunload', function() {
         localStream.getTracks().forEach(track => track.stop());
     }
 });
+
+// ==================== ЧАТ ====================
+let teacherChatSocket = null;
+let currentChatUserEmail = '';
+
+async function loadChatUsers() {
+    try {
+        const [studentsRes, adminRes] = await Promise.all([
+            fetch('/api/users?role=student', { credentials: 'include' }),
+            fetch('/api/users?role=admin', { credentials: 'include' })
+        ]);
+        const students = await studentsRes.json();
+        const admins = await adminRes.json();
+        let users = [];
+        if (students.success) users.push(...students.users);
+        if (admins.success) users.push(...admins.users);
+        const select = document.getElementById('chatUserSelect');
+        select.innerHTML = '<option value="">-- Выберите собеседника --</option>';
+        users.forEach(user => {
+            const option = document.createElement('option');
+            option.value = user.email;
+            option.textContent = `${user.fullName} (${user.role})`;
+            select.appendChild(option);
+        });
+        if (users.length > 0 && !currentChatUserEmail) {
+            currentChatUserEmail = users[0].email;
+            select.value = currentChatUserEmail;
+            loadTeacherChatMessages();
+        }
+    } catch (e) { console.error('Load chat users error:', e); }
+}
+
+async function loadTeacherChatMessages() {
+    if (!currentChatUserEmail) return;
+    try {
+        const response = await fetch(`/api/chat/${encodeURIComponent(currentChatUserEmail)}`, { credentials: 'include' });
+        const data = await response.json();
+        if (data.success && data.messages) {
+            const container = document.getElementById('chatBox');
+            container.innerHTML = data.messages.map(msg => `
+                <div class="chat-msg ${msg.sender_email === currentUser.email ? 'sent' : 'received'}" style="margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 0.5rem; ${msg.sender_email === currentUser.email ? 'background: #dc2626; color: white; text-align: right;' : 'background: #f3f4f6; color: #1f2937;'}">
+                    <div><strong>${msg.sender_email === currentUser.email ? 'Вы' : msg.sender_email.split('@')[0]}</strong> <span style="font-size: 0.7rem;">${new Date(msg.created_at).toLocaleTimeString()}</span></div>
+                    <div>${escapeHtml(msg.message_text)}</div>
+                </div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+    } catch (e) { console.error('Load messages error:', e); }
+}
+
+async function sendTeacherChatMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || !currentChatUserEmail) {
+        showToast('Выберите собеседника и введите сообщение', 'error');
+        return;
+    }
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ receiver_email: currentChatUserEmail, message_text: text }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
+            input.value = '';
+            loadTeacherChatMessages();
+        } else {
+            showToast(data.error || 'Ошибка отправки', 'error');
+        }
+    } catch (e) { showToast('Ошибка сети', 'error'); }
+}
+
+function initTeacherChatSocket() {
+    if (window.io && currentUser) {
+        teacherChatSocket = io();
+        teacherChatSocket.on('chat-message', (data) => {
+            if (data.from === currentChatUserEmail || data.to === currentChatUserEmail) {
+                loadTeacherChatMessages();
+            }
+        });
+    }
+}
+
+document.getElementById('chatUserSelect').addEventListener('change', (e) => {
+    currentChatUserEmail = e.target.value;
+    if (currentChatUserEmail) loadTeacherChatMessages();
+});
+document.getElementById('sendChatBtn').addEventListener('click', sendTeacherChatMessage);
+document.getElementById('chatInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendTeacherChatMessage();
+});
+document.getElementById('refreshChatBtn').addEventListener('click', () => {
+    if (currentChatUserEmail) loadTeacherChatMessages();
+});
+
+async function initTeacherChat() {
+    await loadChatUsers();
+    initTeacherChatSocket();
+}
 
     </script>
 </body>

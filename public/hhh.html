@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>КонсПресс — Университет Будущего</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background: #f9fafb; color: #1f2937; line-height: 1.5; scroll-behavior: smooth; }
+        .wrap { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+        @media (max-width: 640px) { .wrap { padding: 0 1rem; } }
+
+        /* header */
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%;
+            background: rgba(255,255,255,0.96); backdrop-filter: blur(12px);
+            padding: 0.75rem 1.5rem; display: flex; justify-content: center;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04); z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .header-inner { width: 100%; max-width: 1280px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 0.6rem; }
+        .logo-box { width: 2.4rem; height: 2.4rem; background: #dc2626; color: white; display: flex; align-items: center; justify-content: center; border-radius: 0.75rem; font-weight: 800; font-size: 1.25rem; }
+        .logo-text { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.2px; }
+        @media (max-width: 640px) { .logo-text { display: none; } }
+        .nav { display: none; gap: 2rem; font-weight: 500; }
+        @media (min-width: 768px) { .nav { display: flex; } }
+        .nav a { text-decoration: none; color: #1f2937; transition: 0.2s; font-size: 0.95rem; }
+        .nav a:hover { color: #dc2626; }
+        .profile { cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; }
+        .profile svg { width: 1.8rem; height: 1.8rem; color: #4b5563; }
+
+        main { padding-top: 5rem; }
+        .section { padding: 3rem 0; }
+        .section-pad { padding: 4rem 0; }
+        .white { background: white; }
+        .dark { background: #0f172a; color: #f1f5f9; }
+
+        .title { font-size: 1.9rem; font-weight: 700; text-align: center; margin-bottom: 2.5rem; letter-spacing: -0.3px; }
+        .title-lg { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+        .title-xl { font-size: 2.5rem; font-weight: 800; text-align: center; margin-bottom: 1.5rem; }
+        @media (min-width: 768px) { .title-xl { font-size: 3.5rem; } }
+        .text-gray { color: #4b5563; }
+        .dark .text-gray { color: #cbd5e1; }
+        .center { text-align: center; }
+
+        .flex { display: flex; }
+        .col { flex-direction: column; }
+        .gap { gap: 2rem; }
+        .gap-sm { gap: 1rem; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        /* увеличенный отступ между фото и текстом в первом блоке */
+        .hero-gap { gap: 3rem; }
+        @media (min-width: 768px) {
+            .md-row { flex-direction: row; }
+            .md-w-half { width: 50%; }
+            .hero-gap { gap: 4rem; }
+        }
+        .img { width: 100%; height: auto; max-height: 22rem; object-fit: cover; border-radius: 1.2rem; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+
+        /* teacher cards */
+        .cards-wrap { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.8rem; }
+        .card {
+            position: relative; width: 10rem; height: 14rem; border-radius: 1rem; overflow: hidden;
+            cursor: pointer; box-shadow: 0 8px 18px rgba(0,0,0,0.1); transition: transform 0.25s ease;
+        }
+        .card:hover { transform: scale(1.03); }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card .over {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.65);
+            display: flex; align-items: center; justify-content: center; text-align: center;
+            opacity: 0; transition: opacity 0.25s; padding: 0.5rem; color: white; font-weight: 500;
+        }
+        .card:hover .over { opacity: 1; }
+
+        /* slider courses */
+        .slide-wrap { position: relative; overflow: hidden; margin-bottom: 3rem; padding: 0 2rem; }
+        .cards-slide { display: flex; gap: 1.8rem; transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1); will-change: transform; }
+        .card-lg {
+            position: relative; min-width: 260px; width: 260px; height: 320px; border-radius: 1.25rem;
+            overflow: hidden; box-shadow: 0 12px 24px rgba(0,0,0,0.12); transition: transform 0.25s;
+            flex-shrink: 0; text-decoration: none; color: inherit; display: block;
+        }
+        .card-lg:hover { transform: translateY(-6px); }
+        .card-lg img { width: 100%; height: 100%; object-fit: cover; }
+        .card-lg .info {
+            position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            display: flex; align-items: flex-end; padding: 1.5rem;
+        }
+        .card-lg .info span { color: white; font-weight: 700; font-size: 1.1rem; text-shadow: 0 1px 2px black; }
+        .slide-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.9); border: none; width: 2.5rem; height: 2.5rem;
+            border-radius: 50%; font-size: 1.4rem; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: 0.2s; z-index: 5; display: flex; align-items: center; justify-content: center;
+        }
+        .slide-btn:hover { background: white; transform: translateY(-50%) scale(1.05); }
+        .slide-btn.left { left: 0; }
+        .slide-btn.right { right: 0; }
+        @media (max-width: 680px) { .slide-wrap { padding: 0 1.5rem; } .slide-btn { width: 2rem; height: 2rem; } }
+
+        /* video hero */
+        .video-hero {
+            position: relative; width: 100%; max-width: 900px; margin: 0 auto; border-radius: 1.5rem;
+            overflow: hidden; cursor: pointer; background: #000; aspect-ratio: 16 / 9;
+        }
+        .video-hero img { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s; }
+        .video-hero .play {
+            position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.2);
+        }
+        .play-btn {
+            width: 5rem; height: 5rem; background: rgba(255,255,255,0.95); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; transition: 0.2s; backdrop-filter: blur(2px);
+        }
+        .play-btn svg { width: 2.2rem; height: 2.2rem; margin-left: 0.2rem; color: #1e293b; }
+        .video-hero:hover .play-btn { transform: scale(1.08); background: white; }
+        .video-hero .caption {
+            position: absolute; bottom: 1.5rem; left: 0; right: 0; text-align: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent); padding: 1.5rem 1rem 1rem;
+        }
+        .video-hero .caption p { color: white; font-weight: 600; margin-bottom: 0.6rem; text-shadow: 0 1px 2px black; }
+        .video-hero .caption button {
+            background: white; border: none; padding: 0.5rem 1.5rem; border-radius: 2rem;
+            font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: 0.2s;
+        }
+
+        /* video switcher */
+        .video-switch { position: relative; width: 100%; max-width: 880px; margin: 0 auto; border-radius: 1rem; overflow: hidden; aspect-ratio: 16/9; background: #0a0a0a; }
+        .video-switch video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.6s ease; }
+        .video-switch video.active { opacity: 1; z-index: 2; }
+        .video-dots { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
+        .video-dot { width: 2.5rem; height: 0.25rem; background: #cbd5e1; border-radius: 20px; transition: 0.2s; cursor: pointer; }
+        .video-dot.active-dot { background: #dc2626; width: 3rem; }
+
+        /* partner cards */
+        .partner {
+            position: relative; width: 10rem; height: 14rem; border-radius: 1rem; overflow: hidden;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.1); transition: transform 0.2s; text-decoration: none; display: block;
+        }
+        .partner:hover { transform: translateY(-6px); }
+        .partner img { width: 100%; height: 100%; object-fit: cover; }
+        .partner .over {
+            position: absolute; inset: 0; background: rgba(0,0,0,0.45); display: flex;
+            align-items: center; justify-content: center; opacity: 0; transition: 0.25s;
+        }
+        .partner:hover .over { opacity: 1; }
+        .partner .over span { color: white; font-weight: 700; text-align: center; padding: 0.5rem; }
+
+        .cert-box {
+            display: flex; flex-direction: column; gap: 2rem; background: #f1f5f9;
+            padding: 2rem; border-radius: 1.5rem; margin-top: 2rem;
+        }
+        @media (min-width: 768px) { .cert-box { flex-direction: row; align-items: center; } }
+        .img-cert { max-height: 180px; border-radius: 1rem; box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+
+        .cta { text-align: center; margin-bottom: 4rem; position: relative; }
+        .cta-emoji { position: absolute; font-size: 2.8rem; opacity: 0.6; }
+        .cta-emoji.one { top: -0.5rem; left: 5%; animation: float 3s infinite; }
+        .cta-emoji.two { top: 2rem; right: 8%; animation: float 2.5s infinite reverse; }
+        .cta-emoji.three { bottom: -1rem; left: 15%; font-size: 3.5rem; opacity: 0.2; }
+        @keyframes float { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-8px); } }
+        .btn-big {
+            margin-top: 1.5rem; background: #facc15; color: #0f172a; font-weight: 800;
+            padding: 0.9rem 2.5rem; border-radius: 3rem; border: none; font-size: 1.1rem;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+        }
+        .btn-big:hover { background: #fde047; transform: scale(1.02); }
+
+        /* форма полностью удалена, соответствующие стили убраны */
+
+        .footer { background: #0f172a; color: #94a3b8; padding: 2rem 0; text-align: center; font-size: 0.8rem; }
+        .footer-links { margin-top: 1rem; display: flex; justify-content: center; gap: 1.5rem; }
+        .footer-links a { color: #cbd5e1; text-decoration: none; }
+        .footer-links a:hover { color: white; }
+
+        @media (max-width: 640px) { .card { width: 8rem; height: 11rem; } .partner { width: 8rem; height: 11rem; } .card-lg { min-width: 220px; width: 220px; height: 280px; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="wrap header-inner">
+            <div class="logo">
+                <div class="logo-box">КП</div>
+                <span class="logo-text">КонсПресс</span>
+            </div>
+            <nav class="nav">
+                <a href="kurs.html">Курс</a>
+                <a href="spesial.html">Специализация</a>
+                <a href="lickab.html">ДО</a>
+            </nav>
+            <div class="profile" id="profileIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+        </div>
+    </header>
+    <main>
+
+        <section class="wrap section">
+            <div class="flex col md-row items-center hero-gap">
+                <div class="md-w-half">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/136d6f4bc-844e-4faa-a21e-1d2357e0d26f.png" alt="Students" class="img">
+                </div>
+                <div class="md-w-half flex col gap-sm">
+                    <h1 class="title-lg">Добро пожаловать в «КонсПресс» — университет, где пишут код, создают дизайн и строят будущее IT!</h1>
+                    <p class="text-gray">
+                        Вы попали в место, где учёба — это драйв. Для первых курсов у нас море праздников и конкурсов, чтобы влиться в ритм, а для старших — время наслаждаться проектами, хакатонами и чемпионатами. Наши преподаватели — молодые, но опытные практики, которые горят своим делом.
+                    </p>
+                    <p class="text-gray">
+                        Мы помогаем с трудоустройством, а самое главное — создаём сообщество, где каждый свой. Спасибо, что выбрали нас. Впереди — яркие годы!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="teachers" class="wrap section-pad">
+            <h2 class="title">Преподаватели нашего Университета</h2>
+            <div class="cards-wrap">
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/164a9dc9d-3823-4278-8649-9f0e8d5ead98.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/1b46f196b-5163-4c37-a66a-884c5bc5d430.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/13f96b03d-1a13-417e-aa3d-6d4653cf294f.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/159d9184f-37f0-4061-aa75-63b2dffd6bdf.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/1e0439941-0b06-418a-b46c-4951760700f1.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/1b37b5830-55f5-4d6a-a5f9-b3571c5553d7.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/1d4be5d59-485f-4a37-a824-f3713b7ed91e.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+                <div class="card">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/164a9dc9d-3823-4278-8649-9f0e8d5ead98.png">
+                    <div class="over"><p>Преподаю на молодежном сленге</p></div>
+                </div>
+            </div>
+            <p class="center text-gray italic" style="margin-top: 2rem;">Программисты, разработчики, дизайнеры, сис.админы</p>
+        </section>
+
+        <section id="courses" class="white section-pad">
+            <div class="wrap">
+                <h2 class="title">Сделай первый шаг к жизни твоей мечты</h2>
+                <div class="slide-wrap">
+                    <div class="cards-slide" id="sliderCourses">
+                       <a href="#" class="card-lg"><img src="фото/прог.avif"><div class="info"><span>Старт в IT без кода</span></div></a>
+<a href="#" class="card-lg"><img src="фото/хакер.jpg" onerror="this.src='https://via.placeholder.com/400x500/dc2626/white?text=Hacker'"><div class="info"><span>Стать хакером (этичным)</span></div></a>
+<a href="#" class="card-lg"><img src="фото/игра.jpg" onerror="this.src='https://via.placeholder.com/400x500/22c55e/white?text=Game'"><div class="info"><span>Разрабатывать игры</span></div></a>
+                        <a href="#" class="card-lg"><img src="https://picsum.photos/id/20/400/500"><div class="info"><span>Веб-дизайн и верстка</span></div></a>
+                        <a href="#" class="card-lg"><img src="https://picsum.photos/id/26/400/500"><div class="info"><span>Аналитика данных</span></div></a>
+                        <a href="#" class="card-lg"><img src="https://picsum.photos/id/29/400/500"><div class="info"><span>AI & нейросети</span></div></a>
+                    </div>
+                    <button class="slide-btn left" id="slideLeftBtn">❮</button>
+                    <button class="slide-btn right" id="slideRightBtn">❯</button>
+                </div>
+
+                <div class="center">
+                    <h3 class="title-lg">В ритме нашего университета</h3>
+                    <div class="video-hero" id="heroVideoTrigger">
+                        <img src="https://picsum.photos/id/42/1200/700" alt="превью">
+                        <div class="play"><div class="play-btn"><svg fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+                        <div class="caption"><p>Посмотри как университет живёт и работает изнутри</p><button id="heroBtn">Узнать подробнее</button></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="wrap section-pad">
+            <div class="center" style="margin-bottom: 3rem;">
+                <h2 class="title" style="margin-bottom: 0.5rem;">Обучаем на реальных задачах</h2>
+                <p class="text-gray" style="margin-bottom: 1.5rem;">Проекты, сделанные студентами за 2026 год</p>
+                <div class="video-switch" id="videoSwitch">
+                   <video id="vid1" autoplay muted loop playsinline onerror="this.poster='https://via.placeholder.com/800x450/0f172a/white?text=Video+1'">
+    <source src="https://youtu.be/SR0gNSBvfJw?si=CYNwFxEZDRBTO7et" type="video/mp4">
+</video>
+<video id="vid2" muted loop playsinline onerror="this.poster='https://via.placeholder.com/800x450/0f172a/white?text=Video+2'">
+    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4" type="video/mp4">
+</video>
+                </div>
+                <div class="video-dots" id="videoDots">
+                    <div class="video-dot active-dot" data-vid="0"></div>
+                    <div class="video-dot" data-vid="1"></div>
+                </div>
+            </div>
+
+            <div class="center" style="margin-bottom: 4rem;">
+                <h3 class="title-lg" style="margin-bottom: 0.5rem;">Дополнительные занятия на выбор</h3>
+                <p class="text-gray" style="margin-bottom: 2rem;">Будь всегда на шаг впереди</p>
+                <div class="cards-wrap">
+                    <a href="#" class="partner">
+                        <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/1245078a8-46b9-4a52-8ac0-ac104b48cb53.png">
+                        <div class="over"><span>Яндекс Практикум</span></div>
+                    </a>
+                    <a href="#" class="partner">
+                        <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/1a6fb6660-6351-44e9-a514-cc5ffd5fbca6.png">
+                        <div class="over"><span>1С: Код будущего</span></div>
+                    </a>
+                    <a href="#" class="partner">
+                        <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/12c975b17-0b84-4787-b2ce-fc22986f962e.png">
+                        <div class="over"><span>МИФИ</span></div>
+                    </a>
+                    <a href="#" class="partner">
+                        <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/150ead4f0-d16d-4f1a-8297-e963bd51b6dd.png">
+                        <div class="over"><span>Skillbox</span></div>
+                    </a>
+                </div>
+            </div>
+
+            <div class="cert-box">
+                <div>
+                    <h3 class="title-lg" style="margin-bottom: 1rem;">Выдаём дипломы и сертификаты</h3>
+                    <p class="text-gray" style="margin-bottom: 1rem;">
+                        После окончания курса вы получите диплом о профессиональной переподготовке или сертификат установленного образца — тип документа можно уточнить у консультанта.
+                    </p>
+                    <p class="text-sm text-gray">Мы обучаем по государственной лицензии №Д035-1-294-77 / 179 609</p>
+                </div>
+                <div class="center">
+                    <img src="https://image.qwenlm.ai/public_source/b22410d0-63a4-4263-8a85-86c7fda970b8/146872762-a491-4c68-b1b4-a0970b22d6d1.png" class="img-cert">
+                </div>
+            </div>
+        </section>
+
+        <!-- Блок с призывом (CTA) оставлен, форма удалена полностью -->
+        <section class="dark section-pad">
+            <div class="wrap">
+                <div class="cta">
+                    <h2 class="title-xl">Сделай первый шаг <br> к жизни своей мечты</h2>
+                    <div class="cta-emoji one">🤘</div><div class="cta-emoji two">🫡</div><div class="cta-emoji three">⭐</div>
+                    <button class="btn-big" id="ctaScrollBtn">Совершенствоваться</button>
+                </div>
+                <!-- Форма с заявкой полностью удалена, как и запрошено -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Модальное окно успеха тоже убрано, так как оно относилось к форме. Удаляем для чистоты кода -->
+    <footer class="footer">
+        <div class="wrap">
+            <p>© 2026 НГТУ. Все права защищены.</p>
+            <div class="footer-links"><a href="#">Политика конфиденциальности</a><a href="#">Контакты</a></div>
+        </div>
+    </footer>
+
+    <script>
+        const API_URL = window.location.origin;
+
+// Функции для работы с API
+async function apiRequest(url, options = {}) {
+  const response = await fetch(`${API_URL}${url}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options.headers
+    },
+    credentials: 'include'
+  });
+  return response.json();
+}
+
+// Регистрация
+async function registerUser(data) {
+  return apiRequest('/api/register', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+}
+
+// Вход
+async function loginUser(email, password) {
+  return apiRequest('/api/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  });
+}
+
+// Выход
+async function logoutUser() {
+  return apiRequest('/api/logout', { method: 'POST' });
+}
+
+// Получить текущего пользователя
+async function getCurrentUser() {
+  return apiRequest('/api/me');
+}
+
+// Обновить профиль
+async function updateUserProfile(id, data) {
+  return apiRequest(`/api/users/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  });
+}
+        // 1) слайды
+        const sliderTrack = document.getElementById('sliderCourses');
+        const slidesItems = document.querySelectorAll('#sliderCourses .card-lg');
+        let currentIdx = 0;
+        let visibleCount = 3;
+        const updateVisibleCount = () => { visibleCount = window.innerWidth < 800 ? 1 : (window.innerWidth < 1024 ? 2 : 3); };
+        const getSlideWidth = () => {
+            const slide = slidesItems[0];
+            if(!slide) return 280;
+            const style = window.getComputedStyle(slide);
+            const margin = parseFloat(style.marginRight) || 0;
+            return slide.offsetWidth + (margin || 18); // gap = 1.8rem = 18px approx
+        };
+        let slideWidthVal = getSlideWidth();
+        const maxIndex = () => Math.max(0, slidesItems.length - visibleCount);
+        function refreshSlider() {
+            updateVisibleCount();
+            slideWidthVal = getSlideWidth();
+            const max = maxIndex();
+            if(currentIdx > max) currentIdx = max;
+            if(currentIdx < 0) currentIdx = 0;
+            sliderTrack.style.transform = `translateX(-${currentIdx * slideWidthVal}px)`;
+        }
+        function moveSlide(direction) {
+            const max = maxIndex();
+            let newIdx = currentIdx + direction;
+            if(newIdx < 0) newIdx = 0;
+            if(newIdx > max) newIdx = max;
+            currentIdx = newIdx;
+            sliderTrack.style.transform = `translateX(-${currentIdx * slideWidthVal}px)`;
+        }
+        document.getElementById('slideLeftBtn').addEventListener('click', () => moveSlide(-1));
+        document.getElementById('slideRightBtn').addEventListener('click', () => moveSlide(1));
+        window.addEventListener('resize', () => { refreshSlider(); });
+        refreshSlider();
+
+        // 2) видео
+        const videoContainer = document.getElementById('videoSwitch');
+        const videosArr = Array.from(videoContainer.querySelectorAll('video'));
+        const dots = document.querySelectorAll('.video-dot');
+        let activeVideo = 0;
+        let switchInterval;
+        function setActiveVideo(index) {
+            if(index === activeVideo) return;
+            videosArr[activeVideo]?.classList.remove('active');
+            videosArr[activeVideo]?.pause();
+            activeVideo = index;
+            videosArr[activeVideo]?.classList.add('active');
+            videosArr[activeVideo]?.play().catch(e=>console.log("autoplay blocked"));
+            dots.forEach((dot, i) => {
+                if(i === activeVideo) dot.classList.add('active-dot');
+                else dot.classList.remove('active-dot');
+            });
+        }
+        function startRotation() { if(switchInterval) clearInterval(switchInterval); switchInterval = setInterval(() => { let next = (activeVideo + 1) % videosArr.length; setActiveVideo(next); }, 5000); }
+        dots.forEach((dot, idx) => { dot.addEventListener('click', () => { setActiveVideo(idx); startRotation(); }); });
+        videosArr.forEach((vid, i) => { vid.addEventListener('play', () => {}); });
+        setActiveVideo(0);
+        startRotation();
+
+        // 3) видео симуляция
+        const heroDiv = document.getElementById('heroVideoTrigger');
+        const heroBtn = document.getElementById('heroBtn');
+        function showHeroMessage() { alert("🎬 Университет в движении! Полное видео доступно студентам в личном кабинете."); }
+        heroDiv.addEventListener('click', (e) => { if(e.target.closest('.play') || e.target.closest('.play-btn') || heroDiv === e.target) showHeroMessage(); });
+        heroBtn.addEventListener('click', (e) => { e.stopPropagation(); showHeroMessage(); });
+
+        // 4) кнопка cta (скролл теперь будет к секции с призывом, форма удалена, но пусть скроллит к CTA блоку)
+        document.getElementById('ctaScrollBtn').addEventListener('click', () => {
+            const ctaBlock = document.querySelector('.cta');
+            if(ctaBlock) ctaBlock.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            else {
+                // fallback
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }
+        });
+
+        // 5) иконка профиля
+        document.getElementById('profileIcon').addEventListener('click', () => alert("👋 Привет, студент! Войди в личный кабинет для полного доступа."));
+    </script>
+</body>
+</html>

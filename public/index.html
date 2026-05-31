@@ -451,11 +451,7 @@ img {
     margin: 2rem 0;
 }
 
-.banner-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
-}
+
 
 .banner-image {
     max-width: 100%;
@@ -971,10 +967,8 @@ img {
     .video-caption {
         padding: 1.5rem;
     }
-}
-
-.partners-section {
-    padding: 3rem 1rem;
+}.partners-section {
+    padding: 2rem 1rem;        /* уменьшил вертикальный отступ */
     background: #f8fafc;
     border-radius: 2rem;
     margin: 2rem 0;
@@ -983,12 +977,12 @@ img {
 .partners-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
+    gap: 1rem;                 /* уменьшил gap */
 }
 
 .partner-card {
     background: white;
-    border-radius: 1rem;
+    border-radius: 0.75rem;    /* чуть меньше радиус */
     overflow: hidden;
     transition: transform 0.3s ease;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -1000,10 +994,12 @@ img {
     box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
 }
 
+/* Уменьшаем высоту фото для компактности */
 .partner-photo {
     width: 100%;
-    height: 500px;
+    height: 310px;             /* вместо 500px – намного меньше */
     overflow: hidden;
+    background: #f3f4f6;
 }
 
 .partner-img {
@@ -1018,31 +1014,31 @@ img {
 }
 
 .partner-info {
-    padding: 1rem;
+    padding: 0.75rem;          /* уменьшил внутренние отступы */
     text-align: center;
     background: white;
 }
 
 .partner-name {
-    font-size: 1.1rem;
+    font-size: 1rem;           /* чуть меньше шрифт */
     font-weight: 700;
     color: #1f2937;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.2rem;
 }
 
 .partner-desc {
-    font-size: 0.8rem;
+    font-size: 0.7rem;         /* мельче подпись */
     color: #6b7280;
 }
 
+/* Адаптив */
 @media (max-width: 1024px) {
     .partners-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
     }
-    
     .partner-photo {
-        height: 350px;
+        height: 140px;
     }
 }
 
@@ -1051,10 +1047,156 @@ img {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
     .partner-photo {
-        height: 400px;
+        height: 180px;
     }
+}
+/* CTA блок */
+.dark {
+    background: #0f172a;
+    color: #f1f5f9;
+    padding: 5%;
+}
+.cta {
+    text-align: center;
+    position: relative;
+    margin-bottom: 2rem;
+}
+.cta-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+@media (min-width: 768px) {
+    .cta-title {
+        font-size: 3.5rem;
+    }
+}
+.cta-emoji {
+    position: absolute;
+    font-size: 2.8rem;
+    opacity: 0.6;
+    pointer-events: none;
+}
+.cta-emoji.one {
+    top: -0.5rem;
+    left: 5%;
+    animation: float 3s infinite;
+}
+.cta-emoji.two {
+    top: 2rem;
+    right: 8%;
+    animation: float 2.5s infinite reverse;
+}
+.cta-emoji.three {
+    bottom: -1rem;
+    left: 15%;
+    font-size: 3.5rem;
+    opacity: 0.2;
+}
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+.btn-cta {
+    margin-top: 1.5rem;
+    background: #facc15;
+    color: #0f172a;
+    font-weight: 800;
+    padding: 0.9rem 2.5rem;
+    border-radius: 3rem;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 12px 20px rgba(0,0,0,0.2);
+}
+.btn-cta:hover {
+    background: #fde047;
+    transform: scale(1.02);
+}
+/* Контейнер cta – делаем его относительным для позиционирования летающих элементов */
+.cta {
+    position: relative;
+    text-align: center;
+    margin-bottom: 4rem;
+    overflow: hidden; /* чтобы элементы не вылезали за пределы, но можно и убрать */
+}
+
+/* Стили для существующих эмодзи (можно оставить без изменений) */
+.cta-emoji {
+    position: absolute;
+    font-size: 2.8rem;
+    opacity: 0.6;
+    animation: float 3s infinite ease-in-out;
+    pointer-events: none;
+    z-index: 1;
+}
+.cta-emoji.one { top: -0.5rem; left: 5%; }
+.cta-emoji.two { top: 2rem; right: 8%; animation-direction: alternate; }
+.cta-emoji.three { bottom: -1rem; left: 15%; font-size: 3.5rem; opacity: 0.2; animation-duration: 4s; }
+
+/* Новые летающие элементы – символы кода */
+.floating-code {
+    position: absolute;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.2);
+    white-space: pre;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatRandom linear infinite;
+    transform: translate(0, 0);
+}
+
+/* Маленькие точки/кружки */
+.floating-dot {
+    position: absolute;
+    background: rgba(220, 38, 38, 0.4);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+    animation: floatRandom linear infinite;
+}
+
+/* Анимация плавного движения по случайной траектории */
+@keyframes floatRandom {
+    0% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+    25% {
+        transform: translate(15px, -20px) rotate(5deg);
+    }
+    50% {
+        transform: translate(-10px, 15px) rotate(-3deg);
+    }
+    75% {
+        transform: translate(20px, 10px) rotate(8deg);
+    }
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+}
+
+/* Дополнительно – можно добавить плавное мерцание для кнопки */
+.btn-big {
+    position: relative;
+    z-index: 2;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+}
+.btn-big:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px rgba(250, 204, 21, 0.5);
+}
+
+/* Для заголовка добавим лёгкую тень для читаемости на фоне анимированных элементов */
+.title-xl {
+    position: relative;
+    z-index: 2;
+    text-shadow: 0 0 10px rgba(0,0,0,0.3);
 }
     </style>
 </head>
@@ -1360,12 +1502,6 @@ img {
         </div>
     </main>
 
-
-
-    <div class="banner-section">
-    <div class="banner-container">
-        <img src="/foto/banner-image.jpg" alt="Баннер" class="banner-image" onerror="this.src='/foto/banner-default.jpg'">
-    </div>
 </div>
 
 <div class="feedback-section">
@@ -1407,6 +1543,28 @@ img {
         <div id="feedbackFormStatus" class="form-status-message"></div>
     </div>
 </div>
+
+<!-- Блок призыва к действию (CTA) -->
+<section class="dark section-pad">
+    <div class="container">
+        <div class="cta">
+            <h2 class="cta-title">Сделай первый шаг <br> к жизни своей мечты</h2>
+            <div class="cta-emoji one">🤘</div>
+            <div class="cta-emoji three">⭐</div>
+            <button class="btn-cta" id="ctaScrollBtn">Совершенствоваться</button>
+            <div class="floating-code" style="top: 10%; left: 5%; animation-duration: 12s;">&lt;/&gt;</div>
+<div class="floating-code" style="top: 20%; right: 8%; animation-duration: 15s; animation-delay: -2s;">{ }</div>
+<div class="floating-code" style="bottom: 15%; left: 12%; animation-duration: 10s; animation-delay: -4s;">* * *</div>
+<div class="floating-code" style="top: 60%; right: 15%; animation-duration: 18s;">()</div>
+<div class="floating-code" style="bottom: 30%; right: 25%; animation-duration: 14s; font-size: 1.2rem;">⚡</div>
+<div class="floating-code" style="top: 70%; left: 20%; animation-duration: 20s;">#</div>
+<div class="floating-dot" style="top: 15%; left: 20%; width: 6px; height: 6px; animation-duration: 8s;"></div>
+<div class="floating-dot" style="top: 45%; right: 30%; width: 4px; height: 4px; animation-duration: 11s;"></div>
+<div class="floating-dot" style="bottom: 25%; left: 35%; width: 8px; height: 8px; animation-duration: 13s;"></div>
+<div class="floating-dot" style="top: 80%; right: 40%; width: 5px; height: 5px; animation-duration: 9s;"></div>
+        </div>
+    </div>
+</section>
 
     <footer class="footer">
         <div class="container">
@@ -1882,6 +2040,14 @@ if (feedbackForm) {
         }
     });
 }
+document.getElementById('ctaScrollBtn')?.addEventListener('click', () => {
+    const targetSection = document.querySelector('#courses');
+    if (targetSection) {
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+});
 
     </script>
 </body>

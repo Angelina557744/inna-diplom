@@ -620,7 +620,73 @@
                     </table>
                 </div>
             </div>
+            <div class="card mt-4">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-question-circle"></i> Управление вопросами</h3>
+        <button class="btn btn-sm btn-primary" onclick="openGameQuestionModal()"><i class="fas fa-plus"></i> Добавить вопрос</button>
+    </div>
+    <div class="table-wrap">
+        <table style="width: 100%;">
+            <thead>
+                <tr><th>ID</th><th>Игра</th><th>Сложность</th><th>Вопрос</th><th>Действия</th></tr>
+            </thead>
+            <tbody id="gameQuestionsTable">
+                <tr><td colspan="5" class="text-center">Загрузка...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
         </div>
+
+        <div class="modal-overlay" id="editQuestionModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title" id="editQuestionModalTitle">Редактировать вопрос</h2>
+            <button class="modal-close" onclick="closeModal('editQuestionModal')">&times;</button>
+        </div>
+        <input type="hidden" id="editQuestionId">
+        <div class="form-group">
+            <label>Игра</label>
+            <select id="editQuestionGame" class="form-select">
+                <option value="jumper">Code Jumper</option>
+                <option value="runner">Code Runner</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Сложность</label>
+            <select id="editQuestionDifficulty" class="form-select">
+                <option value="easy">Лёгкий</option>
+                <option value="normal">Нормальный</option>
+                <option value="hard">Сложный</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Вопрос</label>
+            <textarea id="editQuestionText" class="form-textarea" rows="3" placeholder="Текст вопроса..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Вариант 1 (правильный)</label>
+            <input type="text" id="editOpt1" class="form-input">
+        </div>
+        <div class="form-group">
+            <label>Вариант 2</label>
+            <input type="text" id="editOpt2" class="form-input">
+        </div>
+        <div class="form-group">
+            <label>Вариант 3</label>
+            <input type="text" id="editOpt3" class="form-input">
+        </div>
+        <div class="form-group">
+            <label>Вариант 4</label>
+            <input type="text" id="editOpt4" class="form-input">
+        </div>
+        <div class="flex gap-2 justify-end mt-4">
+            <button class="btn btn-outline" onclick="closeModal('editQuestionModal')">Отмена</button>
+            <button class="btn btn-primary" id="updateQuestionBtn">Сохранить</button>
+            <button class="btn btn-danger" id="deleteQuestionBtn">Удалить</button>
+        </div>
+    </div>
+</div>
 
         <!-- Чат -->
         <div class="tab-content" id="page-chat">
@@ -824,31 +890,18 @@
         const API_BASE = '';
 
         // ===== INIT =====
-       async function init() {
-    // Проверка авторизации
-    try {
-        const authCheck = await fetch('/api/auth/me', { credentials: 'include' });
-        const authData = await authCheck.json();
-        
-        if (!authData.success || authData.user.role !== 'admin') {
-            window.location.href = '/';
-            return;
-        }
-    } catch(e) {
-        window.location.href = '/';
-        return;
-    }
-    
+ async function init() {
     loadAllFromStorage();
     
-    // Загружаем все данные с сервера
     await Promise.all([
         loadUsersFromServer(),
         loadCoursesFromServer(),
         loadPartnersFromServer(),
         loadContentFromServer(),
         loadApplicationsFromServer(),
-        loadStreamsFromServer()
+        loadStreamsFromServer(),
+        loadGameQuestions(),      // уже есть
+        loadGameProgressFromServer()   // ДОБАВИТЬ ЭТУ СТРОКУ
     ]);
     
     setupNavigation();
@@ -1571,6 +1624,7 @@ async function deleteStream(id) {
             logActivity(`Добавлен вопрос в ${game} (${difficulty})`);
             showToast('✅ Вопрос добавлен');
         }
+        
 
         function deleteObstacle(index) {
             if (confirm('Удалить препятствие?')) {
@@ -2092,8 +2146,192 @@ async function logout() {
             }
         });
     }
+// ===== УПРАВЛЕНИЕ ВОПРОСАМИ ИГР =====
+let gameQuestions = [];
+
+async function loadGameQuestions() {
+    try {
+        const response = await fetch(API_BASE + '/api/games/questions', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        console.log('Game questions loaded:', data);
+        
+        if (data.success) {
+            gameQuestions = [];
+            for (const game in data.questions) {
+                for (const difficulty in data.questions[game]) {
+                    for (const q of data.questions[game][difficulty]) {
+                        gameQuestions.push({
+                            id: q.id,
+                            game: game,
+                            difficulty: difficulty,
+                            question_text: q.q,
+                            options: q.options,
+                            correct_index: q.correct
+                        });
+                    }
+                }
+            }
+            renderGameQuestionsTable();
+        }
+    } catch(e) {
+        console.log('Load game questions failed:', e);
+    }
+}
+
+function renderGameQuestionsTable() {
+    const container = document.getElementById('gameQuestionsTable');
+    if (!container) return;
+    
+    if (gameQuestions.length === 0) {
+        container.innerHTML = '<tr><td colspan="5" class="text-center">Нет вопросов. Добавьте первый вопрос</td></tr>';
+        return;
+    }
+    
+    container.innerHTML = gameQuestions.map(q => `
+        <tr>
+            <td>${q.id}</td>
+            <td>${q.game === 'jumper' ? 'Code Jumper' : 'Code Runner'}</td>
+            <td><span class="level-badge level-badge-${q.difficulty}">${q.difficulty === 'easy' ? 'Лёгкий' : q.difficulty === 'normal' ? 'Нормальный' : 'Сложный'}</span></td>
+            <td style="max-width: 300px;">${escapeHtml(q.question_text.substring(0, 50))}${q.question_text.length > 50 ? '...' : ''}</td>
+            <td>
+                <button class="btn btn-sm btn-outline" onclick="editGameQuestion(${q.id})"><i class="fas fa-edit"></i></button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function openGameQuestionModal() {
+    document.getElementById('editQuestionId').value = '';
+    document.getElementById('editQuestionGame').value = 'jumper';
+    document.getElementById('editQuestionDifficulty').value = 'normal';
+    document.getElementById('editQuestionText').value = '';
+    document.getElementById('editOpt1').value = '';
+    document.getElementById('editOpt2').value = '';
+    document.getElementById('editOpt3').value = '';
+    document.getElementById('editOpt4').value = '';
+    document.getElementById('editQuestionModalTitle').innerText = 'Добавить вопрос';
+    document.getElementById('deleteQuestionBtn').style.display = 'none';
+    document.getElementById('editQuestionModal').classList.add('active');
+}
+
+async function editGameQuestion(id) {
+    const question = gameQuestions.find(q => q.id === id);
+    if (!question) return;
+    
+    document.getElementById('editQuestionId').value = question.id;
+    document.getElementById('editQuestionGame').value = question.game;
+    document.getElementById('editQuestionDifficulty').value = question.difficulty;
+    document.getElementById('editQuestionText').value = question.question_text;
+    document.getElementById('editOpt1').value = question.options[0] || '';
+    document.getElementById('editOpt2').value = question.options[1] || '';
+    document.getElementById('editOpt3').value = question.options[2] || '';
+    document.getElementById('editOpt4').value = question.options[3] || '';
+    document.getElementById('editQuestionModalTitle').innerText = 'Редактировать вопрос';
+    document.getElementById('deleteQuestionBtn').style.display = 'inline-flex';
+    document.getElementById('editQuestionModal').classList.add('active');
+}
+
+async function saveGameQuestion() {
+    const id = document.getElementById('editQuestionId').value;
+    const game = document.getElementById('editQuestionGame').value;
+    const difficulty = document.getElementById('editQuestionDifficulty').value;
+    const questionText = document.getElementById('editQuestionText').value.trim();
+    const options = [
+        document.getElementById('editOpt1').value.trim(),
+        document.getElementById('editOpt2').value.trim(),
+        document.getElementById('editOpt3').value.trim(),
+        document.getElementById('editOpt4').value.trim()
+    ];
+    
+    if (!questionText) {
+        showToast('Введите текст вопроса', 'error');
+        return;
+    }
+    if (!options[0]) {
+        showToast('Первый вариант ответа обязателен', 'error');
+        return;
+    }
+    
+    const url = id ? `/api/games/questions/${id}` : '/api/games/questions';
+    const method = id ? 'PUT' : 'POST';
+    
+    try {
+        const response = await fetch(API_BASE + url, {
+            method: method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                game: game,
+                difficulty: difficulty,
+                question_text: questionText,
+                options: options,
+                correct_index: 0
+            }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(id ? 'Вопрос обновлен' : 'Вопрос добавлен', 'success');
+            closeModal('editQuestionModal');
+            await loadGameQuestions();
+        } else {
+            showToast(data.error || 'Ошибка', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+
+async function deleteGameQuestion() {
+    const id = document.getElementById('editQuestionId').value;
+    if (!id) return;
+    if (!confirm('Удалить вопрос?')) return;
+    
+    try {
+        const response = await fetch(API_BASE + '/api/games/questions/' + id, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Вопрос удален', 'success');
+            closeModal('editQuestionModal');
+            await loadGameQuestions();
+        } else {
+            showToast(data.error || 'Ошибка удаления', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+async function loadGameProgressFromServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/games/progress', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        console.log('Game progress loaded:', data);
+        
+        if (data.success) {
+            gameProgressData = data.progress;
+            saveAllToStorage();
+            renderGames(); // обновить таблицу прогресса
+        } else {
+            console.error('Failed to load game progress:', data.error);
+        }
+    } catch(e) {
+        console.log('Load game progress failed:', e);
+    }
+}
+document.getElementById('updateQuestionBtn').addEventListener('click', saveGameQuestion);
+document.getElementById('deleteQuestionBtn').addEventListener('click', deleteGameQuestion);
     document.getElementById('saveStreamBtn').addEventListener('click', saveStream);
 </script>
+
+
 
 </body>
 </html>

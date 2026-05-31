@@ -73,6 +73,64 @@ app.use(session({
     cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000, httpOnly: true, sameSite: 'lax' }
 }));
 
+
+const onlineUsers = new Map(); // ключ - email, значение - socket.id
+
+io.use((socket, next) => {
+    const auth = socket.handshake.auth;
+    if (!auth || !auth.userId || !auth.userRole) {
+        return next(new Error('Unauthorized'));
+    }
+    next();
+});
+
+io.on('connection', (socket) => {
+    const userEmail = socket.handshake.auth.userId; // здесь передаётся email
+    const userRole = socket.handshake.auth.userRole;
+
+    onlineUsers.set(userEmail, socket.id);
+    io.emit('online-count', onlineUsers.size);
+    console.log(`✅ User connected: ${userEmail}, online: ${onlineUsers.size}`);
+
+    // Обработчик входящих сообщений
+    socket.on('chat-message', async (data) => {
+        const { from, to, text } = data;
+        if (!from || !to || !text) return;
+
+        try {
+            // Сохраняем в БД
+            await pool.query(
+                `INSERT INTO chat_messages (sender_email, receiver_email, message_text, created_at) 
+                 VALUES (?, ?, ?, NOW())`,
+                [from, to, text]
+            );
+
+            // Отправляем получателю, если он онлайн
+            const receiverSocketId = onlineUsers.get(to);
+            if (receiverSocketId) {
+                io.to(receiverSocketId).emit('chat-message', {
+                    from, to, text,
+                    time: new Date().toLocaleTimeString()
+                });
+            }
+
+            // Подтверждение отправителю
+            socket.emit('chat-message', {
+                from, to, text,
+                time: new Date().toLocaleTimeString()
+            });
+        } catch (err) {
+            console.error('WebSocket message error:', err);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        onlineUsers.delete(userEmail);
+        io.emit('online-count', onlineUsers.size);
+        console.log(`❌ User disconnected: ${userEmail}, online: ${onlineUsers.size}`);
+    });
+});
+
 app.use((req, res, next) => {
     req.db = pool;
     req.io = io;
@@ -492,6 +550,70 @@ app.put('/api/streams/:id', async (req, res) => {
     }
 });
 
+app.patch('/api/streams/:id/viewers', async (req, res) => {
+    const id = parseInt(req.params.id);
+    const { viewers } = req.body;
+    
+    if (!id) {
+        return res.status(400).json({ success: false, error: 'Неверный ID' });
+    }
+    
+    try {
+        await pool.query('UPDATE streams SET viewers = ? WHERE id = ?', [viewers, id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Update viewers error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка обновления' });
+    }
+});
+
+app.get('/api/streams/:id', async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (!id) {
+        return res.status(400).json({ success: false, error: 'Неверный ID' });
+    }
+    
+    try {
+        const [streams] = await pool.query(`
+            SELECT s.*, u.fullName as teacher_name, c.name as course_name 
+            FROM streams s 
+            LEFT JOIN users u ON s.teacher_id = u.id 
+            LEFT JOIN courses c ON s.course_id = c.id
+            WHERE s.id = ?
+        `, [id]);
+        
+        if (streams.length === 0) {
+            return res.status(404).json({ success: false, error: 'Трансляция не найдена' });
+        }
+        
+        res.json({ success: true, stream: streams[0] });
+    } catch (err) {
+        console.error('Get stream error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка загрузки трансляции' });
+    }
+});
+
+app.put('/api/users/:id/photo', async (req, res) => {
+    const id = parseInt(req.params.id);
+    const { photoData } = req.body;
+    
+    if (!id) {
+        return res.status(400).json({ success: false, error: 'Неверный ID' });
+    }
+    
+    if (!photoData) {
+        return res.status(400).json({ success: false, error: 'Нет данных фото' });
+    }
+    
+    try {
+        await pool.query('UPDATE users SET photoData = ? WHERE id = ?', [photoData, id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Update photo error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка обновления фото' });
+    }
+});
 app.delete('/api/streams/:id', async (req, res) => {
     const id = parseInt(req.params.id);
     
@@ -690,6 +812,45 @@ app.put('/api/content/applications/:id', async (req, res) => {
     }
 });
 
+
+
+
+app.post('/api/chat', async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ success: false, error: 'Не авторизован' });
+    }
+    const { receiver_email, message_text } = req.body;
+    if (!receiver_email || !message_text) {
+        return res.status(400).json({ success: false, error: 'Не все поля заполнены' });
+    }
+    const sender_email = req.session.userEmail;
+    if (!sender_email) {
+        return res.status(400).json({ success: false, error: 'Отправитель не определён. Попробуйте выйти и зайти снова.' });
+    }
+    try {
+        const [result] = await pool.query(
+            `INSERT INTO chat_messages (sender_email, receiver_email, message_text, created_at) 
+             VALUES (?, ?, ?, NOW())`,
+            [sender_email, receiver_email, message_text]
+        );
+
+        const receiverSocketId = onlineUsers.get(receiver_email);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit('chat-message', {
+                from: sender_email,
+                to: receiver_email,
+                text: message_text,
+                time: new Date().toLocaleTimeString()
+            });
+        }
+
+        res.json({ success: true, id: result.insertId });
+    } catch (err) {
+        console.error('Send message error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/foto', express.static(path.join(__dirname, 'public', 'foto')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -706,32 +867,207 @@ app.get('/admin.html', (req, res) => res.sendFile(path.join(__dirname, 'public',
 app.get('/manifest.json', (req, res) => res.sendFile(path.join(__dirname, 'public', 'manifest.json')));
 app.get('/offline.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'offline.html')));
 
-const onlineUsers = new Map();
+// ==================== ИГРЫ ====================
 
-io.use((socket, next) => {
-    const auth = socket.handshake.auth;
-    if (!auth || !auth.userId || !auth.userRole) {
-        return next(new Error('Unauthorized'));
+app.get('/api/games/questions', async (req, res) => {
+    try {
+        const [questions] = await pool.query(`
+            SELECT * FROM game_questions 
+            ORDER BY game, FIELD(difficulty, 'easy', 'normal', 'hard')
+        `);
+        
+        const result = {};
+        for (const q of questions) {
+            if (!result[q.game]) {
+                result[q.game] = { easy: [], normal: [], hard: [] };
+            }
+            
+            let options = q.options;
+            if (typeof options === 'string') {
+                try {
+                    options = JSON.parse(options);
+                } catch(e) {
+                    options = [];
+                }
+            }
+            
+            result[q.game][q.difficulty].push({
+                id: q.id,
+                q: q.question_text,
+                options: options,
+                correct: q.correct_index,
+                course_id: q.course_id
+            });
+        }
+        
+        res.json({ success: true, questions: result });
+    } catch (err) {
+        console.error('Get questions error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка загрузки вопросов' });
     }
-    next();
 });
 
-io.on('connection', (socket) => {
-    const userId = socket.handshake.auth.userId;
+app.post('/api/games/questions', async (req, res) => {
+    const { game, difficulty, question_text, options, correct_index, course_id } = req.body;
     
-    onlineUsers.set(userId, socket.id);
-    io.emit('online-count', onlineUsers.size);
+    if (!game || !question_text || !options || correct_index === undefined) {
+        return res.status(400).json({ success: false, error: 'Не все данные переданы' });
+    }
     
-    socket.on('disconnect', () => {
-        for (let [uid, sid] of onlineUsers.entries()) {
-            if (sid === socket.id) {
-                onlineUsers.delete(uid);
-                break;
+    try {
+        const [result] = await pool.query(`
+            INSERT INTO game_questions (game, difficulty, question_text, options, correct_index, course_id) 
+            VALUES (?, ?, ?, ?, ?, ?)
+        `, [game, difficulty, question_text, JSON.stringify(options), correct_index, course_id || null]);
+        
+        res.json({ success: true, id: result.insertId });
+    } catch (err) {
+        console.error('Create question error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка создания вопроса' });
+    }
+});
+
+app.put('/api/games/questions/:id', async (req, res) => {
+    const id = parseInt(req.params.id);
+    const { question_text, options, correct_index } = req.body;
+    
+    if (!id) {
+        return res.status(400).json({ success: false, error: 'Неверный ID' });
+    }
+    
+    try {
+        await pool.query(`
+            UPDATE game_questions 
+            SET question_text = ?, options = ?, correct_index = ? 
+            WHERE id = ?
+        `, [question_text, JSON.stringify(options), correct_index, id]);
+        
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Update question error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка обновления вопроса' });
+    }
+});
+
+app.delete('/api/games/questions/:id', async (req, res) => {
+    const id = parseInt(req.params.id);
+    
+    if (!id) {
+        return res.status(400).json({ success: false, error: 'Неверный ID' });
+    }
+    
+    try {
+        await pool.query('DELETE FROM game_questions WHERE id = ?', [id]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Delete question error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка удаления вопроса' });
+    }
+});
+
+app.get('/api/games/config', async (req, res) => {
+    try {
+        const [rows] = await pool.query("SELECT `key`, `value` FROM game_configs");
+        const config = {};
+        for (const row of rows) {
+            try {
+                config[row.key] = JSON.parse(row.value);
+            } catch(e) {
+                config[row.key] = row.value;
             }
         }
-        io.emit('online-count', onlineUsers.size);
-    });
+        res.json({ success: true, config });
+    } catch (err) {
+        res.status(500).json({ success: false, error: 'Ошибка загрузки настроек' });
+    }
 });
+
+app.put('/api/games/config', async (req, res) => {
+    const config = req.body;
+    
+    try {
+        for (const [key, value] of Object.entries(config)) {
+            const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+            await pool.query(`
+                INSERT INTO game_configs (key, value) VALUES (?, ?) 
+                ON DUPLICATE KEY UPDATE value = VALUES(value)
+            `, [key, stringValue]);
+        }
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Save config error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка сохранения настроек' });
+    }
+});
+
+app.post('/api/games/progress', async (req, res) => {
+    const { game, high_score, questions_answered } = req.body;
+    const userId = req.session.userId;
+    
+    if (!game || high_score === undefined) {
+        return res.status(400).json({ success: false, error: 'Не все данные переданы' });
+    }
+    
+    if (!userId) {
+        return res.status(401).json({ success: false, error: 'Не авторизован' });
+    }
+    
+    try {
+        const [result] = await pool.query(`
+            INSERT INTO game_progress (user_id, game, high_score, questions_answered, last_played) 
+            VALUES (?, ?, ?, ?, NOW()) 
+            ON DUPLICATE KEY UPDATE 
+                high_score = GREATEST(high_score, VALUES(high_score)), 
+                questions_answered = questions_answered + VALUES(questions_answered), 
+                last_played = NOW()
+        `, [userId, game, high_score, questions_answered || 0]);
+        
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Save progress error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка сохранения прогресса' });
+    }
+});
+
+app.delete('/api/submissions/:id', async (req, res) => {
+    if (!req.session.userId) return res.status(401).json({ success: false });
+    const id = parseInt(req.params.id);
+    try {
+        const [sub] = await pool.query('SELECT file_data FROM submissions WHERE id = ?', [id]);
+        if (sub.length && sub[0].file_data) {
+            const filePath = path.join(__dirname, sub[0].file_data);
+            if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        }
+        await pool.query('DELETE FROM submissions WHERE id = ?', [id]);
+        res.json({ success: true });
+    } catch (err) {
+        res.status(500).json({ success: false });
+    }
+});
+app.get('/api/chat/:participantEmail', async (req, res) => {
+    if (!req.session.userId) {
+        return res.status(401).json({ success: false, error: 'Не авторизован' });
+    }
+    const currentEmail = req.session.userEmail;
+    if (!currentEmail) {
+        return res.status(400).json({ success: false, error: 'Email пользователя не найден в сессии' });
+    }
+    const participantEmail = req.params.participantEmail;
+    try {
+        const [messages] = await pool.query(
+            `SELECT * FROM chat_messages 
+             WHERE (sender_email = ? AND receiver_email = ?) 
+                OR (sender_email = ? AND receiver_email = ?)
+             ORDER BY created_at ASC LIMIT 200`,
+            [currentEmail, participantEmail, participantEmail, currentEmail]
+        );
+        res.json({ success: true, messages });
+    } catch (err) {
+        console.error('Get messages error:', err);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
 
 const PORT = process.env.PORT || 3000;
 
