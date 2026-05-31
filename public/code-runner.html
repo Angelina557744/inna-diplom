@@ -3,17 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>КонсПресс - Code Runner</title>
+    <title>КонсПресс - Code Runner | Обучение программированию в игре</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/components.css">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.95);
+        }
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0.8rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+        }
+        .logo-box {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            color: white;
+            font-weight: 800;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #0f172a;
+        }
+        .nav {
+            display: flex;
+            gap: 1.8rem;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #475569;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #dc2626;
+        }
+        .profile-icon {
+            cursor: pointer;
+        }
+
+        /* Main */
+        .main {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        .container {
+            width: 100%;
+        }
+        .breadcrumb {
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+        .breadcrumb a {
+            color: #dc2626;
+            text-decoration: none;
+        }
+        .text-center { text-align: center; }
+        .mb-5 { margin-bottom: 2rem; }
+        .mb-2 { margin-bottom: 0.75rem; }
+        .mb-3 { margin-bottom: 1rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .text-gray { color: #64748b; }
+        .text-white { color: white; }
+        .text-xs { font-size: 0.75rem; }
+        .text-sm { font-size: 0.875rem; }
+        .font-bold { font-weight: 700; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .gap-2 { gap: 0.5rem; }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        /* Game container */
         .game-container {
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             border-radius: 1rem;
             padding: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .game-canvas-wrapper {
@@ -23,7 +131,7 @@
             aspect-ratio: 16 / 9;
             position: relative;
             border: 2px solid rgba(220,38,38,0.3);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.1);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
         }
         canvas {
             display: block;
@@ -63,70 +171,35 @@
             gap: 0.5rem;
             margin-top: 0.75rem;
         }
-        .game-controls .btn {
-            flex: 1;
+        .btn {
+            padding: 0.6rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
             transition: all 0.2s;
+            font-family: inherit;
         }
-        .game-controls .btn:hover {
-            transform: translateY(-2px);
-        }
-        .leaderboard {
-            background: white;
-            border-radius: 1rem;
-            padding: 1rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-        }
-        .leaderboard-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.6rem;
-            border-bottom: 1px solid #e5e7eb;
-            transition: background 0.2s;
-        }
-        .leaderboard-item:last-child {
-            border-bottom: none;
-        }
-        .leaderboard-rank {
-            font-weight: 700;
-            width: 2rem;
-            color: #dc2626;
-        }
-        .leaderboard-name {
-            flex: 1;
-            font-weight: 500;
-        }
-        .leaderboard-score {
-            font-weight: 700;
-            color: #f59e0b;
-        }
-        .code-modal .modal-content {
-            max-width: 550px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
+        .btn-primary {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
             color: white;
         }
-        .code-editor {
-            background: #0f172a;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin: 1rem 0;
-            border: 1px solid #334155;
+        .btn-outline {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
         }
-        .code-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: #e2e8f0;
-            font-family: 'Courier New', monospace;
-            font-size: 0.85rem;
-            outline: none;
-            resize: vertical;
-            white-space: pre-wrap;
+        .btn-outline:hover {
+            background: rgba(255,255,255,0.2);
         }
-        .code-hint {
-            font-size: 0.7rem;
-            color: #94a3b8;
-            margin-top: 0.25rem;
+        .select {
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            font-family: inherit;
+            cursor: pointer;
         }
         .difficulty-badge {
             display: inline-block;
@@ -138,12 +211,148 @@
         .difficulty-easy { background: #22c55e; color: white; }
         .difficulty-normal { background: #f59e0b; color: white; }
         .difficulty-hard { background: #ef4444; color: white; }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(0.98); }
+
+        /* Leaderboard & Card */
+        .leaderboard, .card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.6rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .leaderboard-item:last-child { border-bottom: none; }
+        .leaderboard-rank { font-weight: 700; width: 2rem; color: #dc2626; }
+        .leaderboard-name { flex: 1; font-weight: 500; }
+        .leaderboard-score { font-weight: 700; color: #f59e0b; }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            padding: 1.5rem;
+            color: white;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            animation: modalFade 0.2s ease;
+        }
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: white; }
+        .question-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.2rem 0;
+        }
+        .question-option {
+            background: rgba(255,255,255,0.08);
+            padding: 0.8rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(255,255,255,0.1);
+            font-weight: 500;
+        }
+        .question-option:hover {
+            background: rgba(220,38,38,0.3);
+            transform: translateX(5px);
+            border-color: #dc2626;
+        }
+        .code-feedback {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        .btn-skip {
+            background: #334155;
+            color: white;
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+        .btn-skip:hover { background: #ef4444; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1e293b;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            z-index: 1100;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast-success { background: #22c55e; }
+        .toast-error { background: #ef4444; }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 2rem;
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 0.5rem;
+        }
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
         .combo-effect {
             animation: pulse 0.3s ease;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); text-shadow: 0 0 10px #facc15; }
         }
     </style>
 </head>
@@ -169,49 +378,34 @@
     <main class="main">
         <div class="container">
             <div class="breadcrumb">
-                <a href="/">Главная</a>
-                <span>/</span>
-                <a href="/igra.html">Игры</a>
-                <span>/</span>
+                <a href="/">Главная</a> <span>/</span>
+                <a href="/igra.html">Игры</a> <span>/</span>
                 <span>Code Runner</span>
             </div>
 
             <div class="text-center mb-5">
                 <h1 class="mb-2"><i class="fas fa-code"></i> Code Runner</h1>
-                <p class="text-gray">Пиши код, чтобы преодолеть препятствия и набрать очки!</p>
+                <p class="text-gray">Пиши код умом — преодолевай препятствия и набирай очки!</p>
             </div>
 
-            <div class="grid-2" style="gap: 1.5rem;">
+            <div class="grid-2">
                 <div>
                     <div class="game-container">
                         <div class="flex justify-between items-center mb-3">
-                            <div>
-                                <span class="difficulty-badge difficulty-normal" id="difficultyBadge">⚡ Нормальный</span>
-                            </div>
-                            <div class="flex gap-2">
-                                <select id="difficultySelect" class="select" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2);">
-                                    <option value="easy">🌿 Легкий</option>
-                                    <option value="normal" selected>⚡ Нормальный</option>
-                                    <option value="hard">🔥 Сложный</option>
-                                </select>
-                            </div>
+                            <div><span class="difficulty-badge difficulty-normal" id="difficultyBadge">⚡ Нормальный</span></div>
+                            <select id="difficultySelect" class="select">
+                                <option value="easy">🌿 Легкий</option>
+                                <option value="normal" selected>⚡ Нормальный</option>
+                                <option value="hard">🔥 Сложный</option>
+                            </select>
                         </div>
                         <div class="game-canvas-wrapper">
                             <canvas id="gameCanvas"></canvas>
                         </div>
                         <div class="game-stats">
-                            <div class="game-stat">
-                                <div class="game-stat-value" id="scoreDisplay">0</div>
-                                <div class="game-stat-label">ОЧКИ</div>
-                            </div>
-                            <div class="game-stat">
-                                <div class="game-stat-value" id="comboDisplay">x1</div>
-                                <div class="game-stat-label">КОМБО</div>
-                            </div>
-                            <div class="game-stat">
-                                <div class="game-stat-value" id="healthDisplay">3</div>
-                                <div class="game-stat-label">ЖИЗНИ</div>
-                            </div>
+                            <div class="game-stat"><div class="game-stat-value" id="scoreDisplay">0</div><div class="game-stat-label">ОЧКИ</div></div>
+                            <div class="game-stat"><div class="game-stat-value" id="comboDisplay">x1</div><div class="game-stat-label">КОМБО</div></div>
+                            <div class="game-stat"><div class="game-stat-value" id="healthDisplay">3</div><div class="game-stat-label">ЖИЗНИ</div></div>
                         </div>
                         <div class="game-controls">
                             <button id="startGameBtn" class="btn btn-primary"><i class="fas fa-play"></i> Старт</button>
@@ -219,7 +413,7 @@
                             <button id="resetGameBtn" class="btn btn-outline"><i class="fas fa-redo"></i> Сброс</button>
                         </div>
                         <p class="text-xs text-center text-white mt-2 opacity-75">
-                            <i class="fas fa-keyboard"></i> Пробел или ↑ - прыжок | <i class="fas fa-terminal"></i> Каждые 10 прыжков - задание по программированию!
+                            <i class="fas fa-keyboard"></i> Пробел / ↑ - прыжок | <i class="fas fa-terminal"></i> Каждые 10 прыжков - задание!
                         </p>
                     </div>
                 </div>
@@ -227,45 +421,38 @@
                 <div>
                     <div class="leaderboard">
                         <h3 class="font-bold mb-3"><i class="fas fa-trophy" style="color: #f59e0b;"></i> Таблица рекордов</h3>
-                        <div id="leaderboardList">
-                            <div class="skeleton" style="height: 40px; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton" style="height: 40px; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton" style="height: 40px;"></div>
-                        </div>
+                        <div id="leaderboardList"><div class="skeleton" style="height: 40px; margin-bottom: 0.5rem;"></div><div class="skeleton" style="height: 40px;"></div></div>
                     </div>
                     <div class="card mt-4">
                         <h3 class="font-bold mb-2"><i class="fas fa-chart-line"></i> Моя статистика</h3>
-                        <div id="userStats">
-                            <div class="skeleton" style="height: 80px;"></div>
-                        </div>
+                        <div id="userStats"><div class="skeleton" style="height: 80px;"></div></div>
                     </div>
                 </div>
             </div>
         </div>
     </main>
 
+    <!-- Модальное окно с вопросом -->
     <div id="codeModal" class="modal">
-    <div class="modal-content code-modal">
-        <div class="modal-header">
-            <h3 class="font-bold"><i class="fas fa-terminal"></i> Программист, внимание!</h3>
-            <button class="modal-close" onclick="closeCodeModal()">&times;</button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="font-bold"><i class="fas fa-terminal"></i> Код-вызов!</h3>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div id="questionText" class="text-center mb-3" style="font-size: 1rem; line-height: 1.4;"></div>
+            <div id="questionOptions" class="question-options"></div>
+            <div id="codeFeedback" class="code-feedback"></div>
+            <button id="skipChallengeBtn" class="btn btn-skip"><i class="fas fa-forward"></i> Пропустить (-1 жизнь)</button>
         </div>
-        <div id="questionText" class="text-center mb-3" style="font-size: 1rem;"></div>
-        <div id="questionOptions" class="question-options"></div>
-        <div id="codeFeedback" class="text-center text-sm mt-2"></div>
     </div>
-</div>
 
     <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 КонсПресс Университет. Игровой портал.</p>
-        </div>
+        <div class="container"><p>&copy; 2025 КонсПресс Университет. Игровой портал.</p></div>
     </footer>
-
     <div id="toast" class="toast"></div>
 
     <script>
-        const API_URL = window.location.origin;
+        // --- Глобальные переменные ---
         let currentUser = null;
         let currentGame = 'runner';
         let gameRunning = false;
@@ -279,36 +466,21 @@
         let canvas = document.getElementById('gameCanvas');
         let ctx = canvas.getContext('2d');
         let width = 0, height = 0;
+        let jumpCount = 0;
+        let pendingCode = false;
+        let gameSpeed = 4.2;
 
+        // Игровые объекты
         let player = { x: 100, y: 0, width: 32, height: 32, vy: 0, grounded: true, rotation: 0 };
         let obstacles = [];
         let stars = [];
         let particles = [];
         let frameCount = 0;
-        let gameSpeed = 4;
-        let jumpCount = 0;
-        let pendingCode = false;
 
-        for (let i = 0; i < 50; i++) {
-            stars.push({ x: Math.random() * 1000, y: Math.random() * height, size: Math.random() * 2 + 1 });
-        }
-
-        async function apiRequest(url, options = {}) {
-            try {
-                const response = await fetch(API_URL + url, {
-                    ...options,
-                    headers: { 'Content-Type': 'application/json', ...options.headers },
-                    credentials: 'include'
-                });
-                return await response.json();
-            } catch (error) {
-                return { success: false, error: 'Ошибка сети' };
-            }
-        }
-
-        function showToast(message, type = 'info') {
+        // --- Вспомогательные функции ---
+        function showToast(msg, type = 'info') {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            toast.textContent = msg;
             toast.className = 'toast show';
             if (type === 'success') toast.classList.add('toast-success');
             if (type === 'error') toast.classList.add('toast-error');
@@ -317,37 +489,73 @@
 
         function escapeHtml(str) {
             if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
+            return str.replace(/[&<>]/g, m => m === '&' ? '&amp;' : m === '<' ? '&lt;' : '&gt;');
+        }
+
+        // --- API (мок + реальный fallback) ---
+        async function apiRequest(url) {
+            try {
+                const res = await fetch(url, { credentials: 'include', headers: { 'Content-Type': 'application/json' } });
+                return await res.json();
+            } catch {
+                return { success: false };
+            }
         }
 
         async function getCurrentUser() {
-            return apiRequest('/api/auth/me');
+            const data = await apiRequest('/api/auth/me');
+            if (data.success && data.user) return data.user;
+            return null;
         }
 
         async function getGameQuestions() {
-            return apiRequest('/api/games/questions');
+            const data = await apiRequest('/api/games/questions');
+            if (data.success && data.questions?.runner) return data.questions.runner;
+            return null;
         }
 
         async function getGameProgress() {
-            return apiRequest('/api/games/progress');
+            return await apiRequest('/api/games/progress');
         }
 
         async function updateGameProgress(game, highScore, questionsAnswered) {
-            return apiRequest('/api/games/progress', {
-                method: 'POST',
-                body: JSON.stringify({ game, high_score: highScore, questions_answered: questionsAnswered })
-            });
+            try {
+                await fetch('/api/games/progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ game, high_score: highScore, questions_answered: questionsAnswered })
+                });
+            } catch(e) {}
         }
 
         async function getGameConfig() {
-            return apiRequest('/api/games/config');
+            const data = await apiRequest('/api/games/config');
+            if (data.success && data.config?.runner_speed) return data.config.runner_speed;
+            return { easy: 3.2, normal: 4.2, hard: 5.2 };
         }
 
+        // --- Загрузка вопросов ---
+        async function loadQuestions() {
+            const remote = await getGameQuestions();
+            if (remote && remote[currentDifficulty] && remote[currentDifficulty].length) {
+                currentQuestions = remote[currentDifficulty].map(q => ({
+                    q: q.q || q.question_text,
+                    options: q.options || [],
+                    correct: q.correct !== undefined ? q.correct : 0
+                }));
+            }
+            if (!currentQuestions.length) {
+                // fallback вопросы
+                currentQuestions = [
+                    { q: "Что такое переменная в JavaScript?", options: ["Контейнер для данных", "Функция", "Цикл", "Массив"], correct: 0 },
+                    { q: "Какой символ используется для однострочного комментария?", options: ["//", "/*", "#", "<!--"], correct: 0 },
+                    { q: "Что делает оператор '===' ?", options: ["Сравнение без приведения типов", "Присваивание", "Сравнение с приведением", "Умножение"], correct: 0 }
+                ];
+            }
+        }
+
+        // --- Игровая логика ---
         function resizeCanvas() {
             const wrapper = canvas.parentElement;
             width = wrapper.clientWidth;
@@ -356,103 +564,70 @@
             canvas.height = height;
             const groundY = height - 45;
             player.y = groundY - player.height;
+            player.x = 100;
+            // пересоздать звезды
+            stars = [];
+            for (let i = 0; i < 60; i++) {
+                stars.push({ x: Math.random() * width, y: Math.random() * height, size: Math.random() * 2 + 1 });
+            }
         }
 
         async function updateGameSpeed() {
-            const result = await getGameConfig();
-            if (result.success && result.config) {
-                const speedConfig = result.config.runner_speed;
-                if (speedConfig) {
-                    if (currentDifficulty === 'easy') gameSpeed = speedConfig.easy || 3.2;
-                    else if (currentDifficulty === 'hard') gameSpeed = speedConfig.hard || 5.2;
-                    else gameSpeed = speedConfig.normal || 4.2;
-                }
-            }
-            updateDifficultyBadge();
-        }
-
-        function updateDifficultyBadge() {
+            const speeds = await getGameConfig();
+            if (currentDifficulty === 'easy') gameSpeed = speeds.easy || 3.2;
+            else if (currentDifficulty === 'hard') gameSpeed = speeds.hard || 5.2;
+            else gameSpeed = speeds.normal || 4.2;
             const badge = document.getElementById('difficultyBadge');
-            if (!badge) return;
-            if (currentDifficulty === 'easy') {
-                badge.textContent = '🌿 Легкий';
-                badge.className = 'difficulty-badge difficulty-easy';
-            } else if (currentDifficulty === 'normal') {
-                badge.textContent = '⚡ Нормальный';
-                badge.className = 'difficulty-badge difficulty-normal';
-            } else {
-                badge.textContent = '🔥 Сложный';
-                badge.className = 'difficulty-badge difficulty-hard';
-            }
+            if (currentDifficulty === 'easy') { badge.textContent = '🌿 Легкий'; badge.className = 'difficulty-badge difficulty-easy'; }
+            else if (currentDifficulty === 'normal') { badge.textContent = '⚡ Нормальный'; badge.className = 'difficulty-badge difficulty-normal'; }
+            else { badge.textContent = '🔥 Сложный'; badge.className = 'difficulty-badge difficulty-hard'; }
         }
 
         function spawnObstacle() {
             const types = ['block', 'fire', 'spike'];
             const type = types[Math.floor(Math.random() * types.length)];
             let color, icon, obstacleHeight;
-            if (type === 'block') {
-                color = '#ef4444';
-                icon = '🧱';
-                obstacleHeight = 30;
-            } else if (type === 'fire') {
-                color = '#f97316';
-                icon = '🔥';
-                obstacleHeight = 35;
-            } else {
-                color = '#8b5cf6';
-                icon = '⚡';
-                obstacleHeight = 28;
-            }
+            if (type === 'block') { color = '#ef4444'; icon = '🧱'; obstacleHeight = 30; }
+            else if (type === 'fire') { color = '#f97316'; icon = '🔥'; obstacleHeight = 35; }
+            else { color = '#8b5cf6'; icon = '⚡'; obstacleHeight = 28; }
             const groundY = height - 45;
             obstacles.push({
-                x: width,
-                y: groundY - obstacleHeight,
-                width: 28,
-                height: obstacleHeight,
-                color: color,
-                icon: icon,
-                type: type
+                x: width, y: groundY - obstacleHeight, width: 28, height: obstacleHeight,
+                color, icon, type
             });
         }
 
         function addParticles(x, y, color) {
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 12; i++) {
                 particles.push({
-                    x: x + Math.random() * 30,
-                    y: y + Math.random() * 30,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: (Math.random() - 0.5) * 4 - 2,
-                    life: 1,
-                    color: color,
-                    size: Math.random() * 4 + 2
+                    x: x + Math.random() * 30, y: y + Math.random() * 30,
+                    vx: (Math.random() - 0.5) * 4, vy: (Math.random() - 0.5) * 4 - 2,
+                    life: 1, color, size: Math.random() * 4 + 2
                 });
             }
         }
 
         function updateParticles() {
-            for (let i = 0; i < particles.length; i++) {
+            for (let i=0; i<particles.length; i++) {
                 particles[i].x += particles[i].vx;
                 particles[i].y += particles[i].vy;
                 particles[i].life -= 0.03;
                 particles[i].vy += 0.2;
-                if (particles[i].life <= 0 || particles[i].y > height) {
-                    particles.splice(i, 1);
-                    i--;
-                }
+                if (particles[i].life <= 0 || particles[i].y > height) particles.splice(i--,1);
             }
         }
 
-        function drawParticles() {
-            for (let p of particles) {
-                ctx.globalAlpha = p.life;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(p.x, p.y, p.size, p.size);
-            }
-            ctx.globalAlpha = 1;
+        function updateUI() {
+            document.getElementById('scoreDisplay').innerHTML = Math.floor(currentScore);
+            document.getElementById('comboDisplay').innerHTML = `x${currentCombo.toFixed(1)}`;
+            document.getElementById('healthDisplay').innerHTML = currentHealth;
+            const scoreDiv = document.getElementById('scoreDisplay');
+            scoreDiv.classList.add('combo-effect');
+            setTimeout(() => scoreDiv.classList.remove('combo-effect'), 200);
         }
 
         function checkCollision() {
-            for (let i = 0; i < obstacles.length; i++) {
+            for (let i=0; i<obstacles.length; i++) {
                 const obs = obstacles[i];
                 if (player.x < obs.x + obs.width && player.x + player.width > obs.x &&
                     player.y < obs.y + obs.height && player.y + player.height > obs.y) {
@@ -460,12 +635,12 @@
                     currentCombo = 1;
                     addParticles(player.x, player.y, '#ef4444');
                     updateUI();
-                    obstacles.splice(i, 1);
+                    obstacles.splice(i,1);
                     if (currentHealth <= 0) gameOver();
                     return;
                 }
                 if (obs.x + obs.width < 0) {
-                    obstacles.splice(i, 1);
+                    obstacles.splice(i,1);
                     i--;
                     currentScore += 10 * currentCombo;
                     currentCombo = Math.min(currentCombo + 0.2, 3);
@@ -483,14 +658,9 @@
                 player.y = groundY - player.height;
                 player.vy = 0;
                 player.grounded = true;
-            } else {
-                player.grounded = false;
-            }
-            if (player.grounded) {
-                player.rotation = Math.sin(Date.now() * 0.01) * 0.1;
-            } else {
-                player.rotation += 0.1;
-            }
+            } else player.grounded = false;
+            if (player.grounded) player.rotation = Math.sin(Date.now() * 0.01) * 0.1;
+            else player.rotation += 0.1;
         }
 
         function jump() {
@@ -499,138 +669,77 @@
                 player.grounded = false;
                 jumpCount++;
                 addParticles(player.x + player.width/2, player.y + player.height, '#3b82f6');
-                const interval = 10;
-                if (jumpCount % interval === 0 && jumpCount > 0) {
-                    showCodingChallenge();
-                }
+                if (jumpCount % 10 === 0 && jumpCount > 0) showCodingChallenge();
             }
         }
 
-        async function loadQuestions() {
-    const result = await getGameQuestions();
-    if (result.success && result.questions && result.questions.runner) {
-        const all = result.questions.runner;
-        currentQuestions = (all[currentDifficulty] || []).map(q => ({
-            id: q.id,
-            q: q.q,
-            options: q.options,
-            correct: q.correct
-        }));
-    }
-    if (currentQuestions.length === 0) {
-        // Фейковые вопросы на случай пустой БД
-        currentQuestions = [
-            { q: "Что такое JavaScript?", options: ["Язык программирования", "База данных", "Стиль", "Фреймворк"], correct: 0 },
-            { q: "Какой тег используется для ссылки в HTML?", options: ["<a>", "<link>", "<href>", "<url>"], correct: 0 }
-        ];
-    }
-}
+        async function showCodingChallenge() {
+            if (pendingCode || !gameRunning) return;
+            if (currentQuestions.length === 0) await loadQuestions();
+            const q = currentQuestions[Math.floor(Math.random() * currentQuestions.length)];
+            if (!q) return;
 
-       async function showCodingChallenge() {
-    if (pendingCode) return;
-    if (currentQuestions.length === 0) await loadQuestions();
-    const q = currentQuestions[Math.floor(Math.random() * currentQuestions.length)];
-    if (!q) return;
+            pendingCode = true;
+            gamePaused = true;
+            document.getElementById('questionText').innerHTML = q.q;
+            const container = document.getElementById('questionOptions');
+            container.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'question-option';
+                div.innerHTML = opt;
+                div.onclick = () => {
+                    if (idx === q.correct) {
+                        currentScore += 30 * currentCombo;
+                        currentCombo = Math.min(currentCombo + 0.2, 3);
+                        document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-check-circle"></i> Верно! +' + Math.floor(30 * currentCombo) + ' очков';
+                        addParticles(width/2, height/2, '#22c55e');
+                        updateUI();
+                        setTimeout(() => closeCodeModal(false), 900);
+                    } else {
+                        currentHealth--;
+                        currentCombo = 1;
+                        document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-times-circle"></i> Ошибка! -1 жизнь';
+                        addParticles(width/2, height/2, '#ef4444');
+                        updateUI();
+                        if (currentHealth <= 0) {
+                            setTimeout(() => { closeCodeModal(true); gameOver(); }, 1000);
+                        } else {
+                            setTimeout(() => closeCodeModal(false), 1000);
+                        }
+                    }
+                };
+                container.appendChild(div);
+            });
+            document.getElementById('codeFeedback').innerHTML = '';
+            document.getElementById('codeModal').classList.add('active');
+        }
 
-    pendingCode = true;
-    gamePaused = true;
-    document.getElementById('questionText').innerHTML = q.q;
-    const container = document.getElementById('questionOptions');
-    container.innerHTML = '';
-    q.options.forEach((opt, idx) => {
-        const div = document.createElement('div');
-        div.className = 'question-option';
-        div.innerHTML = opt;
-        div.onclick = () => {
-            if (idx === q.correct) {
-                currentScore += 30 * currentCombo;
-                currentCombo = Math.min(currentCombo + 0.2, 3);
-                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-check-circle"></i> Правильно! +30 очков';
-                addParticles(width/2, height/2, '#22c55e');
-                updateUI();
-                setTimeout(() => closeCodeModal(), 1000);
+        function skipChallenge() {
+            if (!pendingCode) return;
+            currentHealth--;
+            currentCombo = 1;
+            updateUI();
+            showToast('Задание пропущено, -1 жизнь', 'error');
+            if (currentHealth <= 0) {
+                closeCodeModal(true);
+                gameOver();
             } else {
-                currentHealth--;
-                currentCombo = 1;
-                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-times-circle"></i> Неправильно! -1 жизнь';
-                addParticles(width/2, height/2, '#ef4444');
-                updateUI();
-                if (currentHealth <= 0) {
-                    setTimeout(() => {
-                        closeCodeModal();
-                        gameOver();
-                    }, 1000);
-                } else {
-                    setTimeout(() => closeCodeModal(), 1000);
-                }
-            }
-        };
-        container.appendChild(div);
-    });
-    document.getElementById('codeFeedback').innerHTML = '';
-    document.getElementById('codeModal').classList.add('active');
-}
-
-function closeCodeModal() {
-    document.getElementById('codeModal').classList.remove('active');
-    pendingCode = false;
-    gamePaused = false;
-    if (gameRunning && !gamePaused && currentHealth > 0) {
-        updateGame();
-    }
-}
-
-        function evaluateCode() {
-            const code = document.getElementById('codeInput').value.trim();
-            const challenge = window.currentChallenge;
-            if (!challenge) return;
-
-            let isCorrect = false;
-            try {
-                // Простейшая проверка: сравнение с ожидаемым кодом (можно расширить)
-                const expected = challenge.expected || '';
-                isCorrect = code.replace(/\s/g, '') === expected.replace(/\s/g, '');
-                // Можно добавить eval для проверки функции (осторожно!)
-                // Для простоты используем сравнение строк.
-            } catch(e) { isCorrect = false; }
-
-            if (isCorrect) {
-                currentScore += 30 * currentCombo;
-                currentCombo = Math.min(currentCombo + 0.2, 3);
-                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-check-circle"></i> Правильно! +30 очков';
-                addParticles(width/2, height/2, '#22c55e');
-                updateUI();
-                setTimeout(() => {
-                    closeCodeModal();
-                }, 1000);
-            } else {
-                currentHealth--;
-                currentCombo = 1;
-                document.getElementById('codeFeedback').innerHTML = '<i class="fas fa-times-circle"></i> Неправильно! -1 жизнь';
-                addParticles(width/2, height/2, '#ef4444');
-                updateUI();
-                if (currentHealth <= 0) {
-                    setTimeout(() => {
-                        closeCodeModal();
-                        gameOver();
-                    }, 1000);
-                } else {
-                    setTimeout(() => {
-                        closeCodeModal();
-                    }, 1000);
-                }
+                closeCodeModal(false);
             }
         }
 
-        function updateUI() {
-            document.getElementById('scoreDisplay').textContent = Math.floor(currentScore);
-            document.getElementById('comboDisplay').innerHTML = `x${currentCombo.toFixed(1)}`;
-            document.getElementById('healthDisplay').textContent = currentHealth;
-            const scoreDisplay = document.getElementById('scoreDisplay');
-            scoreDisplay.classList.add('combo-effect');
-            setTimeout(() => scoreDisplay.classList.remove('combo-effect'), 300);
+        function closeCodeModal(isGameOver = false) {
+            document.getElementById('codeModal').classList.remove('active');
+            pendingCode = false;
+            gamePaused = false;
+            document.getElementById('codeFeedback').innerHTML = '';
+            if (!isGameOver && gameRunning && currentHealth > 0) {
+                // просто продолжаем, анимация уже идет
+            }
         }
 
+        // --- Отрисовка ---
         function drawBackground() {
             ctx.fillStyle = '#0f172a';
             ctx.fillRect(0, 0, width, height);
@@ -639,19 +748,17 @@ function closeCodeModal() {
                 ctx.fillRect(star.x, star.y, star.size, star.size);
             }
         }
-
         function drawGround() {
             const groundY = height - 45;
             ctx.fillStyle = '#334155';
             ctx.fillRect(0, groundY, width, 40);
             ctx.fillStyle = '#475569';
             ctx.fillRect(0, groundY - 2, width, 4);
-            for (let i = 0; i < width; i += 30) {
+            for (let i = 0; i < width+30; i += 30) {
                 ctx.fillStyle = `rgba(255,255,255,${0.2 + Math.sin(Date.now() * 0.005 + i) * 0.1})`;
                 ctx.fillRect(i + (frameCount % 30), groundY + 2, 5, 3);
             }
         }
-
         function drawPlayer() {
             ctx.save();
             ctx.translate(player.x + player.width/2, player.y + player.height/2);
@@ -664,14 +771,7 @@ function closeCodeModal() {
             ctx.font = 'bold 20px monospace';
             ctx.fillText('</>', -12, -8);
             ctx.restore();
-            if (player.grounded) {
-                ctx.fillStyle = 'rgba(59,130,246,0.3)';
-                ctx.beginPath();
-                ctx.ellipse(player.x + player.width/2, player.y + player.height, player.width/1.5, 8, 0, 0, Math.PI * 2);
-                ctx.fill();
-            }
         }
-
         function drawObstacles() {
             for (let obs of obstacles) {
                 ctx.fillStyle = obs.color;
@@ -679,11 +779,16 @@ function closeCodeModal() {
                 ctx.fillStyle = 'white';
                 ctx.font = '20px monospace';
                 ctx.fillText(obs.icon, obs.x + 4, obs.y + obs.height - 8);
-                ctx.fillStyle = `rgba(0,0,0,0.3)`;
-                ctx.fillRect(obs.x + 2, obs.y + 2, obs.width - 4, 4);
             }
         }
-
+        function drawParticles() {
+            for (let p of particles) {
+                ctx.globalAlpha = p.life;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            }
+            ctx.globalAlpha = 1;
+        }
         function draw() {
             drawBackground();
             drawGround();
@@ -692,28 +797,31 @@ function closeCodeModal() {
             drawParticles();
         }
 
-        function updateGame() {
-            if (!gameRunning || gamePaused) {
+        function updateGameLoop() {
+            if (!gameRunning) {
                 draw();
+                animationId = requestAnimationFrame(updateGameLoop);
                 return;
             }
-            updatePhysics();
-            updateParticles();
-            frameCount++;
-            let spawnRate = currentDifficulty === 'hard' ? 70 : currentDifficulty === 'easy' ? 130 : 100;
-            if (frameCount % spawnRate === 0) spawnObstacle();
-            for (let i = 0; i < obstacles.length; i++) {
-                obstacles[i].x -= gameSpeed;
+            if (!gamePaused) {
+                updatePhysics();
+                updateParticles();
+                frameCount++;
+                let spawnRate = currentDifficulty === 'hard' ? 70 : currentDifficulty === 'easy' ? 130 : 100;
+                if (frameCount % spawnRate === 0) spawnObstacle();
+                for (let i=0; i<obstacles.length; i++) obstacles[i].x -= gameSpeed;
+                checkCollision();
             }
-            checkCollision();
             draw();
-            animationId = requestAnimationFrame(updateGame);
+            animationId = requestAnimationFrame(updateGameLoop);
         }
 
-        async function startGame() {
-            if (gameRunning && !gamePaused) return;
+        // --- Управление игрой ---
+        function startGame() {
+            if (animationId) cancelAnimationFrame(animationId);
             gameRunning = true;
             gamePaused = false;
+            pendingCode = false;
             currentScore = 0;
             currentHealth = 3;
             currentCombo = 1;
@@ -725,21 +833,19 @@ function closeCodeModal() {
             player.y = groundY - player.height;
             player.vy = 0;
             player.rotation = 0;
-            await updateGameSpeed();
             updateUI();
-            if (animationId) cancelAnimationFrame(animationId);
-            updateGame();
+            updateGameSpeed().then(() => {
+                animationId = requestAnimationFrame(updateGameLoop);
+            });
         }
 
         function pauseGame() {
             if (!gameRunning) return;
+            if (pendingCode) return;
             gamePaused = !gamePaused;
-            if (!gamePaused) updateGame();
         }
 
         function resetGame() {
-            gameRunning = false;
-            gamePaused = false;
             if (animationId) cancelAnimationFrame(animationId);
             startGame();
         }
@@ -747,8 +853,9 @@ function closeCodeModal() {
         async function gameOver() {
             gameRunning = false;
             gamePaused = false;
-            if (animationId) cancelAnimationFrame(animationId);
-            showToast(`Игра окончена! Очки: ${Math.floor(currentScore)}`, 'warning');
+            pendingCode = false;
+            document.getElementById('codeModal').classList.remove('active');
+            showToast(`Игра окончена! Счёт: ${Math.floor(currentScore)}`, 'warning');
             if (currentUser && currentScore > 0) {
                 await updateGameProgress(currentGame, Math.floor(currentScore), Math.floor(jumpCount / 10));
                 await loadLeaderboard();
@@ -760,117 +867,74 @@ function closeCodeModal() {
             ctx.fillStyle = 'white';
             ctx.font = 'bold 28px monospace';
             ctx.textAlign = 'center';
-            ctx.fillText('GAME OVER', width / 2, height / 2 - 30);
+            ctx.fillText('GAME OVER', width/2, height/2 - 30);
             ctx.font = '18px monospace';
             ctx.fillStyle = '#facc15';
-            ctx.fillText(`Score: ${Math.floor(currentScore)}`, width / 2, height / 2 + 10);
-            ctx.fillStyle = '#94a3b8';
+            ctx.fillText(`Score: ${Math.floor(currentScore)}`, width/2, height/2 + 10);
             ctx.font = '14px monospace';
-            ctx.fillText('Нажмите "Старт" чтобы продолжить', width / 2, height / 2 + 50);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillText('Нажмите "Старт"', width/2, height/2 + 50);
             ctx.textAlign = 'left';
         }
 
         async function loadLeaderboard() {
             const result = await getGameProgress();
             const container = document.getElementById('leaderboardList');
-            if (result.success && result.progress && result.progress.length > 0) {
-                const topScores = result.progress.filter(p => p.game === 'runner').slice(0, 8);
-                if (topScores.length > 0) {
-                    container.innerHTML = topScores.map((p, idx) => {
-                        let medal = '';
-                        if (idx === 0) medal = '🥇 ';
-                        else if (idx === 1) medal = '🥈 ';
-                        else if (idx === 2) medal = '🥉 ';
-                        return `
-                            <div class="leaderboard-item">
-                                <span class="leaderboard-rank">${medal || (idx + 1)}</span>
-                                <span class="leaderboard-name">${escapeHtml(p.player_name)}</span>
-                                <span class="leaderboard-score">${p.high_score} ⚡</span>
-                            </div>
-                        `;
+            if (result.success && result.progress) {
+                const top = result.progress.filter(p => p.game === 'runner').slice(0, 8);
+                if (top.length) {
+                    container.innerHTML = top.map((p, idx) => {
+                        let medal = idx === 0 ? '🥇 ' : idx === 1 ? '🥈 ' : idx === 2 ? '🥉 ' : (idx+1)+'. ';
+                        return `<div class="leaderboard-item"><span class="leaderboard-rank">${medal}</span><span class="leaderboard-name">${escapeHtml(p.player_name)}</span><span class="leaderboard-score">${p.high_score} ⚡</span></div>`;
                     }).join('');
-                } else {
-                    container.innerHTML = '<p class="text-center text-gray">Нет рекордов</p>';
-                }
-            } else {
-                container.innerHTML = '<p class="text-center text-gray">Не удалось загрузить рекорды</p>';
-            }
+                } else container.innerHTML = '<p class="text-center text-gray">Нет рекордов</p>';
+            } else container.innerHTML = '<p class="text-center text-gray">Не загружено</p>';
         }
 
         async function loadUserStats() {
-            if (!currentUser) {
-                document.getElementById('userStats').innerHTML = '<p class="text-center text-gray">Войдите, чтобы видеть свою статистику</p>';
-                return;
-            }
+            if (!currentUser) { document.getElementById('userStats').innerHTML = '<p class="text-center text-gray p-3">Войдите в аккаунт</p>'; return; }
             const result = await getGameProgress();
             if (result.success && result.progress) {
-                const userProgress = result.progress.filter(p => p.player_name === currentUser.fullName && p.game === 'runner');
-                if (userProgress.length > 0) {
-                    const totalScore = userProgress.reduce((sum, p) => sum + p.high_score, 0);
-                    const totalQuestions = userProgress.reduce((sum, p) => sum + (p.questions_answered || 0), 0);
-                    const bestScore = Math.max(...userProgress.map(p => p.high_score), 0);
+                const userData = result.progress.filter(p => p.player_name === currentUser.fullName && p.game === 'runner');
+                if (userData.length) {
+                    const best = Math.max(...userData.map(p=>p.high_score));
+                    const total = userData.reduce((s,p)=>s+p.high_score,0);
+                    const quests = userData.reduce((s,p)=>s+(p.questions_answered||0),0);
                     document.getElementById('userStats').innerHTML = `
-                        <div class="flex justify-between mb-2 p-2 bg-gray-50 rounded">
-                            <span><i class="fas fa-trophy"></i> Лучший результат:</span>
-                            <span class="font-bold text-primary">${bestScore}</span>
-                        </div>
-                        <div class="flex justify-between mb-2 p-2 bg-gray-50 rounded">
-                            <span><i class="fas fa-star"></i> Всего очков:</span>
-                            <span class="font-bold">${totalScore}</span>
-                        </div>
-                        <div class="flex justify-between p-2 bg-gray-50 rounded">
-                            <span><i class="fas fa-code"></i> Заданий решено:</span>
-                            <span class="font-bold">${totalQuestions}</span>
-                        </div>
-                    `;
-                } else {
-                    document.getElementById('userStats').innerHTML = '<p class="text-center text-gray p-3">Пока нет статистики. Сыграйте!</p>';
-                }
+                        <div class="flex justify-between p-2 bg-gray-50 rounded mb-2"><span>🏆 Лучший:</span><span class="font-bold">${best}</span></div>
+                        <div class="flex justify-between p-2 bg-gray-50 rounded mb-2"><span>⭐ Всего очков:</span><span class="font-bold">${total}</span></div>
+                        <div class="flex justify-between p-2 bg-gray-50 rounded"><span>📚 Решено заданий:</span><span class="font-bold">${quests}</span></div>`;
+                } else document.getElementById('userStats').innerHTML = '<p class="text-center text-gray p-3">Сыграйте, чтобы увидеть статистику</p>';
             }
         }
 
+        // --- Инициализация ---
         async function init() {
-            const userResult = await getCurrentUser();
-            if (userResult.success && userResult.user) {
-                currentUser = userResult.user;
-            }
+            const user = await getCurrentUser();
+            if (user) currentUser = user;
             await loadQuestions();
             await loadLeaderboard();
             await loadUserStats();
-            await updateGameSpeed();
             resizeCanvas();
-            window.addEventListener('resize', resizeCanvas);
+            window.addEventListener('resize', () => { resizeCanvas(); if (!gameRunning) draw(); });
             startGame();
         }
 
+        // --- События ---
         document.getElementById('startGameBtn').addEventListener('click', startGame);
         document.getElementById('pauseGameBtn').addEventListener('click', pauseGame);
         document.getElementById('resetGameBtn').addEventListener('click', resetGame);
         document.getElementById('difficultySelect').addEventListener('change', async (e) => {
             currentDifficulty = e.target.value;
             await updateGameSpeed();
-            if (!gameRunning) startGame();
+            if (!gameRunning) startGame(); else resetGame();
         });
-        document.getElementById('profileIcon').addEventListener('click', () => {
-            window.location.href = '/lickab.html';
-        });
-        document.getElementById('submitCodeBtn').addEventListener('click', evaluateCode);
-        document.getElementById('skipCodeBtn').addEventListener('click', () => {
-            currentHealth--;
-            currentCombo = 1;
-            updateUI();
-            showToast('Задание пропущено, -1 жизнь', 'error');
-            if (currentHealth <= 0) gameOver();
-            closeCodeModal();
-        });
-
+        document.getElementById('profileIcon').addEventListener('click', () => window.location.href = '/lickab.html');
+        document.getElementById('skipChallengeBtn').addEventListener('click', skipChallenge);
+        document.getElementById('modalCloseBtn').addEventListener('click', skipChallenge);
         window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' || e.code === 'ArrowUp') {
-                e.preventDefault();
-                jump();
-            }
+            if (e.code === 'Space' || e.code === 'ArrowUp') { e.preventDefault(); jump(); }
         });
-
         init();
     </script>
 </body>

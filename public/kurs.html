@@ -11,249 +11,55 @@
     <link rel="stylesheet" href="/css/responsive.css">
     <meta name="theme-color" content="#dc2626">
     <style>
-        .course-card {
-    transition: transform 0.2s ease;
-    transform: translateY(0);
-    will-change: transform;
-}
-
-.course-card:hover {
-    transform: translateY(-4px);
-}
-
-.course-card-img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    transition: none;
-}
-
-img {
-    max-width: 100%;
-    height: auto;
-    display: block;
-}
-
-.grid {
-    display: grid;
-    gap: 1.5rem;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-}
-
-.skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
-}
-
-* {
-    box-sizing: border-box;
-}
-        .filter-section {
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid var(--border);
-        }
-        .filter-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: flex-end;
-        }
-        .filter-group .form-group {
-            flex: 1;
-            min-width: 150px;
-        }
-        .course-detail-modal .modal-content {
-            max-width: 800px;
-        }
-        .lesson-list {
-            margin-top: 1rem;
-        }
-        .lesson-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.75rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .lesson-item:last-child {
-            border-bottom: none;
-        }
-        .enroll-btn {
-            margin-top: 1rem;
-            width: 100%;
-        }
-        .search-results {
-            font-size: 0.875rem;
-            color: var(--gray);
-            margin-bottom: 1rem;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray);
-        }
-
-        .feedback-section {
-    padding: 4rem 0;
-    background: #f8fafc;
-    border-radius: 2rem;
-    margin: 3rem 0;
-}
-
-.feedback-container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-}
-
-.feedback-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.feedback-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: #1f2937;
-    margin-bottom: 0.5rem;
-}
-
-.feedback-subtitle {
-    font-size: 1rem;
-    color: #6b7280;
-}
-
-.feedback-form {
-    background: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-}
-
-.form-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.form-group {
-    flex: 1;
-}
-
-.form-control {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.5rem;
-    font-size: 0.9rem;
-    font-family: inherit;
-    transition: all 0.2s;
-    background: #f9fafb;
-}
-
-.form-control:focus {
-    outline: none;
-    border-color: #dc2626;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
-}
-
-.form-checkbox {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 1.5rem 0;
-}
-
-.form-checkbox input {
-    width: 1rem;
-    height: 1rem;
-    cursor: pointer;
-    accent-color: #dc2626;
-}
-
-.form-checkbox label {
-    font-size: 0.85rem;
-    color: #4b5563;
-    cursor: pointer;
-}
-
-.form-submit {
-    text-align: center;
-}
-
-.btn-submit-feedback {
-    background: #dc2626;
-    color: white;
-    border: none;
-    padding: 0.75rem 2rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    width: 100%;
-}
-
-.btn-submit-feedback:hover {
-    background: #b91c1c;
-    transform: translateY(-2px);
-}
-
-.form-note {
-    font-size: 0.7rem;
-    color: #9ca3af;
-    margin-top: 1rem;
-}
-
-.form-status-message {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    text-align: center;
-    display: none;
-}
-
-.form-status-message.success {
-    display: block;
-    background: #d1fae5;
-    color: #065f46;
-}
-
-.form-status-message.error {
-    display: block;
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-@media (max-width: 640px) {
-    .feedback-section {
-        padding: 2rem 0;
-        margin: 2rem 0;
-    }
-    
-    .feedback-title {
-        font-size: 1.5rem;
-    }
-    
-    .form-row {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .feedback-form {
-        padding: 1.5rem;
-    }
-}
+        /* все ваши стили остаются без изменений – копируем их из вашего файла */
+        .course-card { transition: transform 0.2s ease; transform: translateY(0); will-change: transform; }
+        .course-card:hover { transform: translateY(-4px); }
+        .course-card-img { width: 100%; height: 180px; object-fit: cover; transition: none; }
+        img { max-width: 100%; height: auto; display: block; }
+        .grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+        .skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        * { box-sizing: border-box; }
+        .filter-section { background: white; border-radius: var(--radius-lg); padding: 1rem; margin-bottom: 1.5rem; border: 1px solid var(--border); }
+        .filter-group { display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end; }
+        .filter-group .form-group { flex: 1; min-width: 150px; }
+        .course-detail-modal .modal-content { max-width: 800px; }
+        .lesson-list { margin-top: 1rem; }
+        .lesson-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border-bottom: 1px solid var(--border); }
+        .lesson-item:last-child { border-bottom: none; }
+        .enroll-btn { margin-top: 1rem; width: 100%; }
+        .search-results { font-size: 0.875rem; color: var(--gray); margin-bottom: 1rem; }
+        .empty-state { text-align: center; padding: 3rem; color: var(--gray); }
+        .feedback-section { padding: 4rem 0; background: #f8fafc; border-radius: 2rem; margin: 3rem 0; }
+        .feedback-container { max-width: 700px; margin: 0 auto; padding: 0 1.5rem; }
+        .feedback-header { text-align: center; margin-bottom: 2rem; }
+        .feedback-title { font-size: 1.8rem; font-weight: 700; color: #1f2937; margin-bottom: 0.5rem; }
+        .feedback-subtitle { font-size: 1rem; color: #6b7280; }
+        .feedback-form { background: white; padding: 2rem; border-radius: 1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .form-row { display: flex; gap: 1rem; margin-bottom: 1rem; }
+        .form-group { flex: 1; }
+        .form-control { width: 100%; padding: 0.75rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9rem; font-family: inherit; transition: all 0.2s; background: #f9fafb; }
+        .form-control:focus { outline: none; border-color: #dc2626; background: white; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+        .form-checkbox { display: flex; align-items: center; gap: 0.5rem; margin: 1.5rem 0; }
+        .form-checkbox input { width: 1rem; height: 1rem; cursor: pointer; accent-color: #dc2626; }
+        .form-checkbox label { font-size: 0.85rem; color: #4b5563; cursor: pointer; }
+        .form-submit { text-align: center; }
+        .btn-submit-feedback { background: #dc2626; color: white; border: none; padding: 0.75rem 2rem; font-size: 1rem; font-weight: 600; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s; width: 100%; }
+        .btn-submit-feedback:hover { background: #b91c1c; transform: translateY(-2px); }
+        .form-note { font-size: 0.7rem; color: #9ca3af; margin-top: 1rem; }
+        .form-status-message { margin-top: 1rem; padding: 0.75rem; border-radius: 0.5rem; text-align: center; display: none; }
+        .form-status-message.success { display: block; background: #d1fae5; color: #065f46; }
+        .form-status-message.error { display: block; background: #fee2e2; color: #991b1b; }
+        @media (max-width: 640px) { .feedback-section { padding: 2rem 0; margin: 2rem 0; } .feedback-title { font-size: 1.5rem; } .form-row { flex-direction: column; gap: 0.75rem; } .feedback-form { padding: 1.5rem; } }
+        #enrollModal .form-group { margin-bottom: 1rem; }
+        #enrollModal .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: #374151; margin-bottom: 0.4rem; }
+        #enrollModal .form-input { width: 100%; padding: 0.6rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9rem; transition: all 0.2s; background: white; outline: none; }
+        #enrollModal .form-input:focus { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+        #enrollModal .form-textarea { width: 100%; padding: 0.6rem 1rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; font-size: 0.9rem; font-family: inherit; resize: vertical; outline: none; }
+        #enrollModal .form-textarea:focus { border-color: #dc2626; box-shadow: 0 0 0 3px rgba(220,38,38,0.1); }
+        #enrollModal .form-checkbox { display: flex; align-items: center; gap: 0.5rem; margin: 1rem 0; }
+        #enrollModal .form-checkbox input { width: 1rem; height: 1rem; cursor: pointer; accent-color: #dc2626; }
+        #enrollModal .form-checkbox label { font-size: 0.85rem; color: #4b5563; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -341,50 +147,43 @@ img {
         </div>
     </div>
 
-
     <div id="toast" class="toast"></div>
 
-
-<div class="feedback-section">
-    <div class="feedback-container">
-        <div class="feedback-header">
-            <h2 class="feedback-title">Поможем решить все вопросы</h2>
-            <p class="feedback-subtitle">Смело обращайся в деканат. Если боишься напрямую, не стесняйся - пиши!</p>
+    <div class="feedback-section">
+        <div class="feedback-container">
+            <div class="feedback-header">
+                <h2 class="feedback-title">Поможем решить все вопросы</h2>
+                <p class="feedback-subtitle">Смело обращайся в деканат. Если боишься напрямую, не стесняйся - пиши!</p>
+            </div>
+            <form class="feedback-form" id="mainFeedbackForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="fbName" class="form-control" placeholder="Имя" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="fbGroup" class="form-control" placeholder="Группа" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="tel" id="fbPhone" class="form-control" placeholder="Телефон">
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="fbEmail" class="form-control" placeholder="Эл. почта" required>
+                    </div>
+                </div>
+                <div class="form-checkbox">
+                    <input type="checkbox" id="fbAgree" required>
+                    <label for="fbAgree">Я соглашаюсь на обработку персональных данных</label>
+                </div>
+                <div class="form-submit">
+                    <button type="submit" class="btn-submit-feedback">Отправить</button>
+                    <p class="form-note">Нажимая на кнопку, я соглашаюсь с правилами пользования Платформой</p>
+                </div>
+            </form>
+            <div id="feedbackFormStatus" class="form-status-message"></div>
         </div>
-        
-        <form class="feedback-form" id="mainFeedbackForm">
-            <div class="form-row">
-                <div class="form-group">
-                    <input type="text" id="fbName" class="form-control" placeholder="Имя" required>
-                </div>
-                <div class="form-group">
-                    <input type="text" id="fbGroup" class="form-control" placeholder="Группа" required>
-                </div>
-            </div>
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <input type="tel" id="fbPhone" class="form-control" placeholder="Телефон">
-                </div>
-                <div class="form-group">
-                    <input type="email" id="fbEmail" class="form-control" placeholder="Эл. почта" required>
-                </div>
-            </div>
-            
-            <div class="form-checkbox">
-                <input type="checkbox" id="fbAgree" required>
-                <label for="fbAgree">Я соглашаюсь на обработку персональных данных</label>
-            </div>
-            
-            <div class="form-submit">
-                <button type="submit" class="btn-submit-feedback">Отправить</button>
-                <p class="form-note">Нажимая на кнопку, я соглашаюсь с правилами пользования Платформой</p>
-            </div>
-        </form>
-        <div id="feedbackFormStatus" class="form-status-message"></div>
     </div>
-</div>
-
 
     <footer class="footer">
         <div class="container">
@@ -397,19 +196,56 @@ img {
         </div>
     </footer>
 
+    <!-- Модальное окно для записи на курс -->
+    <div id="enrollModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="font-bold">Запись на курс</h3>
+                <button class="modal-close" onclick="closeEnrollModal()">&times;</button>
+            </div>
+            <div id="enrollCourseTitle" class="text-center mb-3" style="font-weight: 600;"></div>
+            <form id="enrollForm">
+                <input type="hidden" id="enrollCourseId">
+                <div class="form-group">
+                    <label>ФИО *</label>
+                    <input type="text" id="enrollName" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="enrollEmail" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label>Телефон</label>
+                    <input type="tel" id="enrollPhone" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label>Комментарий</label>
+                    <textarea id="enrollComment" class="form-textarea" rows="3" placeholder="Ваши вопросы или пожелания..."></textarea>
+                </div>
+                <div class="form-checkbox">
+                    <input type="checkbox" id="enrollAgree" required>
+                    <label for="enrollAgree">Я согласен на обработку персональных данных</label>
+                </div>
+                <div class="flex gap-2 justify-end mt-4">
+                    <button type="button" class="btn btn-outline" onclick="closeEnrollModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                </div>
+            </form>
+            <div id="enrollStatus" class="text-sm mt-2" style="display: none;"></div>
+        </div>
+    </div>
+
     <script>
         const API_URL = window.location.origin;
         let allCourses = [];
         let currentUser = null;
 
+        // ---------- Общие функции ----------
         async function apiRequest(url, options = {}) {
             try {
                 const response = await fetch(API_URL + url, {
                     ...options,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...options.headers
-                    },
+                    headers: { 'Content-Type': 'application/json', ...options.headers },
                     credentials: 'include'
                 });
                 return await response.json();
@@ -425,203 +261,277 @@ img {
             toast.className = 'toast show';
             if (type === 'success') toast.classList.add('toast-success');
             if (type === 'error') toast.classList.add('toast-error');
-            setTimeout(() => {
-                toast.classList.remove('show');
-                toast.className = 'toast';
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         function escapeHtml(str) {
             if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
         }
 
-        async function getCurrentUser() {
-            return apiRequest('/api/auth/me');
-        }
+        // ---------- API вызовы ----------
+        async function getCurrentUser() { return apiRequest('/api/auth/me'); }
+        async function getAllCourses() { return apiRequest('/api/content/slider-courses'); }
+        async function getCourseDetails(courseId) { return apiRequest(`/api/courses/${courseId}`); }
 
-async function getAllCourses() {
-    return apiRequest('/api/content/slider-courses');
-}
-        async function enrollCourse(courseId) {
-            return apiRequest('/api/courses/enroll', {
-                method: 'POST',
-                body: JSON.stringify({ courseId })
-            });
-        }
+        // ---------- Отображение курсов ----------
+        function renderCourses(courses) {
+            const container = document.getElementById('coursesGrid');
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const level = document.getElementById('levelFilter').value;
 
-        async function getCourseDetails(courseId) {
-            return apiRequest(`/api/courses/${courseId}`);
-        }
+            let filtered = [...courses];
 
-function renderCourses(courses) {
-    const container = document.getElementById('coursesGrid');
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    const category = document.getElementById('categoryFilter').value;
-    const level = document.getElementById('levelFilter').value;
-
-    let filtered = [...courses];
-
-    if (searchTerm) {
-        filtered = filtered.filter(c => 
-            c.title.toLowerCase().includes(searchTerm) || 
-            (c.description && c.description.toLowerCase().includes(searchTerm))
-        );
-    }
-
-    if (category !== 'all') {
-        filtered = filtered.filter(c => {
-            if (category === 'programming') {
-                return c.title.toLowerCase().includes('программировани') || 
-                       c.title.toLowerCase().includes('разработчик') ||
-                       c.title.toLowerCase().includes('python') ||
-                       c.title.toLowerCase().includes('java') ||
-                       c.title.toLowerCase().includes('c++');
+            if (searchTerm) {
+                filtered = filtered.filter(c => 
+                    c.title.toLowerCase().includes(searchTerm) || 
+                    (c.description && c.description.toLowerCase().includes(searchTerm))
+                );
             }
-            if (category === 'design') {
-                return c.title.toLowerCase().includes('дизайн') || 
-                       c.title.toLowerCase().includes('ui') ||
-                       c.title.toLowerCase().includes('ux');
+
+            if (category !== 'all') {
+                filtered = filtered.filter(c => {
+                    if (category === 'programming') {
+                        return c.title.toLowerCase().includes('программировани') || 
+                               c.title.toLowerCase().includes('разработчик') ||
+                               c.title.toLowerCase().includes('python') ||
+                               c.title.toLowerCase().includes('java') ||
+                               c.title.toLowerCase().includes('c++');
+                    }
+                    if (category === 'design') {
+                        return c.title.toLowerCase().includes('дизайн') || 
+                               c.title.toLowerCase().includes('ui') ||
+                               c.title.toLowerCase().includes('ux');
+                    }
+                    if (category === 'data') {
+                        return c.title.toLowerCase().includes('аналитик') || 
+                               c.title.toLowerCase().includes('данных') ||
+                               c.title.toLowerCase().includes('data');
+                    }
+                    if (category === 'management') {
+                        return c.title.toLowerCase().includes('менеджер') || 
+                               c.title.toLowerCase().includes('управлен');
+                    }
+                    return true;
+                });
             }
-            if (category === 'data') {
-                return c.title.toLowerCase().includes('аналитик') || 
-                       c.title.toLowerCase().includes('данных') ||
-                       c.title.toLowerCase().includes('data');
+
+            if (level !== 'all') {
+                filtered = filtered.filter(c => c.level === level);
             }
-            if (category === 'management') {
-                return c.title.toLowerCase().includes('менеджер') || 
-                       c.title.toLowerCase().includes('управлен');
+
+            const resultsText = document.getElementById('searchResults');
+            if (resultsText) resultsText.innerHTML = 'Найдено курсов: ' + filtered.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-book-open" style="font-size: 3rem; color: #dc2626; margin-bottom: 1rem;"></i><p>Курсы не найдены</p><p class="text-sm">Попробуйте изменить параметры поиска</p></div>';
+                return;
             }
-            return true;
-        });
-    }
 
-    if (level !== 'all') {
-        filtered = filtered.filter(c => c.level === level);
-    }
-
-    const resultsText = document.getElementById('searchResults');
-    if (resultsText) {
-        resultsText.innerHTML = 'Найдено курсов: ' + filtered.length;
-    }
-
-    if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-book-open" style="font-size: 3rem; color: #dc2626; margin-bottom: 1rem;"></i><p>Курсы не найдены</p><p class="text-sm">Попробуйте изменить параметры поиска</p></div>';
-        return;
-    }
-
-    container.innerHTML = filtered.map(course => {
-        let imgPath = course.img;
-        if (imgPath && !imgPath.startsWith('http') && !imgPath.startsWith('/')) {
-            imgPath = '/' + imgPath;
-        }
-        if (!imgPath) {
-            imgPath = '/foto/course-default.jpg';
-        }
-        
-        let levelBadge = '';
-        let levelColor = '';
-        if (course.level === 'beginner') {
-            levelBadge = 'Начинающий';
-            levelColor = '#22c55e';
-        } else if (course.level === 'intermediate') {
-            levelBadge = 'Средний';
-            levelColor = '#f59e0b';
-        } else if (course.level === 'advanced') {
-            levelBadge = 'Продвинутый';
-            levelColor = '#ef4444';
-        }
-        
-        return `
-            <div class="course-card" data-id="${course.id || course.sort_order}">
-                <img src="${imgPath}" alt="${escapeHtml(course.title)}" class="course-card-img" onerror="this.src='/foto/course-default.jpg'">
-                <div class="course-card-content">
-                    <div class="flex justify-between items-start">
-                        <h3 class="course-card-title">${escapeHtml(course.title)}</h3>
-                        <span class="level-badge" style="background: ${levelColor}20; color: ${levelColor}; padding: 0.2rem 0.5rem; border-radius: 0.5rem; font-size: 0.7rem; font-weight: 600;">${levelBadge}</span>
+            container.innerHTML = filtered.map(course => {
+                let imgPath = course.img;
+                if (imgPath && !imgPath.startsWith('http') && !imgPath.startsWith('/')) imgPath = '/' + imgPath;
+                if (!imgPath) imgPath = '/foto/course-default.jpg';
+                
+                let levelBadge = '', levelColor = '';
+                if (course.level === 'beginner') { levelBadge = 'Начинающий'; levelColor = '#22c55e'; }
+                else if (course.level === 'intermediate') { levelBadge = 'Средний'; levelColor = '#f59e0b'; }
+                else if (course.level === 'advanced') { levelBadge = 'Продвинутый'; levelColor = '#ef4444'; }
+                
+                return `
+                    <div class="course-card" data-id="${course.id || course.sort_order}">
+                        <img src="${imgPath}" alt="${escapeHtml(course.title)}" class="course-card-img" onerror="this.src='/foto/course-default.jpg'">
+                        <div class="course-card-content">
+                            <div class="flex justify-between items-start">
+                                <h3 class="course-card-title">${escapeHtml(course.title)}</h3>
+                                <span class="level-badge" style="background: ${levelColor}20; color: ${levelColor}; padding: 0.2rem 0.5rem; border-radius: 0.5rem; font-size: 0.7rem; font-weight: 600;">${levelBadge}</span>
+                            </div>
+                            <p class="course-card-desc">${escapeHtml(course.description || 'Курс по программированию с практикой')}</p>
+                            <div class="flex justify-between items-center mt-2">
+                                <span class="badge badge-info"><i class="fas fa-graduation-cap"></i> Онлайн курс</span>
+                                <button onclick="showCourseDetails(${course.id || course.sort_order})" class="btn btn-sm btn-outline">Подробнее</button>
+                            </div>
+                            <button onclick="openEnrollModal(${course.id || course.sort_order}, '${escapeHtml(course.title)}')" class="btn btn-primary btn-sm enroll-btn mt-2">Записаться на курс</button>
+                        </div>
                     </div>
-                    <p class="course-card-desc">${escapeHtml(course.description || 'Курс по программированию с практикой')}</p>
-                    <div class="flex justify-between items-center mt-2">
-                        <span class="badge badge-info"><i class="fas fa-graduation-cap"></i> Онлайн курс</span>
-                        <button onclick="showCourseDetails(${course.id || course.sort_order})" class="btn btn-sm btn-outline">Подробнее</button>
-                    </div>
-                    <button onclick="openEnrollModal(${course.id || course.sort_order}, '${escapeHtml(course.title)}')" class="btn btn-primary btn-sm enroll-btn mt-2">Записаться на курс</button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
+                `;
+            }).join('');
+        }
+
         window.showCourseDetails = async function(courseId) {
-    const course = allCourses.find(c => c.sort_order === courseId);
-    const modal = document.getElementById('courseModal');
-    const titleEl = document.getElementById('modalCourseTitle');
-    const bodyEl = document.getElementById('modalCourseBody');
+            const course = allCourses.find(c => c.sort_order === courseId);
+            const modal = document.getElementById('courseModal');
+            const titleEl = document.getElementById('modalCourseTitle');
+            const bodyEl = document.getElementById('modalCourseBody');
 
-    if (course) {
-        titleEl.textContent = course.title;
-        bodyEl.innerHTML = `
-            <img src="${course.img || '/foto/course-default.jpg'}" style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius); margin-bottom: 1rem;" onerror="this.src='/foto/course-default.jpg'">
-            <p class="mb-3">${escapeHtml(course.description || 'Описание отсутствует')}</p>
-            <div class="mb-3">
-                <span class="badge badge-info"><i class="fas fa-clock"></i> Длительность: от 2 до 6 месяцев</span>
-                <span class="badge badge-success ml-1"><i class="fas fa-certificate"></i> Сертификат по окончании</span>
-            </div>
-            <div class="mb-3">
-                <h4 class="font-bold">О курсе:</h4>
-                <ul style="list-style: none; padding-left: 0;">
-                    <li><i class="fas fa-check-circle" style="color: #22c55e;"></i> Практические занятия с экспертами</li>
-                    <li><i class="fas fa-check-circle" style="color: #22c55e;"></i> Доступ к материалам 24/7</li>
-                    <li><i class="fas fa-check-circle" style="color: #22c55e;"></i> Помощь в трудоустройстве</li>
-                </ul>
-            </div>
-            <a href="${course.link || '#'}" class="btn btn-primary enroll-btn mt-3" style="display: block; text-align: center;">Подробнее о курсе</a>
-        `;
-        modal.classList.add('active');
-    } else {
-        showToast('Ошибка загрузки курса', 'error');
+            if (course) {
+                titleEl.textContent = course.title;
+                bodyEl.innerHTML = `
+                    <img src="${course.img || '/foto/course-default.jpg'}" style="width: 100%; height: 200px; object-fit: cover; border-radius: var(--radius); margin-bottom: 1rem;" onerror="this.src='/foto/course-default.jpg'">
+                    <p class="mb-3">${escapeHtml(course.description || 'Описание отсутствует')}</p>
+                    <div class="mb-3">
+                        <span class="badge badge-info"><i class="fas fa-clock"></i> Длительность: от 2 до 6 месяцев</span>
+                        <span class="badge badge-success ml-1"><i class="fas fa-certificate"></i> Сертификат по окончании</span>
+                    </div>
+                    <div class="mb-3">
+                        <h4 class="font-bold">О курсе:</h4>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li><i class="fas fa-check-circle" style="color: #22c55e;"></i> Практические занятия с экспертами</li>
+                            <li><i class="fas fa-check-circle" style="color: #22c55e;"></i> Доступ к материалам 24/7</li>
+                            <li><i class="fas fa-check-circle" style="color: #22c55e;"></i> Помощь в трудоустройстве</li>
+                        </ul>
+                    </div>
+                    <a href="${course.link || '#'}" class="btn btn-primary enroll-btn mt-3" style="display: block; text-align: center;">Подробнее о курсе</a>
+                `;
+                modal.classList.add('active');
+            } else {
+                showToast('Ошибка загрузки курса', 'error');
+            }
+        };
+
+        function closeModal() { document.getElementById('courseModal').classList.remove('active'); }
+        function applyFilters() { renderCourses(allCourses); }
+
+        // ---------- Заявка на курс (модальное окно) ----------
+      window.openEnrollModal = function(courseId, courseTitle) {
+    document.getElementById('enrollCourseId').value = courseId;
+    document.getElementById('enrollCourseTitle').innerHTML = 'Курс: ' + escapeHtml(courseTitle);
+    if (currentUser && currentUser.email) {
+        document.getElementById('enrollEmail').value = currentUser.email;
     }
+    document.getElementById('enrollModal').classList.add('active');
 };
 
-       window.handleEnroll = async function(courseId) {
-    if (!currentUser) {
-        if (confirm('Для записи на курс необходимо войти. Перейти на страницу входа?')) {
-            window.location.href = '/lickab.html';
+        window.closeEnrollModal = function() {
+            document.getElementById('enrollModal').classList.remove('active');
+            document.getElementById('enrollForm').reset();
+            document.getElementById('enrollStatus').style.display = 'none';
+        };
+
+        // Обработчик отправки формы записи на курс
+        document.getElementById('enrollForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('enrollName').value.trim();
+            const email = document.getElementById('enrollEmail').value.trim();
+            const phone = document.getElementById('enrollPhone').value.trim();
+            const comment = document.getElementById('enrollComment').value.trim();
+            const agree = document.getElementById('enrollAgree').checked;
+            const courseId = document.getElementById('enrollCourseId').value;
+            const courseTitle = document.getElementById('enrollCourseTitle').innerText.replace('Курс: ', '');
+
+            if (!name || !email) {
+                showToast('Заполните имя и email', 'error');
+                return;
+            }
+            if (!agree) {
+                showToast('Подтвердите согласие на обработку данных', 'error');
+                return;
+            }
+
+            const statusDiv = document.getElementById('enrollStatus');
+            statusDiv.style.display = 'block';
+            statusDiv.innerHTML = 'Отправка...';
+            statusDiv.style.color = '#6b7280';
+
+            try {
+                const response = await fetch('/api/content/applications', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sender_name: name,
+                        sender_email: email,
+                        type: 'course_enrollment',
+                        content: `Курс: ${courseTitle}\nID курса: ${courseId}\nТелефон: ${phone || 'не указан'}\nКомментарий: ${comment || 'нет'}`
+                    }),
+                    credentials: 'include'
+                });
+                const result = await response.json();
+                if (result.success) {
+                    statusDiv.innerHTML = 'Заявка отправлена! С вами свяжутся.';
+                    statusDiv.style.color = '#22c55e';
+                    setTimeout(() => { closeEnrollModal(); }, 2000);
+                } else {
+                    statusDiv.innerHTML = result.error || 'Ошибка отправки';
+                    statusDiv.style.color = '#ef4444';
+                }
+            } catch (err) {
+                statusDiv.innerHTML = 'Ошибка сети';
+                statusDiv.style.color = '#ef4444';
+            }
+        });
+
+        // ---------- Форма обратной связи (обычные сообщения) ----------
+        const feedbackForm = document.getElementById('mainFeedbackForm');
+        const feedbackStatus = document.getElementById('feedbackFormStatus');
+        if (feedbackForm) {
+            feedbackForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const name = document.getElementById('fbName').value.trim();
+                const group = document.getElementById('fbGroup').value.trim();
+                const phone = document.getElementById('fbPhone').value.trim();
+                const email = document.getElementById('fbEmail').value.trim();
+                const agree = document.getElementById('fbAgree').checked;
+
+                if (!name || !group || !email) {
+                    feedbackStatus.className = 'form-status-message error';
+                    feedbackStatus.textContent = 'Заполните обязательные поля (Имя, Группа, Email)';
+                    return;
+                }
+                if (!agree) {
+                    feedbackStatus.className = 'form-status-message error';
+                    feedbackStatus.textContent = 'Необходимо согласие на обработку персональных данных';
+                    return;
+                }
+
+                feedbackStatus.className = 'form-status-message';
+                feedbackStatus.textContent = 'Отправка...';
+                feedbackStatus.style.display = 'block';
+
+                try {
+                    const response = await fetch('/api/content/applications', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            sender_name: name,
+                            sender_email: email,
+                            type: 'question',
+                            content: `Группа: ${group}\nТелефон: ${phone || 'не указан'}\nСообщение: отправитель хочет задать вопрос.`
+                        }),
+                        credentials: 'include'
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        feedbackStatus.className = 'form-status-message success';
+                        feedbackStatus.textContent = 'Спасибо! Ваше сообщение отправлено.';
+                        feedbackForm.reset();
+                        setTimeout(() => { feedbackStatus.style.display = 'none'; }, 3000);
+                    } else {
+                        feedbackStatus.className = 'form-status-message error';
+                        feedbackStatus.textContent = result.error || 'Ошибка отправки. Попробуйте позже.';
+                    }
+                } catch (error) {
+                    feedbackStatus.className = 'form-status-message error';
+                    feedbackStatus.textContent = 'Ошибка сети. Проверьте подключение.';
+                }
+            });
         }
-        return;
-    }
 
-    showToast('Функция записи на курс в разработке', 'info');
-};
+        // ---------- Инициализация ----------
+        async function init() {
+            const userResult = await getCurrentUser();
+            if (userResult.success && userResult.user) currentUser = userResult.user;
 
-        function closeModal() {
-            document.getElementById('courseModal').classList.remove('active');
+            const coursesResult = await getAllCourses();
+            console.log('Courses loaded:', coursesResult);
+            if (coursesResult.success && coursesResult.courses) {
+                allCourses = coursesResult.courses;
+                renderCourses(allCourses);
+            } else {
+                document.getElementById('coursesGrid').innerHTML = '<div class="empty-state"><p>Не удалось загрузить курсы</p></div>';
+            }
         }
 
-        function applyFilters() {
-            renderCourses(allCourses);
-        }
-
-       async function init() {
-    const userResult = await getCurrentUser();
-    if (userResult.success && userResult.user) {
-        currentUser = userResult.user;
-    }
-
-    const coursesResult = await getAllCourses();
-    console.log('Courses loaded:', coursesResult);
-    
-    if (coursesResult.success && coursesResult.courses) {
-        allCourses = coursesResult.courses;
-        renderCourses(allCourses);
-    } else {
-        document.getElementById('coursesGrid').innerHTML = '<div class="empty-state"><p>Не удалось загрузить курсы</p></div>';
-    }
-}
         document.getElementById('searchInput').addEventListener('input', applyFilters);
         document.getElementById('categoryFilter').addEventListener('change', applyFilters);
         document.getElementById('levelFilter').addEventListener('change', applyFilters);
@@ -636,81 +546,14 @@ function renderCourses(courses) {
             window.location.href = '/lickab.html';
         });
 
-        modalClose = closeModal;
-
         init();
-    </script>
-    <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(function(registrations) {
-            for(let registration of registrations) {
-                registration.unregister();
-                console.log('ServiceWorker unregistered');
-            }
-        });
-    }
 
-    const feedbackForm = document.getElementById('mainFeedbackForm');
-const feedbackStatus = document.getElementById('feedbackFormStatus');
-
-if (feedbackForm) {
-    feedbackForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        const name = document.getElementById('fbName').value.trim();
-        const group = document.getElementById('fbGroup').value.trim();
-        const phone = document.getElementById('fbPhone').value.trim();
-        const email = document.getElementById('fbEmail').value.trim();
-        const agree = document.getElementById('fbAgree').checked;
-        
-        if (!name || !group || !email) {
-            feedbackStatus.className = 'form-status-message error';
-            feedbackStatus.textContent = 'Заполните обязательные поля (Имя, Группа, Email)';
-            return;
-        }
-        
-        if (!agree) {
-            feedbackStatus.className = 'form-status-message error';
-            feedbackStatus.textContent = 'Необходимо согласие на обработку персональных данных';
-            return;
-        }
-        
-        feedbackStatus.className = 'form-status-message';
-        feedbackStatus.textContent = 'Отправка...';
-        feedbackStatus.style.display = 'block';
-        
-        try {
-            const response = await fetch('/api/content/applications', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sender_name: name,
-                    sender_email: email,
-                    type: 'question',
-                    content: `Группа: ${group}\nТелефон: ${phone || 'не указан'}\nВопрос от студента`
-                }),
-                credentials: 'include'
+        // Отключаем Service Worker, если есть
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(r => r.unregister());
             });
-            
-            const result = await response.json();
-            
-            if (result.success) {
-                feedbackStatus.className = 'form-status-message success';
-                feedbackStatus.textContent = 'Спасибо! Ваше сообщение отправлено.';
-                feedbackForm.reset();
-                setTimeout(() => {
-                    feedbackStatus.style.display = 'none';
-                }, 3000);
-            } else {
-                feedbackStatus.className = 'form-status-message error';
-                feedbackStatus.textContent = result.error || 'Ошибка отправки. Попробуйте позже.';
-            }
-        } catch (error) {
-            feedbackStatus.className = 'form-status-message error';
-            feedbackStatus.textContent = 'Ошибка сети. Проверьте подключение.';
         }
-    });
-}
-</script>
+    </script>
 </body>
 </html>

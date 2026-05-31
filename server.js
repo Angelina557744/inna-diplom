@@ -406,9 +406,25 @@ app.delete('/api/users/:id', async (req, res) => {
 
 app.get('/api/courses', async (req, res) => {
     try {
-        const [courses] = await pool.query('SELECT * FROM courses ORDER BY created_at DESC');
+        let courses;
+        if (req.session.userRole === 'student') {
+            // Студент видит только курсы, на которые он записан
+            const [rows] = await pool.query(`
+                SELECT c.* 
+                FROM courses c
+                INNER JOIN course_enrollments ce ON c.id = ce.course_id
+                WHERE ce.student_id = ?
+                ORDER BY c.created_at DESC
+            `, [req.session.userId]);
+            courses = rows;
+        } else {
+            // Админ и преподаватель видят все курсы
+            const [rows] = await pool.query('SELECT * FROM courses ORDER BY created_at DESC');
+            courses = rows;
+        }
         res.json({ success: true, courses });
     } catch (err) {
+        console.error('Courses error:', err);
         res.status(500).json({ success: false, error: 'Ошибка сервера' });
     }
 });
@@ -816,24 +832,21 @@ app.put('/api/content/applications/:id', async (req, res) => {
 
 
 app.post('/api/chat', async (req, res) => {
-    if (!req.session.userId) {
-        return res.status(401).json({ success: false, error: 'Не авторизован' });
-    }
+    if (!req.session.userId) return res.status(401).json({ success: false });
     const { receiver_email, message_text } = req.body;
     if (!receiver_email || !message_text) {
         return res.status(400).json({ success: false, error: 'Не все поля заполнены' });
     }
     const sender_email = req.session.userEmail;
     if (!sender_email) {
-        return res.status(400).json({ success: false, error: 'Отправитель не определён. Попробуйте выйти и зайти снова.' });
+        return res.status(400).json({ success: false, error: 'Отправитель не определён' });
     }
     try {
-        const [result] = await pool.query(
-            `INSERT INTO chat_messages (sender_email, receiver_email, message_text, created_at) 
-             VALUES (?, ?, ?, NOW())`,
+        await pool.query(
+            'INSERT INTO chat_messages (sender_email, receiver_email, message_text, created_at) VALUES (?, ?, ?, NOW())',
             [sender_email, receiver_email, message_text]
         );
-
+        // Отправить получателю
         const receiverSocketId = onlineUsers.get(receiver_email);
         if (receiverSocketId) {
             io.to(receiverSocketId).emit('chat-message', {
@@ -843,11 +856,57 @@ app.post('/api/chat', async (req, res) => {
                 time: new Date().toLocaleTimeString()
             });
         }
-
-        res.json({ success: true, id: result.insertId });
+        // Опционально: отправить и отправителю, чтобы он мгновенно увидел сообщение (но мы уже вызываем loadChatMessages)
+        // const senderSocketId = onlineUsers.get(sender_email);
+        // if (senderSocketId) io.to(senderSocketId).emit(...);
+        res.json({ success: true });
     } catch (err) {
         console.error('Send message error:', err);
         res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+app.get('/api/my-course-applications', async (req, res) => {
+    if (!req.session.userId || req.session.userRole !== 'student') {
+        return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+    try {
+        const [apps] = await pool.query(
+            `SELECT * FROM applications 
+             WHERE sender_email = ? AND type = 'course_enrollment' 
+             ORDER BY created_at DESC`,
+            [req.session.userEmail]
+        );
+        res.json({ success: true, applications: apps });
+    } catch (err) {
+        console.error('Get student applications error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка загрузки заявок' });
+    }
+});
+
+app.post('/api/admin/enroll-student', async (req, res) => {
+    if (!req.session.userId || req.session.userRole !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+    const { courseId, studentEmail } = req.body;
+    if (!courseId || !studentEmail) {
+        return res.status(400).json({ success: false, error: 'Не хватает данных' });
+    }
+    try {
+        const [students] = await pool.query('SELECT id FROM users WHERE email = ? AND role = "student"', [studentEmail]);
+        if (students.length === 0) {
+            return res.status(404).json({ success: false, error: 'Студент с таким email не найден' });
+        }
+        const studentId = students[0].id;
+        await pool.query(
+            'INSERT IGNORE INTO course_enrollments (student_id, course_id) VALUES (?, ?)',
+            [studentId, courseId]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Enroll student error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка зачисления' });
     }
 });
 
@@ -1079,6 +1138,31 @@ async function initDirectories() {
         }
     }
 }
+
+app.post('/api/admin/enroll-student', async (req, res) => {
+    if (!req.session.userId || req.session.userRole !== 'admin') {
+        return res.status(403).json({ success: false, error: 'Доступ запрещён' });
+    }
+    const { courseId, studentEmail } = req.body;
+    if (!courseId || !studentEmail) {
+        return res.status(400).json({ success: false, error: 'Не хватает данных' });
+    }
+    try {
+        const [students] = await pool.query('SELECT id FROM users WHERE email = ? AND role = "student"', [studentEmail]);
+        if (students.length === 0) {
+            return res.status(404).json({ success: false, error: 'Студент не найден' });
+        }
+        const studentId = students[0].id;
+        await pool.query(
+            'INSERT IGNORE INTO course_enrollments (student_id, course_id) VALUES (?, ?)',
+            [studentId, courseId]
+        );
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Enroll student error:', err);
+        res.status(500).json({ success: false, error: 'Ошибка зачисления' });
+    }
+});
 
 initDirectories().then(() => {
     server.listen(PORT, () => {

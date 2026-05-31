@@ -380,7 +380,16 @@
                                 <div class="skeleton" style="height: 80px; margin-bottom: 0.5rem;"></div>
                             </div>
                         </div>
-
+<!-- Мои заявки на курсы -->
+<div class="card mt-4">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fas fa-clock"></i> Мои заявки на курсы</h3>
+        <button id="refreshApplicationsBtn" class="btn btn-sm btn-outline">Обновить</button>
+    </div>
+    <div id="myApplicationsList">
+        <div class="skeleton" style="height: 60px;"></div>
+    </div>
+</div>
                         <!-- Мои работы -->
                         <div class="card">
                             <div class="card-header">
@@ -527,23 +536,22 @@
         return false;
     }
 
-    async function loadCourses() {
-        const result = await getUserCourses();
-        const container = document.getElementById('myCoursesList');
-        if (result.success && result.courses && result.courses.length > 0) {
-            container.innerHTML = result.courses.slice(0, 5).map(course => `
-                <div style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem;">
-                    <div>
-                        <h4 class="font-bold">${escapeHtml(course.name)}</h4>
-                        <p class="text-xs text-gray">${escapeHtml(course.description || 'Без описания')}</p>
-                    </div>
-                    <button onclick="handleEnroll(${course.id})" class="btn btn-sm btn-primary">Записаться</button>
+   async function loadCourses() {
+    const result = await getUserCourses();
+    const container = document.getElementById('myCoursesList');
+    if (result.success && result.courses && result.courses.length > 0) {
+        container.innerHTML = result.courses.map(course => `
+            <div style="margin-bottom: 0.75rem; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem;">
+                <div>
+                    <h4 class="font-bold">${escapeHtml(course.name)}</h4>
+                    <p class="text-xs text-gray">${escapeHtml(course.description || 'Без описания')}</p>
                 </div>
-            `).join('');
-        } else {
-            container.innerHTML = '<p class="text-center text-gray">Нет доступных курсов</p>';
-        }
+            </div>
+        `).join('');
+    } else {
+        container.innerHTML = '<p class="text-center text-gray">Вы ещё не записаны ни на один курс.</p>';
     }
+}
 
     async function loadSubmissions() {
         const result = await getUserSubmissions();
@@ -662,36 +670,29 @@
     }
 
     async function sendChatMessage() {
-        const input = document.getElementById('chatInput');
-        const text = input.value.trim();
-        if (!text || !currentTeacherEmail) {
-            showToast('Выберите преподавателя и введите сообщение', 'error');
-            return;
-        }
-        try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ receiver_email: currentTeacherEmail, message_text: text }),
-                credentials: 'include'
-            });
-            const data = await response.json();
-            if (data.success) {
-                input.value = '';
-                loadChatMessages();
-                // Отправляем также через WebSocket (дублируем для мгновенной отправки)
-                if (chatSocket && chatSocket.connected) {
-                    chatSocket.emit('chat-message', {
-                        from: currentUser.email,
-                        to: currentTeacherEmail,
-                        text: text
-                    });
-                }
-            } else {
-                showToast(data.error || 'Ошибка отправки', 'error');
-            }
-        } catch (e) { showToast('Ошибка сети', 'error'); }
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text || !currentTeacherEmail) {
+        showToast('Выберите преподавателя и введите сообщение', 'error');
+        return;
     }
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ receiver_email: currentTeacherEmail, message_text: text }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
+            input.value = '';
+            // Обновляем чат, чтобы увидеть отправленное сообщение
+            await loadChatMessages();
+        } else {
+            showToast(data.error || 'Ошибка отправки', 'error');
+        }
+    } catch (e) { showToast('Ошибка сети', 'error'); }
+}
 
     function initChatSocket() {
         if (window.io && currentUser && !chatSocket) {
@@ -739,27 +740,28 @@
     }
 
     async function initAuth() {
-        const isLoggedIn = await loadUserData();
-        if (isLoggedIn) {
-            if (currentUser.role === 'admin') {
-                window.location.href = '/admin.html';
-                return;
-            }
-            if (currentUser.role === 'teacher') {
-                window.location.href = '/teacher.html';
-                return;
-            }
-            document.querySelector('.auth-wrapper').style.display = 'none';
-            document.getElementById('cabinetContainer').style.display = 'block';
-            await loadCourses();
-            await loadSubmissions();
-            await loadGameStats();
-            await initChat();
-        } else {
-            document.querySelector('.auth-wrapper').style.display = 'flex';
-            document.getElementById('cabinetContainer').style.display = 'none';
+    const isLoggedIn = await loadUserData();
+    if (isLoggedIn) {
+        if (currentUser.role === 'admin') {
+            window.location.href = '/admin.html';
+            return;
         }
+        if (currentUser.role === 'teacher') {
+            window.location.href = '/teacher.html';
+            return;
+        }
+        document.querySelector('.auth-wrapper').style.display = 'none';
+        document.getElementById('cabinetContainer').style.display = 'block';
+        await loadCourses();
+        await loadSubmissions();
+        await loadGameStats();
+        await loadMyApplications();   // <-- добавить эту строку
+        await initChat();
+    } else {
+        document.querySelector('.auth-wrapper').style.display = 'flex';
+        document.getElementById('cabinetContainer').style.display = 'none';
     }
+}
 
     // ---------- Обработчики DOM ----------
     document.getElementById('doLogin').addEventListener('click', async () => {
@@ -870,6 +872,36 @@
         if (e.key === 'Enter') sendChatMessage();
     });
 
+async function getMyCourseApplications() {
+    return apiRequest('/api/my-course-applications');
+}
+
+async function loadMyApplications() {
+    const container = document.getElementById('myApplicationsList');
+    if (!container) return;
+    const result = await getMyCourseApplications();
+    if (result.success && result.applications && result.applications.length > 0) {
+        container.innerHTML = result.applications.map(app => `
+            <div style="border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 0.75rem; margin-bottom: 0.75rem;">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h4 class="font-bold">${escapeHtml(app.content?.split('\n')[0] || 'Заявка на курс')}</h4>
+                        <p class="text-xs text-gray">${new Date(app.created_at).toLocaleString()}</p>
+                    </div>
+                    <div>
+                        <span class="badge ${app.status === 'pending' ? 'badge-warning' : (app.status === 'accepted' ? 'badge-success' : 'badge-danger')}">
+                            ${app.status === 'pending' ? 'На рассмотрении' : (app.status === 'accepted' ? 'Одобрена' : 'Отклонена')}
+                        </span>
+                    </div>
+                </div>
+                ${app.admin_comment ? `<p class="text-sm text-gray mt-2">Комментарий: ${escapeHtml(app.admin_comment)}</p>` : ''}
+            </div>
+        `).join('');
+    } else {
+        container.innerHTML = '<p class="text-center text-gray">Вы ещё не подавали заявок на курсы</p>';
+    }
+}
+document.getElementById('refreshApplicationsBtn')?.addEventListener('click', loadMyApplications);
     // Запуск
     initTabs();
     initAuth();

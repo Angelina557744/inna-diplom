@@ -103,50 +103,6 @@
             font-size: 0.7rem;
             font-weight: 600;
         }
-     .start-stream-btn {
-    background: linear-gradient(135deg, #10b981, #059669);
-    color: white;
-    border: none;
-    padding: 0.35rem 1rem;
-    font-size: 0.7rem;
-    font-weight: 500;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    letter-spacing: 0.3px;
-}
-.start-stream-btn {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    color: white;
-    border: none;
-    padding: 0.35rem 0,5rem;
-    font-size: 0.7rem;
-    font-weight: 500;
-    border-radius: 0.5rem;
-    transition: all 0.2s ease;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.start-stream-btn:hover {
-    background: linear-gradient(135deg, #dc2626, #b91c1c);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 10px rgba(220,38,38,0.3);
-}
-
-.start-stream-btn:active {
-    transform: translateY(0);
-}
-
-.start-stream-btn i {
-    font-size: 0.6rem;
-}
         .badge-success {
             background: #d1fae5;
             color: #065f46;
@@ -155,62 +111,77 @@
             background: #fef3c7;
             color: #92400e;
         }
-
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .start-stream-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 0.35rem 0.8rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .start-stream-btn:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(220,38,38,0.3);
+        }
+        .start-stream-btn:active {
+            transform: translateY(0);
+        }
         .stream-preview {
-    position: relative;
-    background: #000;
-    border-radius: 0.75rem;
-    overflow: hidden;
-    aspect-ratio: 16 / 9;
-}
-
-.stream-video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.stream-controls-overlay {
-    position: absolute;
-    bottom: 1rem;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: linear-gradient(transparent, rgba(0,0,0,0.7));
-}
-
-.stream-placeholder {
-    text-align: center;
-    padding: 3rem;
-    background: #f8fafc;
-    border-radius: 0.75rem;
-    border: 2px dashed #cbd5e1;
-}
-
-.stream-placeholder i {
-    font-size: 3rem;
-    color: #94a3b8;
-    margin-bottom: 1rem;
-}
-
-.stream-placeholder p {
-    margin: 0.25rem 0;
-    color: #64748b;
-}
-
-.stream-settings {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #e5e7eb;
-}
-
-.badge-info {
-    background: #dbeafe;
-    color: #1e40af;
-}
+            position: relative;
+            background: #000;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+        }
+        .stream-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .stream-controls-overlay {
+            position: absolute;
+            bottom: 1rem;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+        }
+        .stream-placeholder {
+            text-align: center;
+            padding: 3rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            border: 2px dashed #cbd5e1;
+        }
+        .stream-placeholder i {
+            font-size: 3rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+        .stream-placeholder p {
+            margin: 0.25rem 0;
+            color: #64748b;
+        }
+        .stream-settings {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
     </style>
 </head>
 <body>
@@ -269,69 +240,70 @@
                     <button id="addGroupBtn" class="btn btn-outline btn-block mt-3"><i class="fas fa-plus"></i> Добавить группу</button>
                 </div>
             </div>
-            <div class="card mt-5">
-    <div class="card-header">
-        <h3 class="card-title"><i class="fas fa-comments"></i> Чат со студентами и администратором</h3>
-    </div>
-    <div class="flex gap-2 mb-2">
-        <select id="chatUserSelect" class="select" style="width: auto;">
-            <option value="">-- Выберите собеседника --</option>
-        </select>
-        <button id="refreshChatBtn" class="btn btn-sm btn-outline"><i class="fas fa-sync-alt"></i> Обновить</button>
-    </div>
-    <div id="chatBox" style="height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem; margin-bottom: 0.5rem;"></div>
-    <div class="flex gap-2">
-        <input type="text" id="chatInput" class="input" placeholder="Напишите сообщение..." style="flex: 1;">
-        <button id="sendChatBtn" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
-    </div>
-</div>
 
+            <!-- Чат со студентами и администратором -->
             <div class="card mt-5">
-    <div class="card-header">
-        <h3 class="card-title">
-            <i class="fas fa-video"></i> Прямая трансляция
-        </h3>
-        <div class="flex gap-2">
-            <span id="streamStatus" class="badge badge-warning"><i class="fas fa-circle"></i> Не в эфире</span>
-            <span id="streamViewerCount" class="badge badge-info" style="display: none;"><i class="fas fa-eye"></i> 0 зрителей</span>
-        </div>
-    </div>
-    
-    <div id="streamPreview" class="stream-preview" style="display: none;">
-        <video id="streamVideo" class="stream-video" autoplay muted playsinline></video>
-        <div class="stream-controls-overlay">
-            <button id="stopStreamBtn" class="btn btn-danger btn-sm">
-                <i class="fas fa-stop"></i> Остановить трансляцию
-            </button>
-        </div>
-    </div>
-    
-    <div id="streamPlaceholder" class="stream-placeholder">
-        <i class="fas fa-video-slash"></i>
-        <p>Трансляция не активна</p>
-        <p class="text-sm text-gray">Нажмите "Начать трансляцию" чтобы подключить камеру</p>
-<button id="startStreamBtn" class="btn btn-primary start-stream-btn">
-    <i class="fas fa-video"></i> Начать трансляцию
-</button>
-    </div>
-    
-    <div id="streamSettings" class="stream-settings">
-        <div class="flex gap-3">
-            <label class="flex items-center gap-2">
-                <input type="checkbox" id="streamAudioCheckbox" checked>
-                <span class="text-sm">Микрофон</span>
-            </label>
-            <label class="flex items-center gap-2">
-                <input type="checkbox" id="streamCameraCheckbox" checked>
-                <span class="text-sm">Камера</span>
-            </label>
-            <select id="cameraSelect" class="select" style="width: auto; padding: 0.25rem 1.5rem 0.25rem 0.5rem;">
-                <option value="">Выбор камеры</option>
-            </select>
-        </div>
-    </div>
-</div>
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-comments"></i> Чат со студентами и администратором</h3>
+                </div>
+                <div class="flex gap-2 mb-2">
+                    <select id="chatUserSelect" class="select" style="width: auto;">
+                        <option value="">-- Выберите собеседника --</option>
+                    </select>
+                    <button id="refreshChatBtn" class="btn btn-sm btn-outline"><i class="fas fa-sync-alt"></i> Обновить</button>
+                </div>
+                <div id="chatBox" style="height: 300px; overflow-y: auto; border: 1px solid #e5e7eb; border-radius: 0.5rem; padding: 0.5rem; margin-bottom: 0.5rem; background: white;"></div>
+                <div class="flex gap-2">
+                    <input type="text" id="chatInput" class="input" placeholder="Напишите сообщение..." style="flex: 1;">
+                    <button id="sendChatBtn" class="btn btn-primary"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
 
+            <!-- Прямая трансляция -->
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-video"></i> Прямая трансляция
+                    </h3>
+                    <div class="flex gap-2">
+                        <span id="streamStatus" class="badge badge-warning"><i class="fas fa-circle"></i> Не в эфире</span>
+                        <span id="streamViewerCount" class="badge badge-info" style="display: none;"><i class="fas fa-eye"></i> 0 зрителей</span>
+                    </div>
+                </div>
+                <div id="streamPreview" class="stream-preview" style="display: none;">
+                    <video id="streamVideo" class="stream-video" autoplay muted playsinline></video>
+                    <div class="stream-controls-overlay">
+                        <button id="stopStreamBtn" class="btn btn-danger btn-sm">
+                            <i class="fas fa-stop"></i> Остановить трансляцию
+                        </button>
+                    </div>
+                </div>
+                <div id="streamPlaceholder" class="stream-placeholder">
+                    <i class="fas fa-video-slash"></i>
+                    <p>Трансляция не активна</p>
+                    <p class="text-sm text-gray">Нажмите "Начать трансляцию" чтобы подключить камеру</p>
+                    <button id="startStreamBtn" class="btn btn-primary start-stream-btn">
+                        <i class="fas fa-video"></i> Начать трансляцию
+                    </button>
+                </div>
+                <div id="streamSettings" class="stream-settings">
+                    <div class="flex gap-3">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="streamAudioCheckbox" checked>
+                            <span class="text-sm">Микрофон</span>
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" id="streamCameraCheckbox" checked>
+                            <span class="text-sm">Камера</span>
+                        </label>
+                        <select id="cameraSelect" class="select" style="width: auto; padding: 0.25rem 1.5rem 0.25rem 0.5rem;">
+                            <option value="">Выбор камеры</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Работы студентов -->
             <div class="card mt-5">
                 <div class="card-header">
                     <h3 class="card-title"><i class="fas fa-file-alt"></i> Работы студентов</h3>
@@ -350,7 +322,7 @@
         </div>
     </main>
 
-    <!-- Модальное окно добавления курса -->
+    <!-- Модальные окна -->
     <div id="courseModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -363,7 +335,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно добавления группы -->
     <div id="groupModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -378,7 +349,6 @@
         </div>
     </div>
 
-    <!-- Модальное окно оценки работы -->
     <div id="gradeModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -407,6 +377,7 @@
 
     <div id="toast" class="toast"></div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         const API_URL = window.location.origin;
         let currentUser = null;
@@ -415,6 +386,7 @@
         let currentGroups = [];
         let currentGradeSubId = null;
 
+        // ---------- Общие функции ----------
         async function apiRequest(url, options = {}) {
             try {
                 const response = await fetch(API_URL + url, {
@@ -440,50 +412,19 @@
 
         function escapeHtml(str) {
             if (!str) return '';
-            return str.replace(/[&<>]/g, function(m) {
-                if (m === '&') return '&amp;';
-                if (m === '<') return '&lt;';
-                if (m === '>') return '&gt;';
-                return m;
-            });
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
         }
 
-        function escapeQuotes(str) {
-            if (!str) return '';
-            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-        }
+        // ---------- API вызовы ----------
+        async function getCurrentUser() { return apiRequest('/api/auth/me'); }
+        async function getAllCourses() { return apiRequest('/api/courses'); }
+        async function createCourse(data) { return apiRequest('/api/courses', { method: 'POST', body: JSON.stringify(data) }); }
+        async function getAllGroups() { return apiRequest('/api/groups'); }
+        async function createGroup(data) { return apiRequest('/api/groups', { method: 'POST', body: JSON.stringify(data) }); }
+        async function getAllSubmissions() { return apiRequest('/api/submissions'); }
+        async function gradeSubmission(id, grade, comment) { return apiRequest(`/api/submissions/${id}/grade`, { method: 'PUT', body: JSON.stringify({ grade, comment }) }); }
 
-        async function getCurrentUser() {
-            return apiRequest('/api/auth/me');
-        }
-
-        async function getAllCourses() {
-            return apiRequest('/api/courses');
-        }
-
-        async function createCourse(data) {
-            return apiRequest('/api/courses', { method: 'POST', body: JSON.stringify(data) });
-        }
-
-        async function getAllGroups() {
-            return apiRequest('/api/groups');
-        }
-
-        async function createGroup(data) {
-            return apiRequest('/api/groups', { method: 'POST', body: JSON.stringify(data) });
-        }
-
-        async function getAllSubmissions() {
-            return apiRequest('/api/submissions');
-        }
-
-        async function gradeSubmission(id, grade, comment) {
-            return apiRequest(`/api/submissions/${id}/grade`, {
-                method: 'PUT',
-                body: JSON.stringify({ grade: grade, comment: comment })
-            });
-        }
-
+        // ---------- Загрузка данных ----------
         async function loadUserData() {
             const result = await getCurrentUser();
             if (result.success && result.user) {
@@ -503,25 +444,22 @@
             const result = await getAllCourses();
             const container = document.getElementById('myCoursesList');
             const filterSelect = document.getElementById('filterCourseSelect');
-            
             if (result.success && result.courses) {
                 currentCourses = result.courses;
                 if (currentCourses.length === 0) {
                     container.innerHTML = '<p class="text-gray text-center">Нет курсов. Создайте первый курс.</p>';
                 } else {
-                    container.innerHTML = currentCourses.map(function(course) {
-                        return '<div class="flex justify-between items-center p-3 border-bottom">' +
-                            '<div>' +
-                                '<div class="font-bold">' + escapeHtml(course.name) + '</div>' +
-                                '<div class="text-xs text-gray">' + escapeHtml(course.description || '') + '</div>' +
-                            '</div>' +
-                            '<button onclick="deleteCourse(' + course.id + ')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>' +
-                        '</div>';
-                    }).join('');
+                    container.innerHTML = currentCourses.map(course => `
+                        <div class="flex justify-between items-center p-3 border-bottom">
+                            <div>
+                                <div class="font-bold">${escapeHtml(course.name)}</div>
+                                <div class="text-xs text-gray">${escapeHtml(course.description || '')}</div>
+                            </div>
+                            <button onclick="deleteCourse(${course.id})" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `).join('');
                 }
-                filterSelect.innerHTML = '<option value="all">Все курсы</option>' + currentCourses.map(function(c) {
-                    return '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>';
-        }).join('');
+                filterSelect.innerHTML = '<option value="all">Все курсы</option>' + currentCourses.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
             }
         }
 
@@ -529,193 +467,77 @@
             const result = await getAllGroups();
             const container = document.getElementById('myGroupsList');
             const groupCourseSelect = document.getElementById('groupCourseSelect');
-            
             if (result.success && result.groups) {
                 currentGroups = result.groups;
                 if (currentGroups.length === 0) {
                     container.innerHTML = '<p class="text-gray text-center">Нет групп. Создайте первую группу.</p>';
                 } else {
-                    container.innerHTML = currentGroups.map(function(group) {
-                        return '<div class="flex justify-between items-center p-3 border-bottom">' +
-                            '<div>' +
-                                '<div class="font-bold">' + escapeHtml(group.name) + '</div>' +
-                                '<div class="text-xs text-gray">' + escapeHtml(group.course_name || 'Без курса') + '</div>' +
-                            '</div>' +
-                            '<button onclick="deleteGroup(' + group.id + ')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>' +
-                        '</div>';
-                    }).join('');
+                    container.innerHTML = currentGroups.map(group => `
+                        <div class="flex justify-between items-center p-3 border-bottom">
+                            <div>
+                                <div class="font-bold">${escapeHtml(group.name)}</div>
+                                <div class="text-xs text-gray">${escapeHtml(group.course_name || 'Без курса')}</div>
+                            </div>
+                            <button onclick="deleteGroup(${group.id})" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>
+                        </div>
+                    `).join('');
                 }
-                groupCourseSelect.innerHTML = '<option value="">Выберите курс</option>' + currentCourses.map(function(c) {
-                    return '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>';
-                }).join('');
+                groupCourseSelect.innerHTML = '<option value="">Выберите курс</option>' + currentCourses.map(c => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
             }
         }
 
-        // Добавьте эту функцию перед loadSubmissions
-function escapeForOnClick(str) {
-    if (!str) return '';
-    return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-}
-
-async function loadSubmissions() {
-    const filterCourse = document.getElementById('filterCourseSelect').value;
-    const result = await getAllSubmissions();
-    const container = document.getElementById('submissionsList');
-    
-    if (result.success && result.submissions) {
-        let filtered = result.submissions;
-        if (filterCourse !== 'all') {
-            filtered = filtered.filter(s => s.course_id == filterCourse);
-        }
-        currentSubmissions = filtered;
-        
-        if (filtered.length === 0) {
-            container.innerHTML = '<div class="text-center text-gray p-5">Нет работ для проверки</div>';
-            return;
-        }
-        
-        // Очищаем контейнер
-        container.innerHTML = '';
-        
-        filtered.forEach(sub => {
-            const card = document.createElement('div');
-            card.className = `submission-card ${sub.status}`;
-            
-            const flexDiv = document.createElement('div');
-            flexDiv.className = 'flex justify-between items-start flex-wrap gap-2';
-            
-            // Левая часть
-            const leftDiv = document.createElement('div');
-            leftDiv.style.flex = '1';
-            leftDiv.innerHTML = `
-                <div class="font-bold">${escapeHtml(sub.student_name || sub.student_fullname || 'Студент')}</div>
-                <div class="text-sm"><strong>${escapeHtml(sub.title)}</strong></div>
-                <div class="text-xs text-gray"><i class="far fa-calendar-alt"></i> ${new Date(sub.submitted_at).toLocaleString('ru-RU')}</div>
-                ${sub.file_data ? `<a href="${escapeHtml(sub.file_data)}" class="file-link" download><i class="fas fa-download"></i> Скачать файл</a>` : ''}
-                ${sub.comment ? `<div class="comment-text"><i class="fas fa-comment"></i> ${escapeHtml(sub.comment)}</div>` : ''}
-            `;
-            
-            // Правая часть
-            const rightDiv = document.createElement('div');
-            rightDiv.className = 'text-right';
-            const gradeBadge = sub.grade !== null 
-                ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Оценка: ${sub.grade}</span>`
-                : '<span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> На проверке</span>';
-            rightDiv.innerHTML = gradeBadge;
-            
-            const btn = document.createElement('button');
-            btn.className = 'btn btn-sm btn-primary mt-1';
-            btn.innerHTML = '<i class="fas fa-star"></i> Оценить';
-            // Безопасное сохранение данных в dataset
-            btn.dataset.id = sub.id;
-            btn.dataset.student = sub.student_name || sub.student_fullname || 'Студент';
-            btn.dataset.title = sub.title;
-            btn.dataset.grade = sub.grade !== null ? sub.grade : '';
-            btn.dataset.comment = sub.comment || '';
-            btn.onclick = function() {
-                openGradeModal(
-                    this.dataset.id,
-                    this.dataset.student,
-                    this.dataset.title,
-                    this.dataset.grade,
-                    this.dataset.comment
-                );
-            };
-            rightDiv.appendChild(btn);
-            
-            flexDiv.appendChild(leftDiv);
-            flexDiv.appendChild(rightDiv);
-            card.appendChild(flexDiv);
-            container.appendChild(card);
-        });
-    } else {
-        container.innerHTML = '<div class="text-center text-gray p-5">Ошибка загрузки работ</div>';
-    }
-}
-
-       async function loadSubmissions() {
-    const filterCourse = document.getElementById('filterCourseSelect').value;
-    const result = await getAllSubmissions();
-    const container = document.getElementById('submissionsList');
-    
-    if (result.success && result.submissions) {
-        let filtered = result.submissions;
-        if (filterCourse !== 'all') {
-            filtered = filtered.filter(s => s.course_id == filterCourse);
-        }
-        currentSubmissions = filtered;
-        
-        if (filtered.length === 0) {
-            container.innerHTML = '<div class="text-center text-gray p-5">Нет работ для проверки</div>';
-            return;
-        }
-        
-        // Очищаем контейнер
-        container.innerHTML = '';
-        
-        filtered.forEach(sub => {
-            const card = document.createElement('div');
-            card.className = `submission-card ${sub.status}`;
-            
-            const flexDiv = document.createElement('div');
-            flexDiv.className = 'flex justify-between items-start flex-wrap gap-2';
-            
-            // Левая часть
-            const leftDiv = document.createElement('div');
-            leftDiv.style.flex = '1';
-            const studentName = escapeHtml(sub.student_name || sub.student_fullname || 'Студент');
-            const title = escapeHtml(sub.title);
-            const date = new Date(sub.submitted_at).toLocaleString('ru-RU');
-            let leftHtml = `
-                <div class="font-bold">${studentName}</div>
-                <div class="text-sm"><strong>${title}</strong></div>
-                <div class="text-xs text-gray"><i class="far fa-calendar-alt"></i> ${date}</div>
-            `;
-            if (sub.file_data) {
-                leftHtml += `<a href="${escapeHtml(sub.file_data)}" class="file-link" download><i class="fas fa-download"></i> Скачать файл</a>`;
+        async function loadSubmissions() {
+            const filterCourse = document.getElementById('filterCourseSelect').value;
+            const result = await getAllSubmissions();
+            const container = document.getElementById('submissionsList');
+            if (result.success && result.submissions) {
+                let filtered = result.submissions;
+                if (filterCourse !== 'all') {
+                    filtered = filtered.filter(s => s.course_id == filterCourse);
+                }
+                currentSubmissions = filtered;
+                if (filtered.length === 0) {
+                    container.innerHTML = '<div class="text-center text-gray p-5">Нет работ для проверки</div>';
+                    return;
+                }
+                container.innerHTML = '';
+                filtered.forEach(sub => {
+                    const card = document.createElement('div');
+                    card.className = `submission-card ${sub.status}`;
+                    const studentName = escapeHtml(sub.student_name || sub.student_fullname || 'Студент');
+                    const title = escapeHtml(sub.title);
+                    const date = new Date(sub.submitted_at).toLocaleString('ru-RU');
+                    let leftHtml = `
+                        <div class="font-bold">${studentName}</div>
+                        <div class="text-sm"><strong>${title}</strong></div>
+                        <div class="text-xs text-gray"><i class="far fa-calendar-alt"></i> ${date}</div>
+                    `;
+                    if (sub.file_data) {
+                        leftHtml += `<a href="${escapeHtml(sub.file_data)}" class="file-link" download><i class="fas fa-download"></i> Скачать файл</a>`;
+                    }
+                    if (sub.comment) {
+                        leftHtml += `<div class="comment-text"><i class="fas fa-comment"></i> ${escapeHtml(sub.comment)}</div>`;
+                    }
+                    const gradeBadge = sub.grade !== null 
+                        ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Оценка: ${sub.grade}</span>`
+                        : '<span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> На проверке</span>';
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start flex-wrap gap-2">
+                            <div style="flex:1;">${leftHtml}</div>
+                            <div class="text-right">
+                                ${gradeBadge}
+                                <button class="btn btn-sm btn-primary mt-1" onclick='openGradeModal(${sub.id}, ${JSON.stringify(studentName)}, ${JSON.stringify(title)}, ${sub.grade !== null ? sub.grade : ''}, ${JSON.stringify(sub.comment || '')})'>
+                                    <i class="fas fa-star"></i> Оценить
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } else {
+                container.innerHTML = '<div class="text-center text-gray p-5">Ошибка загрузки работ</div>';
             }
-            if (sub.comment) {
-                leftHtml += `<div class="comment-text"><i class="fas fa-comment"></i> ${escapeHtml(sub.comment)}</div>`;
-            }
-            leftDiv.innerHTML = leftHtml;
-            
-            // Правая часть
-            const rightDiv = document.createElement('div');
-            rightDiv.className = 'text-right';
-            const gradeBadge = sub.grade !== null 
-                ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Оценка: ${sub.grade}</span>`
-                : '<span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> На проверке</span>';
-            rightDiv.innerHTML = gradeBadge;
-            
-            const btn = document.createElement('button');
-            btn.className = 'btn btn-sm btn-primary mt-1';
-            btn.innerHTML = '<i class="fas fa-star"></i> Оценить';
-            // Сохраняем данные в dataset, чтобы избежать проблем с кавычками
-            btn.dataset.id = sub.id;
-            btn.dataset.student = sub.student_name || sub.student_fullname || 'Студент';
-            btn.dataset.title = sub.title;
-            btn.dataset.grade = sub.grade !== null ? sub.grade : '';
-            btn.dataset.comment = sub.comment || '';
-            btn.onclick = function(e) {
-                openGradeModal(
-                    parseInt(this.dataset.id),
-                    this.dataset.student,
-                    this.dataset.title,
-                    this.dataset.grade,
-                    this.dataset.comment
-                );
-            };
-            rightDiv.appendChild(btn);
-            
-            flexDiv.appendChild(leftDiv);
-            flexDiv.appendChild(rightDiv);
-            card.appendChild(flexDiv);
-            container.appendChild(card);
-        });
-    } else {
-        container.innerHTML = '<div class="text-center text-gray p-5">Ошибка загрузки работ</div>';
-    }
-}
+        }
 
         window.openGradeModal = function(id, studentName, title, currentGrade, currentComment) {
             currentGradeSubId = id;
@@ -732,8 +554,8 @@ async function loadSubmissions() {
         }
 
         document.getElementById('submitGradeBtn').addEventListener('click', async function() {
-            var grade = parseInt(document.getElementById('gradeValue').value);
-            var comment = document.getElementById('gradeComment').value.trim();
+            const grade = parseInt(document.getElementById('gradeValue').value);
+            const comment = document.getElementById('gradeComment').value.trim();
             if (isNaN(grade) || grade < 0 || grade > 100) {
                 showToast('Оценка должна быть числом от 0 до 100', 'error');
                 return;
@@ -742,7 +564,7 @@ async function loadSubmissions() {
                 showToast('Ошибка: работа не выбрана', 'error');
                 return;
             }
-            var result = await gradeSubmission(currentGradeSubId, grade, comment);
+            const result = await gradeSubmission(currentGradeSubId, grade, comment);
             if (result.success) {
                 showToast('Оценка сохранена!', 'success');
                 closeGradeModal();
@@ -758,73 +580,38 @@ async function loadSubmissions() {
             }
         });
 
-        function openCourseModal() {
-            document.getElementById('courseModal').classList.add('active');
-        }
-
-        function closeCourseModal() {
-            document.getElementById('courseModal').classList.remove('active');
-            document.getElementById('courseNameInput').value = '';
-            document.getElementById('courseDescInput').value = '';
-        }
-
+        function openCourseModal() { document.getElementById('courseModal').classList.add('active'); }
+        function closeCourseModal() { document.getElementById('courseModal').classList.remove('active'); document.getElementById('courseNameInput').value = ''; document.getElementById('courseDescInput').value = ''; }
         document.getElementById('saveCourseBtn').addEventListener('click', async function() {
-            var name = document.getElementById('courseNameInput').value.trim();
-            var description = document.getElementById('courseDescInput').value;
-            if (!name) {
-                showToast('Введите название курса', 'error');
-                return;
-            }
-            var result = await createCourse({ name: name, description: description });
+            const name = document.getElementById('courseNameInput').value.trim();
+            const description = document.getElementById('courseDescInput').value;
+            if (!name) { showToast('Введите название курса', 'error'); return; }
+            const result = await createCourse({ name, description });
             if (result.success) {
                 showToast('Курс создан!', 'success');
                 closeCourseModal();
                 await loadCourses();
                 await loadGroups();
-            } else {
-                showToast(result.error || 'Ошибка создания', 'error');
-            }
+            } else { showToast(result.error || 'Ошибка создания', 'error'); }
         });
 
-        function openGroupModal() {
-            document.getElementById('groupModal').classList.add('active');
-        }
-
-        function closeGroupModal() {
-            document.getElementById('groupModal').classList.remove('active');
-            document.getElementById('groupNameInput').value = '';
-        }
-
+        function openGroupModal() { document.getElementById('groupModal').classList.add('active'); }
+        function closeGroupModal() { document.getElementById('groupModal').classList.remove('active'); document.getElementById('groupNameInput').value = ''; }
         document.getElementById('saveGroupBtn').addEventListener('click', async function() {
-            var name = document.getElementById('groupNameInput').value.trim();
-            var courseId = document.getElementById('groupCourseSelect').value;
-            if (!name) {
-                showToast('Введите название группы', 'error');
-                return;
-            }
-            if (!courseId) {
-                showToast('Выберите курс', 'error');
-                return;
-            }
-            var result = await createGroup({ name: name, course_id: parseInt(courseId) });
+            const name = document.getElementById('groupNameInput').value.trim();
+            const courseId = document.getElementById('groupCourseSelect').value;
+            if (!name) { showToast('Введите название группы', 'error'); return; }
+            if (!courseId) { showToast('Выберите курс', 'error'); return; }
+            const result = await createGroup({ name, course_id: parseInt(courseId) });
             if (result.success) {
                 showToast('Группа создана!', 'success');
                 closeGroupModal();
                 await loadGroups();
-            } else {
-                showToast(result.error || 'Ошибка создания', 'error');
-            }
+            } else { showToast(result.error || 'Ошибка создания', 'error'); }
         });
 
-        window.deleteCourse = async function(id) {
-            if (!confirm('Удалить курс? Все связанные группы и работы останутся без привязки.')) return;
-            showToast('Функция удаления курса в разработке', 'info');
-        };
-
-        window.deleteGroup = async function(id) {
-            if (!confirm('Удалить группу?')) return;
-            showToast('Функция удаления группы в разработке', 'info');
-        };
+        window.deleteCourse = async function(id) { showToast('Функция удаления курса в разработке', 'info'); };
+        window.deleteGroup = async function(id) { showToast('Функция удаления группы в разработке', 'info'); };
 
         document.getElementById('addCourseBtn').addEventListener('click', openCourseModal);
         document.getElementById('addGroupBtn').addEventListener('click', openGroupModal);
@@ -835,8 +622,202 @@ async function loadSubmissions() {
             window.location.href = '/lickab.html';
         });
 
+        // ---------- Трансляция ----------
+        let localStream = null;
+        let isStreaming = false;
+        let streamInterval = null;
+        let viewerCount = 0;
+
+        async function startStream() {
+            try {
+                const audioEnabled = document.getElementById('streamAudioCheckbox').checked;
+                const videoEnabled = document.getElementById('streamCameraCheckbox').checked;
+                const constraints = { video: videoEnabled ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false, audio: audioEnabled };
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                const video = document.getElementById('streamVideo');
+                video.srcObject = localStream;
+                isStreaming = true;
+                document.getElementById('streamPlaceholder').style.display = 'none';
+                document.getElementById('streamPreview').style.display = 'block';
+                document.getElementById('streamStatus').className = 'badge badge-danger';
+                document.getElementById('streamStatus').innerHTML = '<i class="fas fa-circle"></i> В эфире';
+                document.getElementById('streamViewerCount').style.display = 'inline-block';
+                viewerCount = 0;
+                updateViewerCount();
+                streamInterval = setInterval(() => {
+                    if (isStreaming) {
+                        viewerCount = Math.floor(Math.random() * 20) + 5;
+                        updateViewerCount();
+                    }
+                }, 10000);
+                showToast('Трансляция начата!', 'success');
+            } catch (err) {
+                let errorMsg = 'Не удалось получить доступ к камере/микрофону';
+                if (err.name === 'NotAllowedError') errorMsg = 'Доступ к камере запрещён. Разрешите доступ в браузере.';
+                else if (err.name === 'NotFoundError') errorMsg = 'Камера не найдена. Подключите устройство.';
+                showToast(errorMsg, 'error');
+            }
+        }
+
+        function stopStream() {
+            if (localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
+            if (streamInterval) { clearInterval(streamInterval); streamInterval = null; }
+            isStreaming = false;
+            const video = document.getElementById('streamVideo');
+            video.srcObject = null;
+            document.getElementById('streamPlaceholder').style.display = 'block';
+            document.getElementById('streamPreview').style.display = 'none';
+            document.getElementById('streamStatus').className = 'badge badge-warning';
+            document.getElementById('streamStatus').innerHTML = '<i class="fas fa-circle"></i> Не в эфире';
+            document.getElementById('streamViewerCount').style.display = 'none';
+            showToast('Трансляция остановлена', 'info');
+        }
+
+        function updateViewerCount() { document.getElementById('streamViewerCount').innerHTML = '<i class="fas fa-eye"></i> ' + viewerCount + ' зрителей'; }
+
+        async function getCameraDevices() {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                const select = document.getElementById('cameraSelect');
+                select.innerHTML = '<option value="">Выбор камеры</option>';
+                videoDevices.forEach((device, index) => {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.textContent = device.label || `Камера ${index + 1}`;
+                    select.appendChild(option);
+                });
+                if (videoDevices.length > 0 && videoDevices[0].deviceId) select.value = videoDevices[0].deviceId;
+            } catch (err) { console.log('Cannot enumerate devices:', err); }
+        }
+
+        document.getElementById('startStreamBtn').addEventListener('click', startStream);
+        document.getElementById('stopStreamBtn').addEventListener('click', stopStream);
+        document.getElementById('streamCameraCheckbox').addEventListener('change', function(e) {
+            if (isStreaming) { showToast('Остановите трансляцию, чтобы изменить настройки', 'warning'); e.target.checked = !e.target.checked; }
+        });
+        document.getElementById('streamAudioCheckbox').addEventListener('change', function(e) {
+            if (isStreaming) { showToast('Остановите трансляцию, чтобы изменить настройки', 'warning'); e.target.checked = !e.target.checked; }
+        });
+        document.getElementById('cameraSelect').addEventListener('change', function() {
+            if (isStreaming) showToast('Остановите трансляцию, чтобы сменить камеру', 'warning');
+        });
+
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+            navigator.mediaDevices.enumerateDevices().then(getCameraDevices);
+            navigator.mediaDevices.addEventListener('devicechange', getCameraDevices);
+        }
+        window.addEventListener('beforeunload', function() {
+            if (localStream) localStream.getTracks().forEach(track => track.stop());
+        });
+
+        // ---------- Чат ----------
+        let teacherChatSocket = null;
+        let currentChatUserEmail = '';
+
+        async function loadChatUsers() {
+            try {
+                const [studentsRes, adminRes] = await Promise.all([
+                    fetch('/api/users?role=student', { credentials: 'include' }),
+                    fetch('/api/users?role=admin', { credentials: 'include' })
+                ]);
+                const students = await studentsRes.json();
+                const admins = await adminRes.json();
+                let users = [];
+                if (students.success) users.push(...students.users);
+                if (admins.success) users.push(...admins.users);
+                const select = document.getElementById('chatUserSelect');
+                select.innerHTML = '<option value="">-- Выберите собеседника --</option>';
+                users.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.email;
+                    option.textContent = `${user.fullName} (${user.role})`;
+                    select.appendChild(option);
+                });
+                if (users.length > 0 && !currentChatUserEmail) {
+                    currentChatUserEmail = users[0].email;
+                    select.value = currentChatUserEmail;
+                    loadTeacherChatMessages();
+                }
+            } catch (e) { console.error('Load chat users error:', e); }
+        }
+
+        async function loadTeacherChatMessages() {
+            if (!currentChatUserEmail) return;
+            try {
+                const response = await fetch(`/api/chat/${encodeURIComponent(currentChatUserEmail)}`, { credentials: 'include' });
+                const data = await response.json();
+                if (data.success && data.messages) {
+                    const container = document.getElementById('chatBox');
+                    container.innerHTML = data.messages.map(msg => `
+                        <div class="chat-msg ${msg.sender_email === currentUser.email ? 'sent' : 'received'}" style="margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 0.5rem; ${msg.sender_email === currentUser.email ? 'background: #dc2626; color: white; text-align: right;' : 'background: #f3f4f6; color: #1f2937;'}">
+                            <div><strong>${msg.sender_email === currentUser.email ? 'Вы' : msg.sender_email.split('@')[0]}</strong> <span style="font-size: 0.7rem;">${new Date(msg.created_at).toLocaleTimeString()}</span></div>
+                            <div>${escapeHtml(msg.message_text)}</div>
+                        </div>
+                    `).join('');
+                    container.scrollTop = container.scrollHeight;
+                }
+            } catch (e) { console.error('Load messages error:', e); }
+        }
+
+        async function sendTeacherChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text || !currentChatUserEmail) {
+                showToast('Выберите собеседника и введите сообщение', 'error');
+                return;
+            }
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ receiver_email: currentChatUserEmail, message_text: text }),
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    input.value = '';
+                    // После отправки сразу показываем сообщение (без дублирования, т.к. сервер не шлёт обратный сокет)
+                    await loadTeacherChatMessages();
+                } else {
+                    showToast(data.error || 'Ошибка отправки', 'error');
+                }
+            } catch (e) { showToast('Ошибка сети', 'error'); }
+        }
+
+        function initTeacherChatSocket() {
+            if (window.io && currentUser && !teacherChatSocket) {
+                teacherChatSocket = io({
+                    auth: { userId: currentUser.email, userRole: currentUser.role }
+                });
+                teacherChatSocket.on('chat-message', (data) => {
+                    if (data.from === currentChatUserEmail || data.to === currentChatUserEmail) {
+                        loadTeacherChatMessages();
+                    }
+                });
+            }
+        }
+
+        document.getElementById('chatUserSelect').addEventListener('change', (e) => {
+            currentChatUserEmail = e.target.value;
+            if (currentChatUserEmail) loadTeacherChatMessages();
+        });
+        document.getElementById('sendChatBtn').addEventListener('click', sendTeacherChatMessage);
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendTeacherChatMessage();
+        });
+        document.getElementById('refreshChatBtn').addEventListener('click', () => {
+            if (currentChatUserEmail) loadTeacherChatMessages();
+        });
+
+        async function initTeacherChat() {
+            await loadChatUsers();
+            initTeacherChatSocket();
+        }
+
+        // ---------- Инициализация ----------
         async function init() {
-            var loggedIn = await loadUserData();
+            const loggedIn = await loadUserData();
             if (loggedIn) {
                 await loadCourses();
                 await loadGroups();
@@ -845,262 +826,7 @@ async function loadSubmissions() {
             }
         }
 
-        function initChatSocket() {
-    if (window.io && currentUser) {
-        chatSocket = io({
-            auth: { userId: currentUser.email, userRole: currentUser.role }
-        });
-        chatSocket.on('chat-message', (data) => {
-            if (data.from === currentTeacherEmail || data.to === currentTeacherEmail) {
-                loadChatMessages();
-            }
-        });
-    }
-}
-
         init();
-
-        // Трансляция
-let localStream = null;
-let isStreaming = false;
-let streamInterval = null;
-let viewerCount = 0;
-
-async function startStream() {
-    try {
-        const audioEnabled = document.getElementById('streamAudioCheckbox').checked;
-        const videoEnabled = document.getElementById('streamCameraCheckbox').checked;
-        
-        const constraints = {
-            video: videoEnabled ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false,
-            audio: audioEnabled
-        };
-        
-        localStream = await navigator.mediaDevices.getUserMedia(constraints);
-        
-        const video = document.getElementById('streamVideo');
-        video.srcObject = localStream;
-        
-        isStreaming = true;
-        
-        document.getElementById('streamPlaceholder').style.display = 'none';
-        document.getElementById('streamPreview').style.display = 'block';
-        document.getElementById('streamStatus').className = 'badge badge-danger';
-        document.getElementById('streamStatus').innerHTML = '<i class="fas fa-circle"></i> В эфире';
-        document.getElementById('streamViewerCount').style.display = 'inline-block';
-        
-        viewerCount = 0;
-        updateViewerCount();
-        
-        streamInterval = setInterval(() => {
-            if (isStreaming) {
-                viewerCount = Math.floor(Math.random() * 20) + 5;
-                updateViewerCount();
-            }
-        }, 10000);
-        
-        showToast('Трансляция начата!', 'success');
-        
-    } catch (err) {
-        console.error('Stream error:', err);
-        let errorMsg = 'Не удалось получить доступ к камере/микрофону';
-        if (err.name === 'NotAllowedError') {
-            errorMsg = 'Доступ к камере запрещён. Разрешите доступ в браузере.';
-        } else if (err.name === 'NotFoundError') {
-            errorMsg = 'Камера не найдена. Подключите устройство.';
-        }
-        showToast(errorMsg, 'error');
-    }
-}
-
-function stopStream() {
-    if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-        localStream = null;
-    }
-    
-    if (streamInterval) {
-        clearInterval(streamInterval);
-        streamInterval = null;
-    }
-    
-    isStreaming = false;
-    
-    const video = document.getElementById('streamVideo');
-    video.srcObject = null;
-    
-    document.getElementById('streamPlaceholder').style.display = 'block';
-    document.getElementById('streamPreview').style.display = 'none';
-    document.getElementById('streamStatus').className = 'badge badge-warning';
-    document.getElementById('streamStatus').innerHTML = '<i class="fas fa-circle"></i> Не в эфире';
-    document.getElementById('streamViewerCount').style.display = 'none';
-    
-    showToast('Трансляция остановлена', 'info');
-}
-
-function updateViewerCount() {
-    document.getElementById('streamViewerCount').innerHTML = '<i class="fas fa-eye"></i> ' + viewerCount + ' зрителей';
-}
-
-async function getCameraDevices() {
-    try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(device => device.kind === 'videoinput');
-        const select = document.getElementById('cameraSelect');
-        
-        select.innerHTML = '<option value="">Выбор камеры</option>';
-        videoDevices.forEach((device, index) => {
-            const option = document.createElement('option');
-            option.value = device.deviceId;
-            option.textContent = device.label || `Камера ${index + 1}`;
-            select.appendChild(option);
-        });
-        
-        if (videoDevices.length > 0 && videoDevices[0].deviceId) {
-            select.value = videoDevices[0].deviceId;
-        }
-    } catch (err) {
-        console.log('Cannot enumerate devices:', err);
-    }
-}
-
-document.getElementById('startStreamBtn').addEventListener('click', startStream);
-document.getElementById('stopStreamBtn').addEventListener('click', stopStream);
-
-document.getElementById('streamCameraCheckbox').addEventListener('change', async function(e) {
-    if (isStreaming) {
-        showToast('Остановите трансляцию, чтобы изменить настройки', 'warning');
-        e.target.checked = !e.target.checked;
-    }
-});
-
-document.getElementById('streamAudioCheckbox').addEventListener('change', async function(e) {
-    if (isStreaming) {
-        showToast('Остановите трансляцию, чтобы изменить настройки', 'warning');
-        e.target.checked = !e.target.checked;
-    }
-});
-
-document.getElementById('cameraSelect').addEventListener('change', function() {
-    if (isStreaming) {
-        showToast('Остановите трансляцию, чтобы сменить камеру', 'warning');
-    }
-});
-
-if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
-    navigator.mediaDevices.enumerateDevices().then(() => {
-        getCameraDevices();
-    });
-    navigator.mediaDevices.addEventListener('devicechange', getCameraDevices);
-}
-
-window.addEventListener('beforeunload', function() {
-    if (localStream) {
-        localStream.getTracks().forEach(track => track.stop());
-    }
-});
-
-// ==================== ЧАТ ====================
-let teacherChatSocket = null;
-let currentChatUserEmail = '';
-
-async function loadChatUsers() {
-    try {
-        const [studentsRes, adminRes] = await Promise.all([
-            fetch('/api/users?role=student', { credentials: 'include' }),
-            fetch('/api/users?role=admin', { credentials: 'include' })
-        ]);
-        const students = await studentsRes.json();
-        const admins = await adminRes.json();
-        let users = [];
-        if (students.success) users.push(...students.users);
-        if (admins.success) users.push(...admins.users);
-        const select = document.getElementById('chatUserSelect');
-        select.innerHTML = '<option value="">-- Выберите собеседника --</option>';
-        users.forEach(user => {
-            const option = document.createElement('option');
-            option.value = user.email;
-            option.textContent = `${user.fullName} (${user.role})`;
-            select.appendChild(option);
-        });
-        if (users.length > 0 && !currentChatUserEmail) {
-            currentChatUserEmail = users[0].email;
-            select.value = currentChatUserEmail;
-            loadTeacherChatMessages();
-        }
-    } catch (e) { console.error('Load chat users error:', e); }
-}
-
-async function loadTeacherChatMessages() {
-    if (!currentChatUserEmail) return;
-    try {
-        const response = await fetch(`/api/chat/${encodeURIComponent(currentChatUserEmail)}`, { credentials: 'include' });
-        const data = await response.json();
-        if (data.success && data.messages) {
-            const container = document.getElementById('chatBox');
-            container.innerHTML = data.messages.map(msg => `
-                <div class="chat-msg ${msg.sender_email === currentUser.email ? 'sent' : 'received'}" style="margin-bottom: 0.5rem; padding: 0.5rem; border-radius: 0.5rem; ${msg.sender_email === currentUser.email ? 'background: #dc2626; color: white; text-align: right;' : 'background: #f3f4f6; color: #1f2937;'}">
-                    <div><strong>${msg.sender_email === currentUser.email ? 'Вы' : msg.sender_email.split('@')[0]}</strong> <span style="font-size: 0.7rem;">${new Date(msg.created_at).toLocaleTimeString()}</span></div>
-                    <div>${escapeHtml(msg.message_text)}</div>
-                </div>
-            `).join('');
-            container.scrollTop = container.scrollHeight;
-        }
-    } catch (e) { console.error('Load messages error:', e); }
-}
-
-async function sendTeacherChatMessage() {
-    const input = document.getElementById('chatInput');
-    const text = input.value.trim();
-    if (!text || !currentChatUserEmail) {
-        showToast('Выберите собеседника и введите сообщение', 'error');
-        return;
-    }
-    try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ receiver_email: currentChatUserEmail, message_text: text }),
-            credentials: 'include'
-        });
-        const data = await response.json();
-        if (data.success) {
-            input.value = '';
-            loadTeacherChatMessages();
-        } else {
-            showToast(data.error || 'Ошибка отправки', 'error');
-        }
-    } catch (e) { showToast('Ошибка сети', 'error'); }
-}
-
-function initTeacherChatSocket() {
-    if (window.io && currentUser) {
-        teacherChatSocket = io();
-        teacherChatSocket.on('chat-message', (data) => {
-            if (data.from === currentChatUserEmail || data.to === currentChatUserEmail) {
-                loadTeacherChatMessages();
-            }
-        });
-    }
-}
-
-document.getElementById('chatUserSelect').addEventListener('change', (e) => {
-    currentChatUserEmail = e.target.value;
-    if (currentChatUserEmail) loadTeacherChatMessages();
-});
-document.getElementById('sendChatBtn').addEventListener('click', sendTeacherChatMessage);
-document.getElementById('chatInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') sendTeacherChatMessage();
-});
-document.getElementById('refreshChatBtn').addEventListener('click', () => {
-    if (currentChatUserEmail) loadTeacherChatMessages();
-});
-
-async function initTeacherChat() {
-    await loadChatUsers();
-    initTeacherChatSocket();
-}
-
     </script>
 </body>
 </html>

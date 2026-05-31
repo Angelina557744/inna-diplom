@@ -1059,6 +1059,9 @@
                 'site-content': renderSiteContent,
                 'partners': renderPartners
             };
+            if (page === 'chat') {
+    loadTeachersForAdminChat();
+}
             if (renderers[page]) renderers[page]();
             if (page === 'live-preview') updatePreview();
         }
@@ -1319,7 +1322,7 @@ async function deleteUserById(id) {
         }
 
         // ===== APPLICATIONS =====
-        function renderApplications() {
+       function renderApplications() {
     const filter = document.getElementById('appFilter')?.value || 'all';
     let filtered = applicationsData;
     if (filter !== 'all') {
@@ -1331,30 +1334,82 @@ async function deleteUserById(id) {
         return;
     }
 
-    document.getElementById('applicationsTableBody').innerHTML = filtered.map(a => `
-        <tr>
-            <td>${a.id}</td>
-            <td>${escapeHtml(a.sender_name || a.sender)}</td>
-            <td>${escapeHtml(a.type)}</td>
-            <td>${escapeHtml(a.content || '')}</td>
-            <td>${a.created_at ? new Date(a.created_at).toLocaleDateString() : (a.date || '-')}</td>
-            <td><span class="status-badge status-${a.status}">${a.status === 'pending' ? 'Ожидает' : a.status === 'accepted' ? 'Принято' : 'Отклонено'}</span></td>
-            <td>
-                <div class="btn-group">
-                    ${a.status === 'pending' ? `
-                        <button class="btn btn-success btn-sm" onclick="updateApplication(${a.id}, 'accepted')">Принять</button>
-                        <button class="btn btn-danger btn-sm" onclick="updateApplication(${a.id}, 'rejected')">Отклонить</button>
-                    ` : '<span class="text-muted">Обработано</span>'}
-                </div>
-            </td>
-        </tr>
-    `).join('');
+    document.getElementById('applicationsTableBody').innerHTML = filtered.map(a => {
+        let typeLabel = a.type;
+        let typeBadge = '';
+        if (a.type === 'course_enrollment') {
+            typeLabel = 'Запись на курс';
+            typeBadge = '<span class="badge badge-info" style="margin-left: 0.5rem;">🎓</span>';
+        } else if (a.type === 'question') typeLabel = 'Вопрос';
+        else if (a.type === 'complaint') typeLabel = 'Жалоба';
+        else typeLabel = a.type || 'Обращение';
+
+        // Дополнительная информация для заявки на курс
+        let extraHtml = '';
+        if (a.type === 'course_enrollment' && a.content) {
+            const courseMatch = a.content.match(/ID курса:\s*(\d+)/);
+            if (courseMatch) extraHtml = `<div class="text-xs text-gray">Курс ID: ${courseMatch[1]}</div>`;
+        }
+
+        return `
+            <tr>
+                <td>${a.id}</td>
+                <td>${escapeHtml(a.sender_name || a.sender)}</td>
+                <td>${escapeHtml(typeLabel)} ${typeBadge} ${extraHtml}</td>
+                <td style="max-width: 250px; word-break: break-word;">${escapeHtml(a.content || '')}</td>
+                <td>${a.created_at ? new Date(a.created_at).toLocaleDateString() : (a.date || '-')}</td>
+                <td><span class="status-badge status-${a.status}">${a.status === 'pending' ? 'Ожидает' : a.status === 'accepted' ? 'Принято' : 'Отклонено'}</span></td>
+                <td>
+                    <div class="btn-group">
+                        ${a.status === 'pending' ? `
+                            <button class="btn btn-success btn-sm" onclick="updateApplication(${a.id}, 'accepted')">Принять</button>
+                            <button class="btn btn-danger btn-sm" onclick="updateApplication(${a.id}, 'rejected')">Отклонить</button>
+                        ` : '<span class="text-muted">Обработано</span>'}
+                    </div>
+                </td>
+            </tr>
+        `;
+    }).join('');
 
     updateApplicationBadge();
 }
 
-       async function updateApplication(id, status) {
+      async function updateApplication(id, status) {
     try {
+        const app = applicationsData.find(a => a.id === id);
+        if (!app) {
+            showToast('Заявка не найдена', 'error');
+            return;
+        }
+
+        // Если заявка на курс и статус "accepted" – зачисляем студента
+        if (app.type === 'course_enrollment' && status === 'accepted') {
+            const courseMatch = app.content.match(/ID курса:\s*(\d+)/);
+            if (!courseMatch) {
+                showToast('Не удалось определить курс из заявки', 'error');
+                return;
+            }
+            const courseId = parseInt(courseMatch[1]);
+            const studentEmail = app.sender_email;
+            if (!studentEmail) {
+                showToast('У заявки нет email отправителя', 'error');
+                return;
+            }
+
+            const enrollRes = await fetch('/api/admin/enroll-student', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId, studentEmail }),
+                credentials: 'include'
+            });
+            const enrollData = await enrollRes.json();
+            if (!enrollData.success) {
+                showToast(enrollData.error || 'Ошибка зачисления', 'error');
+                return;
+            }
+        }
+
+        // Обновляем статус заявки
         const response = await fetch(API_BASE + '/api/content/applications/' + id, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
@@ -1375,6 +1430,68 @@ async function deleteUserById(id) {
     } catch(e) {
         showToast('Ошибка сети', 'error');
         console.log('Update application error:', e);
+    }
+}
+
+   async function updateApplication(id, status) {
+    try {
+        // Находим заявку в текущих данных
+        const app = applicationsData.find(a => a.id === id);
+        if (!app) {
+            showToast('Заявка не найдена', 'error');
+            return;
+        }
+
+        // Если заявка на курс и статус "accepted" – зачисляем студента
+        if (app.type === 'course_enrollment' && status === 'accepted') {
+            // Извлекаем ID курса из поля content
+            const courseMatch = app.content.match(/ID курса:\s*(\d+)/);
+            if (!courseMatch) {
+                showToast('Не удалось определить курс из заявки', 'error');
+                return;
+            }
+            const courseId = parseInt(courseMatch[1]);
+            const studentEmail = app.sender_email;
+            if (!studentEmail) {
+                showToast('У заявки нет email отправителя', 'error');
+                return;
+            }
+
+            // Отправляем запрос на зачисление студента (отдельный API)
+            const enrollRes = await fetch('/api/admin/enroll-student', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ courseId, studentEmail }),
+                credentials: 'include'
+            });
+            const enrollData = await enrollRes.json();
+            if (!enrollData.success) {
+                showToast(enrollData.error || 'Ошибка зачисления студента', 'error');
+                return;
+            }
+        }
+
+        // Обновляем статус заявки
+        const response = await fetch('/api/content/applications/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status, admin_comment: '' }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+
+        if (data.success) {
+            showToast(status === 'accepted' ? 'Заявка принята' : 'Заявка отклонена');
+            await loadApplicationsFromServer();  // перезагружаем список заявок
+            renderApplications();               // обновляем таблицу
+            renderDashboard();                  // обновляем дашборд (счётчики)
+            logActivity(`Заявка #${id} ${status === 'accepted' ? 'принята' : 'отклонена'}`);
+        } else {
+            showToast(data.error || 'Ошибка обновления', 'error');
+        }
+    } catch (e) {
+        showToast('Ошибка сети', 'error');
+        console.error('Update application error:', e);
     }
 }
         function updateApplicationBadge() {
@@ -1636,55 +1753,67 @@ async function deleteStream(id) {
 
         // ===== CHAT =====
         function renderChat() {
-            const teachers = usersData.filter(u => u.role === 'teacher');
-            document.getElementById('chatTeacherList').innerHTML = teachers.map(t => `
-                <div class="chat-list-item" onclick="selectChatTeacher('${t.email}')" data-email="${t.email}">
-                    <span class="dot ${t.status === 'blocked' ? 'offline' : 'online'}"></span>
-                    <div>
-                        <strong>${escapeHtml(t.fullName || t.email)}</strong>
-                        <p style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(t.specialization || '')}</p>
-                    </div>
+    // Очищаем список преподавателей, он будет загружен отдельно
+    document.getElementById('chatTeacherList').innerHTML = '<div class="text-center p-3">Загрузка...</div>';
+    loadTeachersForAdminChat();
+}
+
+       async function selectChatTeacher(email) {
+    document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
+    document.querySelector(`.chat-list-item[data-email="${email}"]`)?.classList.add('active');
+    
+    window.activeChatTeacher = email;
+    
+    try {
+        const response = await fetch(`/api/chat/${encodeURIComponent(email)}`, { credentials: 'include' });
+        const data = await response.json();
+        const messagesContainer = document.getElementById('chatMessages');
+        
+        if (data.success && data.messages && data.messages.length > 0) {
+            messagesContainer.innerHTML = data.messages.map(msg => `
+                <div class="chat-msg ${msg.sender_email === 'admin@cons.ru' ? 'sent' : 'received'}">
+                    ${escapeHtml(msg.message_text)}
+                    <div class="time">${new Date(msg.created_at).toLocaleTimeString()}</div>
                 </div>
-            `).join('') || '<p class="text-muted" style="padding:1rem;">Нет преподавателей</p>';
+            `).join('');
+        } else {
+            messagesContainer.innerHTML = '<p class="text-muted" style="text-align:center;padding:2rem;">Нет сообщений. Напишите первым!</p>';
         }
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    } catch (e) {
+        console.error('Load messages error:', e);
+        document.getElementById('chatMessages').innerHTML = '<p class="text-muted" style="text-align:center;padding:2rem;">Ошибка загрузки сообщений</p>';
+    }
+}
 
-        function selectChatTeacher(email) {
-            document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
-            document.querySelector(`.chat-list-item[data-email="${email}"]`)?.classList.add('active');
-            
-            window.activeChatTeacher = email;
-            const messages = chatMessagesData[email] || [];
-            document.getElementById('chatMessages').innerHTML = messages.map(m => `
-                <div class="chat-msg ${m.from === 'admin' ? 'sent' : 'received'}">
-                    ${escapeHtml(m.text)}
-                    <div class="time">${m.time || ''}</div>
-                </div>
-            `).join('') || '<p class="text-muted" style="text-align:center;">Нет сообщений. Напишите первым!</p>';
-        }
-
-        function sendChatMessage() {
-            const input = document.getElementById('chatInput');
-            const text = input.value.trim();
-            const teacherEmail = window.activeChatTeacher;
-
-            if (!text || !teacherEmail) {
-                if (!teacherEmail) showToast('Выберите преподавателя');
-                return;
-            }
-
-            if (!chatMessagesData[teacherEmail]) chatMessagesData[teacherEmail] = [];
-            chatMessagesData[teacherEmail].push({
-                from: 'admin',
-                text,
-                time: new Date().toLocaleTimeString()
-            });
-
-            saveAllToStorage();
+      async function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    const teacherEmail = window.activeChatTeacher;
+    
+    if (!text || !teacherEmail) {
+        if (!teacherEmail) showToast('Выберите преподавателя', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ receiver_email: teacherEmail, message_text: text }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
             input.value = '';
-            selectChatTeacher(teacherEmail);
-            updateChatBadge();
-            logActivity(`Отправлено сообщение преподавателю: ${teacherEmail}`);
+            // Не обновляем чат — сообщение придёт через WebSocket
+        } else {
+            showToast(data.error || 'Ошибка отправки', 'error');
         }
+    } catch (e) {
+        showToast('Ошибка сети', 'error');
+    }
+}
 
         function updateChatBadge() {
             const badge = document.getElementById('chatBadge');
@@ -1698,26 +1827,31 @@ async function deleteStream(id) {
             }
         }
 
-        function setupSocketIO() {
-            const socket = io();
-            socket.on('connect', () => {
-                document.getElementById('chatStatus').innerHTML = '🟢 Подключён';
-                socket.emit('user-online', 'admin');
-            });
-            socket.on('disconnect', () => {
-                document.getElementById('chatStatus').innerHTML = '🔴 Отключён';
-            });
-            socket.on('chat-message', (data) => {
-                if (data.to === 'admin') {
-                    const teacherEmail = data.from;
-                    if (!chatMessagesData[teacherEmail]) chatMessagesData[teacherEmail] = [];
-                    chatMessagesData[teacherEmail].push({ from: teacherEmail, text: data.text, time: new Date().toLocaleTimeString() });
-                    saveAllToStorage();
-                    updateChatBadge();
-                    if (window.activeChatTeacher === teacherEmail) selectChatTeacher(teacherEmail);
-                }
-            });
+       function setupSocketIO() {
+    // Проверяем, что текущий пользователь – администратор (email известен)
+    const adminEmail = 'admin@cons.ru'; // или получить из currentUser
+    const socket = io({
+        auth: { userId: adminEmail, userRole: 'admin' }
+    });
+    socket.on('connect', () => {
+        document.getElementById('chatStatus').innerHTML = '🟢 Подключён';
+    });
+    socket.on('disconnect', () => {
+        document.getElementById('chatStatus').innerHTML = '🔴 Отключён';
+    });
+    socket.on('chat-message', (data) => {
+        // Если сообщение адресовано админу или отправлено текущим выбранным преподавателем
+        if (data.to === adminEmail || data.from === window.activeChatTeacher) {
+            // Обновляем окно чата
+            if (window.activeChatTeacher) {
+                selectChatTeacher(window.activeChatTeacher);
+            }
+            // Обновить бейдж (количество непрочитанных – можно реализовать позже)
+            updateChatBadge();
         }
+    });
+    window.adminSocket = socket;
+}
 
         // ===== COURSES =====
        function renderCourses() {
@@ -2326,6 +2460,30 @@ async function loadGameProgressFromServer() {
         console.log('Load game progress failed:', e);
     }
 }
+async function loadTeachersForAdminChat() {
+    try {
+        const response = await fetch('/api/users?role=teacher', { credentials: 'include' });
+        const data = await response.json();
+        const container = document.getElementById('chatTeacherList');
+        if (data.success && data.users && data.users.length > 0) {
+            container.innerHTML = data.users.map(teacher => `
+                <div class="chat-list-item" onclick="selectChatTeacher('${teacher.email}')" data-email="${teacher.email}">
+                    <span class="dot ${teacher.status === 'blocked' ? 'offline' : 'online'}"></span>
+                    <div>
+                        <strong>${escapeHtml(teacher.fullName || teacher.email)}</strong>
+                        <p style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(teacher.specialization || 'Преподаватель')}</p>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p class="text-muted text-center p-3">Нет преподавателей</p>';
+        }
+    } catch (e) {
+        console.error('Load teachers for chat error:', e);
+        document.getElementById('chatTeacherList').innerHTML = '<p class="text-muted text-center p-3">Ошибка загрузки</p>';
+    }
+}
+
 document.getElementById('updateQuestionBtn').addEventListener('click', saveGameQuestion);
 document.getElementById('deleteQuestionBtn').addEventListener('click', deleteGameQuestion);
     document.getElementById('saveStreamBtn').addEventListener('click', saveStream);
