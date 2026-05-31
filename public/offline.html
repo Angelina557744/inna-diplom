@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Нет подключения | КонсПресс</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            max-width: 480px;
+            width: 100%;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
+            color: #dc2626;
+            margin-bottom: 12px;
+        }
+        h1 { font-size: 22px; margin-bottom: 8px; color: #0f172a; }
+        p { color: #64748b; margin-bottom: 24px; line-height: 1.6; }
+        .btn {
+            display: inline-block;
+            background: #dc2626;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: background 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        .btn:hover { background: #b91c1c; }
+        .status {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">КП</div>
+        <h1>Нет подключения к интернету</h1>
+        <p>Проверьте соединение с сетью или попробуйте перезагрузить страницу. Часть материалов может быть доступна в кэше.</p>
+        <button class="btn" onclick="location.reload()">Повторить попытку</button>
+        <div class="status">Страница сохранена в кэше браузера</div>
+    </div>
+    <script>
+        window.addEventListener('online', () => location.reload());
+    </script>
+</body>
+</html>

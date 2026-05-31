@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>КонсПресс - Игровой портал</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <style>
+        .game-container {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .game-canvas-wrapper {
+            background: #0f0f1a;
+            border-radius: var(--radius);
+            overflow: hidden;
+            aspect-ratio: 16 / 9;
+            position: relative;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius);
+            margin-top: 0.75rem;
+        }
+        .game-stat {
+            text-align: center;
+        }
+        .game-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #facc15;
+        }
+        .game-stat-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .game-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .leaderboard {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 1rem;
+        }
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+        .leaderboard-rank {
+            font-weight: 700;
+            width: 2rem;
+        }
+        .leaderboard-name {
+            flex: 1;
+        }
+        .leaderboard-score {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .question-modal .modal-content {
+            max-width: 450px;
+        }
+        .question-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 1rem 0;
+        }
+        .question-option {
+            padding: 0.75rem;
+            background: var(--light);
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+        .question-option:hover {
+            background: var(--border);
+        }
+        .question-option.correct {
+            background: var(--success);
+            color: white;
+        }
+        .question-option.wrong {
+            background: var(--danger);
+            color: white;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .recording {
+            animation: pulse 1s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <div class="logo-box">&lt;/&gt;</div>
+                <span class="logo-text">КонсПресс</span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link">Главная</a>
+                <a href="/kurs.html" class="nav-link">Курсы</a>
+                <a href="/spesial.html" class="nav-link">Специализация</a>
+                <a href="/lickab.html" class="nav-link">Личный кабинет</a>
+            </nav>
+            <div class="profile-icon" id="profileIcon">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Главная</a>
+                <span>/</span>
+                <span>Игры</span>
+            </div>
+
+            <div class="text-center mb-5">
+                <h1 class="mb-2">🎮 Игровой портал</h1>
+                <p class="text-gray">Учись программированию через игру</p>
+            </div>
+
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div>
+                    <div class="game-container">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="text-white" id="gameTitle">Code Jumper</h3>
+                            <div class="flex gap-2">
+                                <select id="difficultySelect" class="select" style="background: rgba(255,255,255,0.1); color: white; border-color: rgba(255,255,255,0.2);">
+                                    <option value="easy">🟢 Лёгкий</option>
+                                    <option value="normal" selected>🟡 Нормальный</option>
+                                    <option value="hard">🔴 Сложный</option>
+                                </select>
+                                <button id="gameSelectorBtn" class="btn btn-sm btn-outline" style="background: rgba(255,255,255,0.1); color: white;">🔄 Сменить игру</button>
+                            </div>
+                        </div>
+                        <div class="game-canvas-wrapper">
+                            <canvas id="gameCanvas"></canvas>
+                        </div>
+                        <div class="game-stats">
+                            <div class="game-stat">
+                                <div class="game-stat-value" id="scoreDisplay">0</div>
+                                <div class="game-stat-label">Очки</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value" id="levelDisplay">1</div>
+                                <div class="game-stat-label">Уровень</div>
+                            </div>
+                            <div class="game-stat">
+                                <div class="game-stat-value" id="healthDisplay">❤️ 3</div>
+                                <div class="game-stat-label">Здоровье</div>
+                            </div>
+                        </div>
+                        <div class="game-controls">
+                            <button id="startGameBtn" class="btn btn-primary flex-1">▶ Начать игру</button>
+                            <button id="pauseGameBtn" class="btn btn-outline flex-1" style="background: rgba(255,255,255,0.1); color: white;">⏸ Пауза</button>
+                            <button id="resetGameBtn" class="btn btn-outline flex-1" style="background: rgba(255,255,255,0.1); color: white;">🔄 Сброс</button>
+                        </div>
+                        <p class="text-xs text-center text-white mt-2 opacity-75">⬅️ ➡️ Управление стрелками | ⬆️ Прыжок</p>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="leaderboard">
+                        <h3 class="font-bold mb-3">🏆 Таблица рекордов</h3>
+                        <div id="leaderboardList">
+                            <div class="skeleton" style="height: 40px; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton" style="height: 40px; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton" style="height: 40px;"></div>
+                        </div>
+                    </div>
+                    <div class="card mt-4">
+                        <h3 class="font-bold mb-2">📊 Моя статистика</h3>
+                        <div id="userStats">
+                            <div class="skeleton" style="height: 60px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="questionModal" class="modal">
+        <div class="modal-content question-modal">
+            <div class="modal-header">
+                <h3 class="font-bold">📚 Вопрос по программированию</h3>
+                <button class="modal-close" onclick="closeQuestionModal()">&times;</button>
+            </div>
+            <div id="questionText" class="text-center mb-3" style="font-size: 1rem;"></div>
+            <div id="questionOptions" class="question-options"></div>
+            <div id="questionFeedback" class="text-center text-sm"></div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 КонсПресс Университет. Игровой портал.</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let currentGame = 'jumper';
+        let gameRunning = false;
+        let gamePaused = false;
+        let animationId = null;
+        let currentScore = 0;
+        let currentLevel = 1;
+        let currentHealth = 3;
+        let currentUser = null;
+        let currentQuestions = { easy: [], normal: [], hard: [] };
+        let currentDifficulty = 'normal';
+        let canvas = document.getElementById('gameCanvas');
+        let ctx = canvas.getContext('2d');
+        let width = 0, height = 0;
+
+        let player = { x: 100, y: 0, width: 30, height: 30, vy: 0, grounded: true };
+        let obstacles = [];
+        let frameCount = 0;
+        let gameSpeed = 4;
+        let jumpCount = 0;
+        let pendingQuestion = false;
+
+        async function apiRequest(url, options = {}) {
+            try {
+                const response = await fetch(API_URL + url, {
+                    ...options,
+                    headers: { 'Content-Type': 'application/json', ...options.headers },
+                    credentials: 'include'
+                });
+                return await response.json();
+            } catch (error) {
+                return { success: false, error: 'Ошибка сети' };
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (type === 'success') toast.classList.add('toast-success');
+            if (type === 'error') toast.classList.add('toast-error');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[m]));
+        }
+
+        async function getCurrentUser() {
+            return apiRequest('/api/auth/me');
+        }
+
+        async function getGameQuestions() {
+            return apiRequest('/api/games/questions');
+        }
+
+        async function getGameProgress() {
+            return apiRequest('/api/games/progress');
+        }
+
+        async function updateGameProgress(game, highScore, questionsAnswered) {
+            return apiRequest('/api/games/progress', {
+                method: 'POST',
+                body: JSON.stringify({ game, high_score: highScore, questions_answered: questionsAnswered })
+            });
+        }
+
+        function resizeCanvas() {
+            const wrapper = canvas.parentElement;
+            width = wrapper.clientWidth;
+            height = wrapper.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+            player.y = height - 80;
+        }
+
+        function updateGameSpeed() {
+            if (currentDifficulty === 'easy') gameSpeed = 3;
+            else if (currentDifficulty === 'hard') gameSpeed = 5.5;
+            else gameSpeed = 4;
+        }
+
+        function spawnObstacle() {
+            const obstacleHeight = 25 + Math.random() * 20;
+            obstacles.push({
+                x: width,
+                y: height - 15 - obstacleHeight,
+                width: 25,
+                height: obstacleHeight,
+                color: '#ef4444'
+            });
+        }
+
+        function checkCollision() {
+            for (let i = 0; i < obstacles.length; i++) {
+                const obs = obstacles[i];
+                if (player.x < obs.x + obs.width && player.x + player.width > obs.x &&
+                    player.y < obs.y + obs.height && player.y + player.height > obs.y) {
+                    currentHealth--;
+                    updateUI();
+                    obstacles.splice(i, 1);
+                    if (currentHealth <= 0) gameOver();
+                    return;
+                }
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(i, 1);
+                    i--;
+                    currentScore += 5;
+                    updateUI();
+                }
+            }
+        }
+
+        function updatePhysics() {
+            player.vy += 0.55;
+            player.y += player.vy;
+            const ground = height - 45;
+            if (player.y + player.height >= ground) {
+                player.y = ground - player.height;
+                player.vy = 0;
+                player.grounded = true;
+            } else {
+                player.grounded = false;
+            }
+        }
+
+        function jump() {
+            if (player.grounded && gameRunning && !gamePaused && !pendingQuestion) {
+                player.vy = -10;
+                player.grounded = false;
+                jumpCount++;
+                
+                if (jumpCount % 10 === 0 && jumpCount > 0) {
+                    showRandomQuestion();
+                }
+            }
+        }
+
+        async function showRandomQuestion() {
+            if (pendingQuestion) return;
+            
+            const questions = currentQuestions[currentDifficulty] || currentQuestions.normal;
+            if (questions.length === 0) return;
+            
+            pendingQuestion = true;
+            gamePaused = true;
+            
+            const q = questions[Math.floor(Math.random() * questions.length)];
+            document.getElementById('questionText').innerHTML = q.q;
+            
+            const container = document.getElementById('questionOptions');
+            container.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = 'question-option';
+                div.innerHTML = opt;
+                div.onclick = () => {
+                    if (idx === q.correct) {
+                        currentScore += 20;
+                        document.getElementById('questionFeedback').innerHTML = '✅ Правильно! +20 очков';
+                        updateUI();
+                    } else {
+                        currentHealth = Math.max(0, currentHealth - 1);
+                        document.getElementById('questionFeedback').innerHTML = `❌ Неправильно! Правильный ответ: ${escapeHtml(q.options[q.correct])}`;
+                        updateUI();
+                        if (currentHealth <= 0) gameOver();
+                    }
+                    setTimeout(() => {
+                        closeQuestionModal();
+                        pendingQuestion = false;
+                        gamePaused = false;
+                        if (gameRunning && !gamePaused && currentHealth > 0) {
+                            updateGame();
+                        }
+                    }, 1500);
+                };
+                container.appendChild(div);
+            });
+            
+            document.getElementById('questionModal').classList.add('active');
+        }
+
+        function closeQuestionModal() {
+            document.getElementById('questionModal').classList.remove('active');
+            document.getElementById('questionFeedback').innerHTML = '';
+        }
+
+        function updateUI() {
+            document.getElementById('scoreDisplay').textContent = currentScore;
+            document.getElementById('healthDisplay').innerHTML = `❤️ ${currentHealth}`;
+            if (currentScore > 0) {
+                currentLevel = Math.floor(currentScore / 100) + 1;
+                document.getElementById('levelDisplay').textContent = currentLevel;
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(0, height - 40, width, 40);
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(0, height - 42, width, 4);
+            ctx.fillStyle = '#3b82f6';
+            ctx.fillRect(player.x, player.y, player.width, player.height);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px monospace';
+            ctx.fillText('</>', player.x + 8, player.y + 22);
+            
+            for (let obs of obstacles) {
+                ctx.fillStyle = obs.color;
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+            }
+        }
+
+        function updateGame() {
+            if (!gameRunning || gamePaused) {
+                draw();
+                return;
+            }
+            
+            updatePhysics();
+            
+            frameCount++;
+            let spawnRate = currentDifficulty === 'hard' ? 70 : currentDifficulty === 'easy' ? 130 : 100;
+            if (frameCount % spawnRate === 0) spawnObstacle();
+            
+            for (let i = 0; i < obstacles.length; i++) {
+                obstacles[i].x -= gameSpeed;
+            }
+            
+            checkCollision();
+            draw();
+            
+            animationId = requestAnimationFrame(updateGame);
+        }
+
+        function startGame() {
+            if (gameRunning && !gamePaused) return;
+            gameRunning = true;
+            gamePaused = false;
+            currentScore = 0;
+            currentHealth = 3;
+            currentLevel = 1;
+            jumpCount = 0;
+            obstacles = [];
+            frameCount = 0;
+            player.y = height - 80;
+            player.vy = 0;
+            updateGameSpeed();
+            updateUI();
+            if (animationId) cancelAnimationFrame(animationId);
+            updateGame();
+        }
+
+        function pauseGame() {
+            if (!gameRunning) return;
+            gamePaused = !gamePaused;
+            if (!gamePaused) updateGame();
+        }
+
+        function resetGame() {
+            gameRunning = false;
+            gamePaused = false;
+            if (animationId) cancelAnimationFrame(animationId);
+            startGame();
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            gamePaused = false;
+            if (animationId) cancelAnimationFrame(animationId);
+            showToast(`Игра окончена! Очки: ${currentScore}`, 'warning');
+            
+            if (currentUser && currentScore > 0) {
+                updateGameProgress(currentGame, currentScore, Math.floor(jumpCount / 10));
+            }
+            
+            draw();
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME OVER', width / 2, height / 2);
+            ctx.font = '16px monospace';
+            ctx.fillText(`Score: ${currentScore}`, width / 2, height / 2 + 40);
+            ctx.textAlign = 'left';
+        }
+
+        async function loadLeaderboard() {
+            const result = await getGameProgress();
+            const container = document.getElementById('leaderboardList');
+            
+            if (result.success && result.progress && result.progress.length > 0) {
+                const topScores = result.progress.filter(p => p.game === currentGame).sort((a, b) => b.high_score - a.high_score).slice(0, 10);
+                if (topScores.length > 0) {
+                    container.innerHTML = topScores.map((p, idx) => `
+                        <div class="leaderboard-item">
+                            <span class="leaderboard-rank">${idx + 1}</span>
+                            <span class="leaderboard-name">${escapeHtml(p.player_name)}</span>
+                            <span class="leaderboard-score">🏆 ${p.high_score}</span>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-center text-gray">Нет рекордов</p>';
+                }
+            } else {
+                container.innerHTML = '<p class="text-center text-gray">Не удалось загрузить рекорды</p>';
+            }
+        }
+
+        async function loadUserStats() {
+            if (!currentUser) {
+                document.getElementById('userStats').innerHTML = '<p class="text-center text-gray">Войдите, чтобы видеть свою статистику</p>';
+                return;
+            }
+            
+            const result = await getGameProgress();
+            const container = document.getElementById('userStats');
+            
+            if (result.success && result.progress) {
+                const userProgress = result.progress.filter(p => p.player_name === currentUser.fullName && p.game === currentGame);
+                if (userProgress.length > 0) {
+                    container.innerHTML = `
+                        <div class="flex justify-between">
+                            <span>Лучший результат:</span>
+                            <span class="font-bold">🏆 ${userProgress[0].high_score}</span>
+                        </div>
+                        <div class="flex justify-between mt-2">
+                            <span>Отвечено вопросов:</span>
+                            <span class="font-bold">📚 ${userProgress[0].questions_answered || 0}</span>
+                        </div>
+                        <div class="flex justify-between mt-2">
+                            <span>Последняя игра:</span>
+                            <span class="font-bold">📅 ${new Date(userProgress[0].last_played).toLocaleDateString('ru-RU')}</span>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '<p class="text-center text-gray">Пока нет статистики. Сыграйте!</p>';
+                }
+            }
+        }
+
+        async function loadQuestions() {
+            const result = await getGameQuestions();
+            if (result.success && result.questions && result.questions.jumper) {
+                currentQuestions = result.questions.jumper;
+            }
+        }
+
+        async function init() {
+            const userResult = await getCurrentUser();
+            if (userResult.success && userResult.user) {
+                currentUser = userResult.user;
+            }
+            
+            await loadQuestions();
+            await loadLeaderboard();
+            await loadUserStats();
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            startGame();
+        }
+
+        document.getElementById('startGameBtn').addEventListener('click', startGame);
+        document.getElementById('pauseGameBtn').addEventListener('click', pauseGame);
+        document.getElementById('resetGameBtn').addEventListener('click', resetGame);
+        document.getElementById('difficultySelect').addEventListener('change', (e) => {
+            currentDifficulty = e.target.value;
+            updateGameSpeed();
+            if (!gameRunning) startGame();
+        });
+        document.getElementById('gameSelectorBtn').addEventListener('click', () => {
+            showToast('Другие игры в разработке', 'info');
+        });
+        document.getElementById('profileIcon').addEventListener('click', () => {
+            window.location.href = '/lickab.html';
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'ArrowUp') {
+                e.preventDefault();
+                jump();
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

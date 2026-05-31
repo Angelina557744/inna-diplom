@@ -1,0 +1,8 @@
+{
+    "name": "КонсПресс Университет",
+    "short_name": "КонсПресс",
+    "start_url": "/",
+    "display": "standalone",
+    "theme_color": "#dc2626",
+    "background_color": "#ffffff"
+}

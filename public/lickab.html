@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КонсПресс - Личный кабинет</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <meta name="theme-color" content="#dc2626">
+    <style>
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #fef2f2 0%, #f9fafb 100%);
+        }
+        .auth-card {
+            max-width: 480px;
+            width: 100%;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .auth-tabs {
+            display: flex;
+            position: relative;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        .auth-tab {
+            flex: 1;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.3s ease;
+            background: transparent;
+            border: none;
+        }
+        .auth-tab.active {
+            color: #dc2626;
+        }
+        .auth-tab-indicator {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 50%;
+            height: 2px;
+            background: #dc2626;
+            transition: transform 0.3s ease;
+        }
+        .auth-tab-indicator.register {
+            transform: translateX(100%);
+        }
+        .auth-form {
+            padding: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.4rem;
+        }
+        .input-icon {
+            position: relative;
+        }
+        .input-icon i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1rem;
+        }
+        .input-icon input, .input-icon select {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.75rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background: white;
+            outline: none;
+        }
+        .input-icon input:focus, .input-icon select:focus {
+            border-color: #dc2626;
+            box-shadow: 0 0 0 3px rgba(220,38,38,0.1);
+        }
+        .input-icon input.error, .input-icon select.error {
+            border-color: #ef4444;
+        }
+        .btn-auth {
+            width: 100%;
+            padding: 0.85rem;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+        .btn-auth:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+        .error-message {
+            color: #ef4444;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .test-accounts {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-align: center;
+        }
+        .test-accounts p {
+            margin: 0.25rem 0;
+        }
+        .test-accounts strong {
+            color: #dc2626;
+        }
+        .header {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+        .header-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+        .logo-box {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: #dc2626;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-weight: 800;
+            font-size: 1.25rem;
+        }
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.125rem;
+        }
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+        .nav-link {
+            text-decoration: none;
+            color: #1f2937;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #dc2626;
+        }
+        .profile-icon {
+            cursor: pointer;
+        }
+        .profile-icon i {
+            font-size: 1.8rem;
+            color: #6b7280;
+        }
+        @media (max-width: 640px) {
+            .auth-card {
+                margin: 1rem auto;
+                width: 95%;
+            }
+            .auth-form {
+                padding: 1.5rem;
+            }
+            .logo-text {
+                display: none;
+            }
+            .nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-wrapper">
+        <header class="header">
+            <div class="header-inner">
+                <a href="/" class="logo">
+                    <div class="logo-box">&lt;/&gt;</div>
+                    <span class="logo-text">КонсПресс</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Главная</a>
+                    <a href="/kurs.html" class="nav-link">Курсы</a>
+                    <a href="/spesial.html" class="nav-link">Специализация</a>
+                    <a href="/lickab.html" class="nav-link active">Личный кабинет</a>
+                </nav>
+                <div class="profile-icon">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </header>
+
+        <div class="auth-card">
+            <div class="auth-tabs">
+                <button class="auth-tab active" data-tab="login">Вход</button>
+                <button class="auth-tab" data-tab="register">Регистрация</button>
+                <div class="auth-tab-indicator"></div>
+            </div>
+
+            <div id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="student@example.com">
+                    </div>
+                    <div class="error-message" id="loginEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••">
+                    </div>
+                    <div class="error-message" id="loginPasswordError"></div>
+                </div>
+                <div class="error-message" id="loginGeneralError"></div>
+                <button id="doLogin" class="btn-auth">Войти</button>
+                <div class="test-accounts">
+                    <p><strong>Тестовые аккаунты:</strong></p>
+                    <p>📚 Студент: student@cons.ru / 123456</p>
+                    <p>👨‍🏫 Преподаватель: teacher@cons.ru / 123456</p>
+                    <p>⚙️ Админ: admin@cons.ru / admin123</p>
+                </div>
+            </div>
+
+            <div id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label>Имя и фамилия</label>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="regFullname" placeholder="Иванов Иван">
+                    </div>
+                    <div class="error-message" id="regFullnameError"></div>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="regEmail" placeholder="ivan@student.com">
+                    </div>
+                    <div class="error-message" id="regEmailError"></div>
+                </div>
+                <div class="form-group">
+                    <label>Роль</label>
+                    <div class="input-icon">
+                        <i class="fas fa-user-tag"></i>
+                        <select id="regRole">
+                            <option value="student">Студент</option>
+                            <option value="teacher">Преподаватель</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="regPassword" placeholder="минимум 6 символов">
+                    </div>
+                    <div class="error-message" id="regPasswordError"></div>
+                </div>
+                <div class="error-message" id="regGeneralError"></div>
+                <button id="doRegister" class="btn-auth">Зарегистрироваться</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cabinetContainer" style="display: none;">
+        <header class="header">
+            <div class="header-inner">
+                <a href="/" class="logo">
+                    <div class="logo-box">&lt;/&gt;</div>
+                    <span class="logo-text">КонсПресс</span>
+                </a>
+                <nav class="nav">
+                    <a href="/" class="nav-link">Главная</a>
+                    <a href="/kurs.html" class="nav-link">Курсы</a>
+                    <a href="/spesial.html" class="nav-link">Специализация</a>
+                    <a href="/lickab.html" class="nav-link active">Личный кабинет</a>
+                </nav>
+                <div class="profile-icon" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                </div>
+            </div>
+        </header>
+
+        <main class="main">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="/">Главная</a>
+                    <span>/</span>
+                    <span>Личный кабинет</span>
+                </div>
+
+                <div class="grid grid-2" style="grid-template-columns: 1fr 2fr;">
+                    <div class="card">
+                        <div class="text-center mb-4">
+                            <div style="width: 100px; height: 100px; background: var(--light); border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="var(--gray)">
+                                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                                </svg>
+                            </div>
+                            <h3 id="userName" class="font-bold">Загрузка...</h3>
+                            <p id="userRole" class="text-sm text-gray"></p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-sm text-gray">Email</label>
+                            <p id="userEmail" class="font-semibold">-</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-sm text-gray">Группа</label>
+                            <p id="userGroup" class="font-semibold">-</p>
+                        </div>
+                        <div class="mb-3">
+                            <label class="text-sm text-gray">ID</label>
+                            <p id="userId" class="font-semibold">-</p>
+                        </div>
+                        <button id="logoutMainBtn" class="btn btn-danger btn-block">Выйти</button>
+                    </div>
+
+                    <div>
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h3 class="card-title">Мои курсы</h3>
+                                <button id="refreshCoursesBtn" class="btn btn-sm btn-outline">Обновить</button>
+                            </div>
+                            <div id="myCoursesList">
+                                <div class="skeleton" style="height: 80px; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton" style="height: 80px; margin-bottom: 0.5rem;"></div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">Мои работы</h3>
+                                <button id="refreshSubmissionsBtn" class="btn btn-sm btn-outline">Обновить</button>
+                            </div>
+                            <div id="submissionsList">
+                                <div class="skeleton" style="height: 60px; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton" style="height: 60px; margin-bottom: 0.5rem;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2025 КонсПресс Университет. Личный кабинет.</p>
+            </div>
+        </footer>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+    const API_URL = window.location.origin;
+    let currentUser = null;
+
+    async function apiRequest(url, options = {}) {
+        try {
+            const response = await fetch(API_URL + url, {
+                ...options,
+                headers: { 'Content-Type': 'application/json', ...options.headers },
+                credentials: 'include'
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('API Error:', error);
+            return { success: false, error: 'Ошибка сети' };
+        }
+    }
+
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = 'toast show';
+        if (type === 'success') toast.classList.add('toast-success');
+        if (type === 'error') toast.classList.add('toast-error');
+        setTimeout(() => {
+            toast.classList.remove('show');
+            toast.className = 'toast';
+        }, 3000);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    function validateEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validatePassword(password) {
+        return password && password.length >= 6;
+    }
+
+    function validateName(name) {
+        return name && name.trim().length >= 2;
+    }
+
+    function clearLoginErrors() {
+        document.getElementById('loginEmailError').classList.remove('show');
+        document.getElementById('loginEmailError').textContent = '';
+        document.getElementById('loginPasswordError').classList.remove('show');
+        document.getElementById('loginPasswordError').textContent = '';
+        document.getElementById('loginGeneralError').classList.remove('show');
+        document.getElementById('loginGeneralError').textContent = '';
+        document.getElementById('loginEmail').classList.remove('error');
+        document.getElementById('loginPassword').classList.remove('error');
+    }
+
+    function clearRegisterErrors() {
+        document.getElementById('regFullnameError').classList.remove('show');
+        document.getElementById('regFullnameError').textContent = '';
+        document.getElementById('regEmailError').classList.remove('show');
+        document.getElementById('regEmailError').textContent = '';
+        document.getElementById('regPasswordError').classList.remove('show');
+        document.getElementById('regPasswordError').textContent = '';
+        document.getElementById('regGeneralError').classList.remove('show');
+        document.getElementById('regGeneralError').textContent = '';
+        document.getElementById('regFullname').classList.remove('error');
+        document.getElementById('regEmail').classList.remove('error');
+        document.getElementById('regPassword').classList.remove('error');
+    }
+
+    async function getCurrentUser() {
+        return apiRequest('/api/auth/me');
+    }
+
+    async function loginUser(email, password) {
+        return apiRequest('/api/auth/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+        });
+    }
+
+    async function registerUser(data) {
+        return apiRequest('/api/auth/register', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+    }
+
+    async function logoutUser() {
+        return apiRequest('/api/auth/logout', { method: 'POST' });
+    }
+
+    async function getUserCourses() {
+        return apiRequest('/api/courses');
+    }
+
+    async function enrollCourse(courseId) {
+        return apiRequest('/api/courses/enroll', {
+            method: 'POST',
+            body: JSON.stringify({ courseId })
+        });
+    }
+
+    async function getUserSubmissions() {
+        return apiRequest('/api/submissions');
+    }
+
+    async function loadUserData() {
+        const result = await getCurrentUser();
+        if (result.success && result.user) {
+            currentUser = result.user;
+            document.getElementById('userName').textContent = currentUser.fullName || 'Пользователь';
+            document.getElementById('userEmail').textContent = currentUser.email || '-';
+            document.getElementById('userGroup').textContent = currentUser.group_name || 'Не указана';
+            document.getElementById('userId').textContent = currentUser.userId || '-';
+            let roleText = '';
+            if (currentUser.role === 'admin') roleText = 'Администратор';
+            else if (currentUser.role === 'teacher') roleText = 'Преподаватель';
+            else roleText = 'Студент';
+            document.getElementById('userRole').textContent = roleText;
+            return true;
+        }
+        return false;
+    }
+
+    async function loadCourses() {
+        const result = await getUserCourses();
+        const container = document.getElementById('myCoursesList');
+        if (result.success && result.courses && result.courses.length > 0) {
+            container.innerHTML = result.courses.slice(0, 5).map(course => `
+                <div style="margin-bottom: 0.75rem; display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.75rem;">
+                    <div>
+                        <h4 class="font-bold">${escapeHtml(course.name)}</h4>
+                        <p class="text-xs text-gray">${escapeHtml(course.description || 'Без описания')}</p>
+                    </div>
+                    <button onclick="handleEnroll(${course.id})" class="btn btn-sm btn-primary">Записаться</button>
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p class="text-center text-gray">Нет доступных курсов</p>';
+        }
+    }
+
+    async function loadSubmissions() {
+        const result = await getUserSubmissions();
+        const container = document.getElementById('submissionsList');
+        if (result.success && result.submissions && result.submissions.length > 0) {
+            container.innerHTML = result.submissions.map(sub => `
+                <div style="border: 1px solid #e5e7eb; border-radius: 0.75rem; padding: 0.75rem; margin-bottom: 0.75rem;">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold">${escapeHtml(sub.title)}</h4>
+                            <p class="text-xs text-gray">${new Date(sub.submitted_at).toLocaleDateString('ru-RU')}</p>
+                        </div>
+                        <div>
+                            ${sub.grade !== null ? `<span class="badge badge-success">Оценка: ${sub.grade}</span>` : '<span class="badge badge-warning">На проверке</span>'}
+                        </div>
+                    </div>
+                    ${sub.comment ? `<p class="text-sm mt-2">${escapeHtml(sub.comment)}</p>` : ''}
+                </div>
+            `).join('');
+        } else {
+            container.innerHTML = '<p class="text-center text-gray">Нет отправленных работ</p>';
+        }
+    }
+
+    window.handleEnroll = async function(courseId) {
+        if (!currentUser) {
+            showToast('Войдите в аккаунт', 'error');
+            return;
+        }
+        const result = await enrollCourse(courseId);
+        if (result.success) {
+            showToast('Вы записаны на курс', 'success');
+            loadCourses();
+        } else {
+            showToast(result.error || 'Ошибка записи', 'error');
+        }
+    };
+
+    function initTabs() {
+        const tabs = document.querySelectorAll('.auth-tab');
+        const indicator = document.querySelector('.auth-tab-indicator');
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                if (tabName === 'login') {
+                    loginForm.style.display = 'block';
+                    registerForm.style.display = 'none';
+                    indicator.classList.remove('register');
+                    clearLoginErrors();
+                } else {
+                    loginForm.style.display = 'none';
+                    registerForm.style.display = 'block';
+                    indicator.classList.add('register');
+                    clearRegisterErrors();
+                }
+            });
+        });
+    }
+
+    async function initAuth() {
+        const isLoggedIn = await loadUserData();
+        if (isLoggedIn) {
+            if (currentUser.role === 'admin') {
+                window.location.href = '/admin.html';
+                return;
+            }
+            if (currentUser.role === 'teacher') {
+                window.location.href = '/teacher.html';
+                return;
+            }
+            document.querySelector('.auth-wrapper').style.display = 'none';
+            document.getElementById('cabinetContainer').style.display = 'block';
+            await loadCourses();
+            await loadSubmissions();
+        } else {
+            document.querySelector('.auth-wrapper').style.display = 'flex';
+            document.getElementById('cabinetContainer').style.display = 'none';
+        }
+    }
+
+    document.getElementById('doLogin').addEventListener('click', async () => {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        clearLoginErrors();
+        let hasError = false;
+        if (!email) {
+            document.getElementById('loginEmailError').textContent = 'Введите email';
+            document.getElementById('loginEmailError').classList.add('show');
+            document.getElementById('loginEmail').classList.add('error');
+            hasError = true;
+        } else if (!validateEmail(email)) {
+            document.getElementById('loginEmailError').textContent = 'Введите корректный email';
+            document.getElementById('loginEmailError').classList.add('show');
+            document.getElementById('loginEmail').classList.add('error');
+            hasError = true;
+        }
+        if (!password) {
+            document.getElementById('loginPasswordError').textContent = 'Введите пароль';
+            document.getElementById('loginPasswordError').classList.add('show');
+            document.getElementById('loginPassword').classList.add('error');
+            hasError = true;
+        } else if (password.length < 6) {
+            document.getElementById('loginPasswordError').textContent = 'Пароль должен быть не менее 6 символов';
+            document.getElementById('loginPasswordError').classList.add('show');
+            document.getElementById('loginPassword').classList.add('error');
+            hasError = true;
+        }
+        if (hasError) return;
+        const result = await loginUser(email, password);
+        if (result.success) {
+            await initAuth();
+        } else {
+            document.getElementById('loginGeneralError').textContent = result.error || 'Неверный email или пароль';
+            document.getElementById('loginGeneralError').classList.add('show');
+        }
+    });
+
+    document.getElementById('doRegister').addEventListener('click', async () => {
+        const fullname = document.getElementById('regFullname').value.trim();
+        const email = document.getElementById('regEmail').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const role = document.getElementById('regRole').value;
+        clearRegisterErrors();
+        let hasError = false;
+        if (!fullname) {
+            document.getElementById('regFullnameError').textContent = 'Введите имя и фамилию';
+            document.getElementById('regFullnameError').classList.add('show');
+            document.getElementById('regFullname').classList.add('error');
+            hasError = true;
+        } else if (!validateName(fullname)) {
+            document.getElementById('regFullnameError').textContent = 'Имя должно содержать минимум 2 символа';
+            document.getElementById('regFullnameError').classList.add('show');
+            document.getElementById('regFullname').classList.add('error');
+            hasError = true;
+        }
+        if (!email) {
+            document.getElementById('regEmailError').textContent = 'Введите email';
+            document.getElementById('regEmailError').classList.add('show');
+            document.getElementById('regEmail').classList.add('error');
+            hasError = true;
+        } else if (!validateEmail(email)) {
+            document.getElementById('regEmailError').textContent = 'Введите корректный email';
+            document.getElementById('regEmailError').classList.add('show');
+            document.getElementById('regEmail').classList.add('error');
+            hasError = true;
+        }
+        if (!password) {
+            document.getElementById('regPasswordError').textContent = 'Введите пароль';
+            document.getElementById('regPasswordError').classList.add('show');
+            document.getElementById('regPassword').classList.add('error');
+            hasError = true;
+        } else if (!validatePassword(password)) {
+            document.getElementById('regPasswordError').textContent = 'Пароль должен быть не менее 6 символов';
+            document.getElementById('regPasswordError').classList.add('show');
+            document.getElementById('regPassword').classList.add('error');
+            hasError = true;
+        }
+        if (hasError) return;
+        const result = await registerUser({ email, password, fullName: fullname, role });
+        if (result.success) {
+            showToast('Регистрация успешна', 'success');
+            await initAuth();
+        } else {
+            document.getElementById('regGeneralError').textContent = result.error || 'Ошибка регистрации';
+            document.getElementById('regGeneralError').classList.add('show');
+        }
+    });
+
+    document.getElementById('refreshCoursesBtn').addEventListener('click', loadCourses);
+    document.getElementById('refreshSubmissionsBtn').addEventListener('click', loadSubmissions);
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+        await logoutUser();
+        window.location.href = '/';
+    });
+    document.getElementById('logoutMainBtn').addEventListener('click', async () => {
+        await logoutUser();
+        window.location.href = '/';
+    });
+
+    initTabs();
+    initAuth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КонсПресс — Админ-панель v3.0</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-w: 280px;
+            --primary: #dc2626;
+            --primary-hover: #b91c1c;
+            --bg: #f1f5f9;
+            --card: #ffffff;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: var(--sidebar-w);
+            background: #0f172a;
+            color: #e2e8f0;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            display: flex; flex-direction: column;
+            z-index: 100;
+            overflow-y: auto;
+            transition: transform 0.3s;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #1e293b;
+        }
+        .sidebar-logo {
+            font-size: 1.3rem; font-weight: 800;
+            display: flex; align-items: center; gap: 0.6rem;
+        }
+        .sidebar-logo .icon {
+            width: 2.2rem; height: 2.2rem;
+            background: var(--primary); border-radius: 0.6rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1rem;
+        }
+        .sidebar-nav {
+            flex: 1; padding: 0.75rem;
+        }
+        .nav-section {
+            margin-bottom: 0.5rem;
+        }
+        .nav-section-title {
+            font-size: 0.7rem; text-transform: uppercase;
+            letter-spacing: 0.08em; color: #64748b;
+            padding: 0.6rem 0.8rem 0.3rem; font-weight: 600;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 0.7rem;
+            padding: 0.65rem 0.8rem; border-radius: 0.6rem;
+            cursor: pointer; transition: all 0.15s;
+            font-size: 0.88rem; color: #cbd5e1;
+            text-decoration: none;
+        }
+        .nav-item:hover { background: #1e293b; color: white; }
+        .nav-item.active {
+            background: var(--primary); color: white;
+            font-weight: 600; box-shadow: 0 4px 12px rgba(220,38,38,0.3);
+        }
+        .nav-item .badge {
+            margin-left: auto; background: rgba(255,255,255,0.2);
+            padding: 0.15rem 0.5rem; border-radius: 1rem;
+            font-size: 0.7rem; font-weight: 600;
+        }
+        .nav-item .badge.danger { background: var(--danger); }
+        .sidebar-footer {
+            padding: 1rem 1.5rem; border-top: 1px solid #1e293b;
+            font-size: 0.8rem; color: #64748b;
+        }
+        .sidebar-footer .user-info {
+            display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.6rem;
+        }
+        .sidebar-footer .avatar {
+            width: 2rem; height: 2rem; background: var(--primary);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: 700; font-size: 0.8rem;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: var(--sidebar-w);
+            flex: 1; padding: 1.5rem;
+            min-height: 100vh;
+        }
+        .page-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+        }
+        .page-title {
+            font-size: 1.6rem; font-weight: 700;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .page-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        /* ===== CARDS ===== */
+        .card {
+            background: var(--card); border-radius: 1rem;
+            padding: 1.5rem; border: 1px solid var(--border);
+            box-shadow: var(--shadow); margin-bottom: 1.5rem;
+        }
+        .card-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+        }
+        .card-title { font-weight: 700; font-size: 1.1rem; }
+
+        /* ===== STATS GRID ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem; margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background: var(--card); padding: 1.25rem;
+            border-radius: 1rem; border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .stat-card .stat-icon {
+            width: 2.5rem; height: 2.5rem; border-radius: 0.75rem;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; margin-bottom: 0.75rem;
+        }
+        .stat-card .stat-value { font-size: 2rem; font-weight: 800; }
+        .stat-card .stat-label { font-size: 0.8rem; color: var(--text-muted); }
+        .stat-card .stat-change { font-size: 0.75rem; margin-top: 0.3rem; }
+
+        /* ===== TABLES ===== */
+        .table-wrap { overflow-x: auto; }
+        table {
+            width: 100%; border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.75rem 1rem; text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th { background: #f8fafc; font-weight: 600; font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; }
+        tr:hover { background: #f8fafc; }
+        .status-badge {
+            padding: 0.2rem 0.7rem; border-radius: 1rem;
+            font-size: 0.7rem; font-weight: 600; white-space: nowrap;
+        }
+        .status-active { background: #d1fae5; color: #065f46; }
+        .status-blocked { background: #fee2e2; color: #991b1b; }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-accepted { background: #dbeafe; color: #1e40af; }
+        .status-rejected { background: #fce7f3; color: #9d174d; }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 0.55rem 1.1rem; border-radius: 0.6rem;
+            font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            border: none; transition: all 0.15s; display: inline-flex;
+            align-items: center; gap: 0.4rem; white-space: nowrap;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+        .btn-outline { background: white; border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+        .btn-success { background: var(--success); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-info { background: var(--info); color: white; }
+        .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.75rem; border-radius: 0.4rem; }
+        .btn-group { display: flex; gap: 0.3rem; }
+
+        /* ===== FORMS ===== */
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 600; font-size: 0.8rem; margin-bottom: 0.35rem; color: var(--text-muted); }
+        .form-input, .form-select, .form-textarea {
+            width: 100%; padding: 0.6rem 0.9rem; border-radius: 0.6rem;
+            border: 1px solid var(--border); font-size: 0.88rem;
+            font-family: inherit; transition: 0.15s; background: white;
+        }
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none; border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(220,38,38,0.08);
+        }
+        .form-textarea { resize: vertical; min-height: 80px; }
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px); z-index: 200;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: white; border-radius: 1.25rem;
+            max-width: 600px; width: 92%; max-height: 85vh;
+            overflow-y: auto; padding: 1.5rem;
+        }
+        .modal-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 1.25rem;
+        }
+        .modal-title { font-size: 1.2rem; font-weight: 700; }
+        .modal-close {
+            width: 2rem; height: 2rem; border-radius: 50%;
+            border: none; background: #f1f5f9; cursor: pointer;
+            font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+        }
+.level-badge {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+
+.level-badge-beginner {
+    background: rgba(34,197,94,0.2);
+    color: #22c55e;
+}
+
+.level-badge-intermediate {
+    background: rgba(245,158,11,0.2);
+    color: #f59e0b;
+}
+
+.level-badge-advanced {
+    background: rgba(239,68,68,0.2);
+    color: #ef4444;
+}
+        /* ===== TABS ===== */
+        .tabs { display: flex; gap: 0.3rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+        .tab {
+            padding: 0.5rem 1.1rem; border-radius: 0.6rem;
+            cursor: pointer; font-size: 0.85rem; font-weight: 500;
+            border: 1px solid var(--border); background: white;
+            transition: 0.15s;
+        }
+        .tab:hover { border-color: var(--primary); }
+        .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* ===== CHAT ===== */
+        .chat-container {
+            display: flex; height: 500px; border-radius: 1rem;
+            overflow: hidden; border: 1px solid var(--border);
+        }
+        .chat-list {
+            width: 260px; background: #f8fafc; border-right: 1px solid var(--border);
+            overflow-y: auto; flex-shrink: 0;
+        }
+        .chat-list-item {
+            padding: 0.8rem 1rem; cursor: pointer; border-bottom: 1px solid var(--border);
+            transition: 0.1s; display: flex; align-items: center; gap: 0.6rem;
+        }
+        .chat-list-item:hover, .chat-list-item.active { background: #e2e8f0; }
+        .chat-list-item .dot {
+            width: 0.55rem; height: 0.55rem; border-radius: 50%; flex-shrink: 0;
+        }
+        .dot.online { background: var(--success); }
+        .dot.offline { background: #94a3b8; }
+        .chat-main {
+            flex: 1; display: flex; flex-direction: column;
+        }
+        .chat-messages {
+            flex: 1; overflow-y: auto; padding: 1rem;
+            display: flex; flex-direction: column; gap: 0.6rem;
+        }
+        .chat-msg {
+            max-width: 75%; padding: 0.6rem 0.9rem; border-radius: 0.8rem;
+            font-size: 0.85rem; line-height: 1.4;
+        }
+        .chat-msg.sent {
+            background: var(--primary); color: white;
+            align-self: flex-end; border-bottom-right-radius: 0.2rem;
+        }
+        .chat-msg.received {
+            background: #e2e8f0; color: var(--text);
+            align-self: flex-start; border-bottom-left-radius: 0.2rem;
+        }
+        .chat-msg .time { font-size: 0.65rem; opacity: 0.7; margin-top: 0.25rem; }
+        .chat-input-area {
+            padding: 0.8rem; border-top: 1px solid var(--border);
+            display: flex; gap: 0.5rem;
+        }
+        .chat-input-area input { flex: 1; }
+
+        /* ===== LIVE PREVIEW ===== */
+        .preview-frame {
+            width: 100%; height: 500px; border: 1px solid var(--border);
+            border-radius: 0.75rem; background: white;
+        }
+
+        /* ===== GAME EDITOR ===== */
+        .game-card {
+            background: #f8fafc; border-radius: 0.8rem;
+            padding: 1rem; border: 1px solid var(--border);
+        }
+        .game-card h4 { margin-bottom: 0.5rem; }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            background: #1e293b; color: white; padding: 0.8rem 1.5rem;
+            border-radius: 0.8rem; font-size: 0.85rem; z-index: 300;
+            opacity: 0; transform: translateY(10px); transition: 0.2s;
+            pointer-events: none; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; }
+            .mobile-menu-btn { display: block !important; }
+            .chat-container { flex-direction: column; height: auto; }
+            .chat-list { width: 100%; max-height: 150px; }
+        }
+        .mobile-menu-btn {
+            display: none; position: fixed; top: 1rem; left: 1rem;
+            z-index: 110; background: var(--primary); color: white;
+            border: none; width: 2.5rem; height: 2.5rem; border-radius: 0.6rem;
+            font-size: 1.3rem; cursor: pointer; box-shadow: 0 4px 12px rgba(220,38,38,0.3);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .text-muted { color: var(--text-muted); }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        .gap-1 { gap: 0.5rem; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <!-- Mobile menu button -->
+    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <div class="icon">⚙️</div>
+                <span>КонсПресс</span>
+            </div>
+            <p style="font-size:0.7rem;color:#64748b;margin-top:0.3rem;">Панель администратора v3.0</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Основное</div>
+                <a class="nav-item active" data-page="dashboard">
+                    📊 Дашборд
+                </a>
+<a class="nav-item" data-page="live-preview">
+    <i class="fas fa-eye"></i> Просмотр сайта
+</a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Пользователи</div>
+                <a class="nav-item" data-page="students">
+                    👨‍🎓 Студенты
+                </a>
+                <a class="nav-item" data-page="teachers">
+                    👨‍🏫 Преподаватели
+                </a>
+                <a class="nav-item" data-page="applications">
+                    📋 Заявки
+                    <span class="badge danger" id="appBadge">0</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Обучение</div>
+                <a class="nav-item" data-page="courses">
+                    📚 Курсы
+                </a>
+                <a class="nav-item" data-page="streams">
+                    📡 Трансляции
+                </a>
+                <a class="nav-item" data-page="games">
+                    🎮 Симуляторы
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Коммуникация</div>
+                <a class="nav-item" data-page="chat">
+                    💬 Чат с преподавателями
+                    <span class="badge" id="chatBadge">0</span>
+                </a>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Контент</div>
+                <a class="nav-item" data-page="site-content">
+                    ✏️ Контент сайта
+                </a>
+                <a class="nav-item" data-page="partners">
+                    🤝 Партнёры
+                </a>
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="avatar">А</div>
+                <div>
+                    <strong>Администратор</strong>
+                    <p style="font-size:0.7rem;">admin@cons.ru</p>
+                </div>
+            </div>
+<button class="btn btn-outline btn-sm" style="width:100%;color:white;border-color:#334155;" onclick="logout()">
+    🚪 Выйти
+</button>
+        </div>
+    </aside>
+
+    <!-- ===== MAIN ===== -->
+    <main class="main" id="mainContent">
+        
+        <!-- Дашборд -->
+        <div class="tab-content active" id="page-dashboard">
+            <div class="page-header">
+                <h1 class="page-title">📊 Дашборд</h1>
+                <span style="color:var(--text-muted);" id="currentDateTime"></span>
+            </div>
+            <div class="stats-grid" id="dashboardStats"></div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">🟢 Активность онлайн</h3></div>
+                    <div id="onlineActivity" style="max-height:250px;overflow-y:auto;">
+                        <p class="text-muted">Загрузка...</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">📈 Последние действия</h3></div>
+                    <div id="recentActivity" style="max-height:250px;overflow-y:auto;">
+                        <p class="text-muted">Загрузка...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Просмотр сайта -->
+        <div class="tab-content" id="page-live-preview">
+            <div class="page-header">
+                <h1 class="page-title">👁️ Просмотр сайта</h1>
+                <div class="page-actions">
+                    <select class="form-select" style="width:auto;" id="previewPageSelect" onchange="updatePreview()">
+    <option value="index.html">Главная</option>
+    <option value="kurs.html">Курсы</option>
+    <option value="spesial.html">Специализация</option>
+    <option value="lickab.html">Личный кабинет</option>
+    <option value="teacher.html">Панель преподавателя</option>
+    <option value="igra.html">Игры</option>
+    <option value="admin.html">Админ-панель</option>
+</select>
+                    <button class="btn btn-outline" onclick="updatePreview()">🔄 Обновить</button>
+                    <button class="btn btn-outline" onclick="openInNewTab()">🔗 Открыть</button>
+                </div>
+            </div>
+            <div class="card" style="padding:0;overflow:hidden;">
+                <iframe id="previewFrame" class="preview-frame" src="index.html"></iframe>
+            </div>
+        </div>
+
+        <!-- Студенты -->
+        <div class="tab-content" id="page-students">
+            <div class="page-header">
+                <h1 class="page-title">👨‍🎓 Управление студентами</h1>
+                <div class="page-actions">
+                    <input type="text" class="form-input" style="width:200px;" placeholder="🔍 Поиск..." id="studentSearch" oninput="renderStudents()">
+                    <select class="form-select" style="width:auto;" id="studentGroupFilter" onchange="renderStudents()">
+                        <option value="all">Все группы</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openUserModal('student')">+ Добавить</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr>
+                            <th>ID</th><th>ФИО</th><th>Email</th><th>Группа</th>
+                            <th>Рейтинг</th><th>Статус</th><th>Действия</th>
+                        </tr></thead>
+                        <tbody id="studentsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Преподаватели -->
+        <div class="tab-content" id="page-teachers">
+            <div class="page-header">
+                <h1 class="page-title">👨‍🏫 Управление преподавателями</h1>
+                <div class="page-actions">
+                    <input type="text" class="form-input" style="width:200px;" placeholder="🔍 Поиск..." id="teacherSearch" oninput="renderTeachers()">
+                    <button class="btn btn-primary" onclick="openUserModal('teacher')">+ Добавить</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr>
+                            <th>ID</th><th>ФИО</th><th>Email</th><th>Специализация</th>
+                            <th>Статус</th><th>Действия</th>
+                        </tr></thead>
+                        <tbody id="teachersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Заявки -->
+        <div class="tab-content" id="page-applications">
+            <div class="page-header">
+                <h1 class="page-title">📋 Заявки на рассмотрение</h1>
+                <div class="page-actions">
+                    <select class="form-select" style="width:auto;" id="appFilter" onchange="renderApplications()">
+                        <option value="all">Все</option>
+                        <option value="pending">Ожидают</option>
+                        <option value="accepted">Принятые</option>
+                        <option value="rejected">Отклонённые</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card">
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr>
+                            <th>ID</th><th>Отправитель</th><th>Тип</th>
+                            <th>Содержание</th><th>Дата</th><th>Статус</th><th>Действия</th>
+                        </tr></thead>
+                        <tbody id="applicationsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Трансляции -->
+        <div class="tab-content" id="page-streams">
+            <div class="page-header">
+                <h1 class="page-title">📡 Управление трансляциями</h1>
+                <div class="page-actions">
+                  <button class="btn btn-primary" onclick="openStreamModal()"><i class="fas fa-plus"></i> Новая трансляция</button>
+                </div>
+            </div>
+            <div class="grid-2" id="streamsGrid"></div>
+        </div>
+
+        <!-- Игры -->
+        <div class="tab-content" id="page-games">
+            <div class="page-header">
+                <h1 class="page-title">🎮 Управление симуляторами</h1>
+                <div class="page-actions">
+                    <button class="btn btn-primary" onclick="addQuestion()">+ Добавить вопрос</button>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">🏃 Code Jumper</h3></div>
+                    <div id="jumperConfig" class="game-card">
+                        <div class="form-group">
+                            <label>Скорость игры (легкий/норм/сложный)</label>
+                            <div class="form-row">
+                                <input type="number" class="form-input" id="jumperSpeedEasy" placeholder="Easy (3.2)" value="3.2" step="0.1">
+                                <input type="number" class="form-input" id="jumperSpeedNormal" placeholder="Normal (4.2)" value="4.2" step="0.1">
+                                <input type="number" class="form-input" id="jumperSpeedHard" placeholder="Hard (5.2)" value="5.2" step="0.1">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Прыжков до вопроса</label>
+                            <input type="number" class="form-input" id="jumperQuestionInterval" value="10" min="1">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveGameConfig('jumper')">💾 Сохранить</button>
+                        <div class="mt-2" id="jumperQuestionsList"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title">💻 Code Runner</h3></div>
+                    <div id="runnerConfig" class="game-card">
+                        <div class="form-group">
+                            <label>Скорость игры</label>
+                            <input type="number" class="form-input" id="runnerSpeed" value="3.8" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>Здоровье игрока</label>
+                            <input type="number" class="form-input" id="runnerHealth" value="3" min="1">
+                        </div>
+                        <button class="btn btn-primary" onclick="saveGameConfig('runner')">💾 Сохранить</button>
+                        <div class="mt-2" id="runnerObstaclesList"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="card mt-2">
+                <div class="card-header"><h3 class="card-title">📊 Прогресс игроков</h3></div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Игрок</th><th>Игра</th><th>Рекорд</th><th>Вопросов отвечено</th><th>Последняя игра</th></tr></thead>
+                        <tbody id="gameProgressTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Чат -->
+        <div class="tab-content" id="page-chat">
+            <div class="page-header">
+                <h1 class="page-title">💬 Чат с преподавателями</h1>
+                <span class="badge status-active" id="chatStatus">Подключён</span>
+            </div>
+            <div class="card" style="padding:0;">
+                <div class="chat-container">
+                    <div class="chat-list" id="chatTeacherList"></div>
+                    <div class="chat-main">
+                        <div class="chat-messages" id="chatMessages">
+                            <p class="text-muted" style="text-align:center;padding:2rem;">Выберите преподавателя для начала чата</p>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" class="form-input" id="chatInput" placeholder="Введите сообщение..." onkeydown="if(event.key==='Enter')sendChatMessage()">
+                            <button class="btn btn-primary" onclick="sendChatMessage()">📨</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Контент сайта -->
+        <div class="tab-content" id="page-site-content">
+            <div class="page-header">
+                <h1 class="page-title">✏️ Контент главной страницы</h1>
+                <button class="btn btn-primary" onclick="saveSiteContent()">💾 Сохранить всё</button>
+            </div>
+            <div class="card" id="siteContentEditor"></div>
+        </div>
+
+        <!-- Партнёры -->
+        <div class="tab-content" id="page-partners">
+            <div class="page-header">
+                <h1 class="page-title">🤝 Партнёры</h1>
+                <button class="btn btn-primary" onclick="addPartner()">+ Добавить</button>
+            </div>
+            <div class="grid-2" id="partnersGrid"></div>
+        </div>
+
+        <!-- Курсы -->
+        <div class="tab-content" id="page-courses">
+            <div class="page-header">
+                <h1 class="page-title">📚 Курсы (слайдер главной)</h1>
+                <button class="btn btn-primary" onclick="addCourseCard()">+ Добавить курс</button>
+            </div>
+            <div class="grid-2" id="coursesGrid"></div>
+        </div>
+
+    </main>
+
+    <!-- ===== MODALS ===== -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="userModalTitle">Пользователь</h2>
+                <button class="modal-close" onclick="closeModal('userModal')">✕</button>
+            </div>
+            <input type="hidden" id="editUserId">
+            <input type="hidden" id="editUserType">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>ФИО *</label>
+                    <input type="text" class="form-input" id="userFullname" placeholder="Иванов Иван">
+                </div>
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" class="form-input" id="userEmail" placeholder="email@example.com">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Пароль</label>
+                    <input type="password" class="form-input" id="userPassword" placeholder="Оставьте пустым, чтобы не менять">
+                </div>
+                <div class="form-group" id="userGroupField">
+                    <label>Группа</label>
+                    <input type="text" class="form-input" id="userGroup" placeholder="ИВТ-21">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Статус</label>
+                <select class="form-select" id="userStatus">
+                    <option value="active">Активен</option>
+                    <option value="blocked">Заблокирован</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Блокировка до (дата)</label>
+                <input type="datetime-local" class="form-input" id="userBlockUntil">
+            </div>
+            <div class="flex-between" style="margin-top:1.5rem;">
+                <button class="btn btn-danger btn-sm" id="deleteUserBtn" onclick="deleteUser()">🗑️ Удалить</button>
+                <div style="display:flex;gap:0.5rem;">
+                    <button class="btn btn-outline" onclick="closeModal('userModal')">Отмена</button>
+                    <button class="btn btn-primary" onclick="saveUser()">💾 Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модалка вопроса игры -->
+    <div class="modal-overlay" id="questionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="questionModalTitle">Добавить вопрос</h2>
+                <button class="modal-close" onclick="closeModal('questionModal')">✕</button>
+            </div>
+            <div class="form-group">
+                <label>Игра</label>
+                <select class="form-select" id="questionGame">
+                    <option value="jumper">Code Jumper</option>
+                    <option value="runner">Code Runner</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Сложность</label>
+                <select class="form-select" id="questionDifficulty">
+                    <option value="easy">Лёгкий</option>
+                    <option value="normal">Нормальный</option>
+                    <option value="hard">Сложный</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Вопрос</label>
+                <textarea class="form-textarea" id="questionText" placeholder="Текст вопроса..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>Варианты ответа (4 шт.)</label>
+            </div>
+            <div class="form-row" id="questionOptionsInputs">
+                <input type="text" class="form-input" placeholder="Вариант 1 (правильный)" data-correct="true">
+                <input type="text" class="form-input" placeholder="Вариант 2">
+                <input type="text" class="form-input" placeholder="Вариант 3">
+                <input type="text" class="form-input" placeholder="Вариант 4">
+            </div>
+            <button class="btn btn-primary" style="margin-top:1rem;" onclick="saveQuestion()">💾 Сохранить вопрос</button>
+        </div>
+    </div>
+
+    
+
+    <div class="toast" id="toast"></div>
+
+<!-- Модальное окно создания трансляции -->
+<div class="modal-overlay" id="streamModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 class="modal-title"><i class="fas fa-video"></i> Новая трансляция</h2>
+            <button class="modal-close" onclick="closeStreamModal()">&times;</button>
+        </div>
+        <div class="form-group">
+            <label>Название трансляции *</label>
+            <input type="text" id="streamTitle" class="form-input" placeholder="Например: Лекция по C++">
+        </div>
+        <div class="form-group">
+            <label>Преподаватель</label>
+            <select id="streamTeacher" class="form-select">
+                <option value="">Выберите преподавателя</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Курс</label>
+            <select id="streamCourse" class="form-select">
+                <option value="">Выберите курс</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Дата и время начала</label>
+            <input type="datetime-local" id="streamDateTime" class="form-input">
+        </div>
+        <div class="form-group">
+            <label>Статус</label>
+            <select id="streamStatus" class="form-select">
+                <option value="planned">Запланирована</option>
+                <option value="active">В эфире</option>
+                <option value="ended">Завершена</option>
+            </select>
+        </div>
+        <div class="flex gap-2 justify-end mt-4">
+            <button class="btn btn-outline" onclick="closeStreamModal()">Отмена</button>
+            <button class="btn btn-primary" id="saveStreamBtn">Сохранить</button>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // ===== DATA STORE =====
+        let usersData = [];
+        let coursesSlider = [];
+        let partnersList = [];
+        let siteContentData = {};
+        let applicationsData = [];
+        let streamsData = [];
+        let gameConfigData = {};
+        let gameProgressData = [];
+        let chatMessagesData = {};
+        let activityLog = [];
+
+        const API_BASE = '';
+
+        // ===== INIT =====
+       async function init() {
+    // Проверка авторизации
+    try {
+        const authCheck = await fetch('/api/auth/me', { credentials: 'include' });
+        const authData = await authCheck.json();
+        
+        if (!authData.success || authData.user.role !== 'admin') {
+            window.location.href = '/';
+            return;
+        }
+    } catch(e) {
+        window.location.href = '/';
+        return;
+    }
+    
+    loadAllFromStorage();
+    
+    // Загружаем все данные с сервера
+    await Promise.all([
+        loadUsersFromServer(),
+        loadCoursesFromServer(),
+        loadPartnersFromServer(),
+        loadContentFromServer(),
+        loadApplicationsFromServer(),
+        loadStreamsFromServer()
+    ]);
+    
+    setupNavigation();
+    renderDashboard();
+    updateDateTime();
+    setInterval(updateDateTime, 30000);
+    updateApplicationBadge();
+    updateChatBadge();
+}
+
+        function loadAllFromStorage() {
+            const saved = key => localStorage.getItem(key);
+            try {
+                usersData = JSON.parse(saved('admin_users') || '[]');
+                coursesSlider = JSON.parse(saved('admin_courses_slider') || '[]');
+                partnersList = JSON.parse(saved('admin_partners_list') || '[]');
+                siteContentData = JSON.parse(saved('admin_site_content') || '{}');
+                applicationsData = JSON.parse(saved('admin_applications') || '[]');
+                streamsData = JSON.parse(saved('admin_streams') || '[]');
+                gameConfigData = JSON.parse(saved('admin_game_config') || '{}');
+                gameProgressData = JSON.parse(saved('admin_game_progress') || '[]');
+                chatMessagesData = JSON.parse(saved('admin_chat_messages') || '{}');
+                activityLog = JSON.parse(saved('admin_activity_log') || '[]');
+            } catch(e) { console.warn('Storage parse error', e); }
+        }
+
+        async function loadAllFromServer() {
+            try {
+                const [usersRes, coursesRes, partnersRes, contentRes, statsRes] = await Promise.allSettled([
+                    fetch(API_BASE + '/api/users').then(r => r.json()),
+                    fetch(API_BASE + '/api/slider-courses').then(r => r.json()),
+                    fetch(API_BASE + '/api/partners').then(r => r.json()),
+                    fetch(API_BASE + '/api/site-content').then(r => r.json()),
+                    fetch(API_BASE + '/api/statistics').then(r => r.json())
+                ]);
+
+                if (usersRes.status === 'fulfilled' && usersRes.value.success) {
+                    usersData = usersRes.value.users || usersRes.value || [];
+                    saveAllToStorage();
+                }
+                if (coursesRes.status === 'fulfilled' && coursesRes.value.success) {
+                    coursesSlider = coursesRes.value.courses || [];
+                    saveAllToStorage();
+                }
+                if (partnersRes.status === 'fulfilled' && partnersRes.value.success) {
+                    partnersList = partnersRes.value.partners || [];
+                    saveAllToStorage();
+                }
+                if (contentRes.status === 'fulfilled' && contentRes.value.success) {
+                    siteContentData = contentRes.value.content || {};
+                    saveAllToStorage();
+                }
+                if (statsRes.status === 'fulfilled' && statsRes.value.success) {
+                    window.serverStats = statsRes.value.stats;
+                }
+            } catch(e) { console.log('Server not available, using localStorage'); }
+
+            if (coursesSlider.length === 0) coursesSlider = [
+                { title: "Старт в IT без кода", link: "#", img: "https://picsum.photos/id/0/400/500" },
+                { title: "Стать хакером (этичным)", link: "#", img: "https://picsum.photos/id/1/400/500" },
+                { title: "Разрабатывать игры", link: "#", img: "https://picsum.photos/id/15/400/500" }
+            ];
+            if (partnersList.length === 0) partnersList = [
+                { name: "Яндекс Практикум", img: "https://picsum.photos/id/20/200/200", link: "#" },
+                { name: "Skillbox", img: "https://picsum.photos/id/26/200/200", link: "#" }
+            ];
+            const defaultContent = {
+                mainTitle: 'Добро пожаловать в «КонсПресс» — университет, где пишут код, создают дизайн и строят будущее IT!',
+                mainDesc1: 'Вы попали в место, где учёба — это драйв.',
+                mainDesc2: 'Мы помогаем с трудоустройством.',
+                videoPopupText: '🎬 Полное видео доступно студентам.',
+                projectsTitle: 'Обучаем на реальных задачах',
+                teachersSectionTitle: 'Преподаватели нашего Университета',
+                teachersSub: 'Программисты, разработчики, дизайнеры, сис.админы',
+                diplomaText: 'После окончания курса вы получите диплом.',
+                licenseText: 'Лицензия №Д035-1-294-77 / 179 609'
+            };
+            for (const [k, v] of Object.entries(defaultContent)) {
+                if (!siteContentData[k]) siteContentData[k] = v;
+            }
+            if (applicationsData.length === 0) generateTestApplications();
+            if (streamsData.length === 0) generateTestStreams();
+            if (Object.keys(gameConfigData).length === 0) {
+                gameConfigData = {
+                    jumper: { speed: { easy: 3.2, normal: 4.2, hard: 5.2 }, questionInterval: 10, questions: { easy: [], normal: [], hard: [] } },
+                    runner: { speed: 3.8, health: 3, obstacles: [] }
+                };
+            }
+            if (!chatMessagesData['teacher@cons.ru']) chatMessagesData['teacher@cons.ru'] = [];
+            saveAllToStorage();
+        }
+
+        function generateTestApplications() {
+            applicationsData = [
+                { id: 1, sender: "Иванов Иван", type: "Зачисление", content: "Хочу поступить на курс веб-разработки", date: "2025-04-01", status: "pending" },
+                { id: 2, sender: "Петрова Анна", type: "Перевод", content: "Прошу перевести в группу ПИ-22", date: "2025-04-02", status: "pending" },
+                { id: 3, sender: "Сидоров Максим", type: "Жалоба", content: "Проблемы с доступом к материалам", date: "2025-03-28", status: "accepted" }
+            ];
+        }
+
+        function generateTestStreams() {
+            streamsData = [
+                { id: 1, title: "Лекция по C++", teacher: "Алексей Владимирович", status: "active", viewers: 12, startedAt: new Date().toISOString() },
+                { id: 2, title: "Веб-дизайн практика", teacher: "Мария Сергеевна", status: "planned", scheduledFor: "2025-04-10T14:00" }
+            ];
+        }
+
+        function saveAllToStorage() {
+            localStorage.setItem('admin_users', JSON.stringify(usersData));
+            localStorage.setItem('admin_courses_slider', JSON.stringify(coursesSlider));
+            localStorage.setItem('admin_partners_list', JSON.stringify(partnersList));
+            localStorage.setItem('admin_site_content', JSON.stringify(siteContentData));
+            localStorage.setItem('admin_applications', JSON.stringify(applicationsData));
+            localStorage.setItem('admin_streams', JSON.stringify(streamsData));
+            localStorage.setItem('admin_game_config', JSON.stringify(gameConfigData));
+            localStorage.setItem('admin_game_progress', JSON.stringify(gameProgressData));
+            localStorage.setItem('admin_chat_messages', JSON.stringify(chatMessagesData));
+            localStorage.setItem('admin_activity_log', JSON.stringify(activityLog));
+        }
+
+        function logActivity(action) {
+            activityLog.unshift({ action, time: new Date().toISOString() });
+            if (activityLog.length > 100) activityLog = activityLog.slice(0, 100);
+            saveAllToStorage();
+        }
+
+        // ===== NAVIGATION =====
+        function setupNavigation() {
+            document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = item.getAttribute('data-page');
+                    navigateTo(page);
+                    if (window.innerWidth < 1024) document.getElementById('sidebar').classList.remove('open');
+                });
+            });
+        }
+
+        function navigateTo(page) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.querySelector(`.nav-item[data-page="${page}"]`)?.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.getElementById(`page-${page}`)?.classList.add('active');
+
+            const renderers = {
+                'dashboard': renderDashboard,
+                'live-preview': updatePreview,
+                'students': renderStudents,
+                'teachers': renderTeachers,
+                'applications': renderApplications,
+                'courses': renderCourses,
+                'streams': renderStreams,
+                'games': renderGames,
+                'chat': renderChat,
+                'site-content': renderSiteContent,
+                'partners': renderPartners
+            };
+            if (renderers[page]) renderers[page]();
+            if (page === 'live-preview') updatePreview();
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        // ===== DASHBOARD =====
+        function renderDashboard() {
+            const students = usersData.filter(u => u.role === 'student').length;
+            const teachers = usersData.filter(u => u.role === 'teacher').length;
+            const blocked = usersData.filter(u => u.status === 'blocked').length;
+            const pendingApps = applicationsData.filter(a => a.status === 'pending').length;
+            const activeStreams = streamsData.filter(s => s.status === 'active').length;
+            const courses = coursesSlider.length;
+
+            document.getElementById('dashboardStats').innerHTML = `
+                <div class="stat-card"><div class="stat-icon" style="background:#dbeafe;">👨‍🎓</div><div class="stat-value">${students}</div><div class="stat-label">Студентов</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:#fef3c7;">👨‍🏫</div><div class="stat-value">${teachers}</div><div class="stat-label">Преподавателей</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:#d1fae5;">📚</div><div class="stat-value">${courses}</div><div class="stat-label">Курсов</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:#fce7f3;">📋</div><div class="stat-value">${pendingApps}</div><div class="stat-label">Заявок</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:#fee2e2;">🚫</div><div class="stat-value">${blocked}</div><div class="stat-label">Заблокировано</div></div>
+                <div class="stat-card"><div class="stat-icon" style="background:#ede9fe;">📡</div><div class="stat-value">${activeStreams}</div><div class="stat-label">Активных трансляций</div></div>
+            `;
+
+            document.getElementById('onlineActivity').innerHTML = usersData
+                .filter(u => u.status !== 'blocked')
+                .slice(0, 10)
+                .map(u => `<div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid var(--border);">
+                    <span>${escapeHtml(u.fullName || u.email)}</span><span class="status-badge status-active">${u.role}</span></div>`).join('');
+
+            document.getElementById('recentActivity').innerHTML = activityLog.slice(0, 15)
+                .map(a => `<div style="padding:0.3rem 0;font-size:0.8rem;border-bottom:1px solid var(--border);">
+                    ${escapeHtml(a.action)} <span style="color:var(--text-muted);float:right;">${new Date(a.time).toLocaleTimeString()}</span></div>`).join('');
+        }
+
+        function updateDateTime() {
+            document.getElementById('currentDateTime').innerText = new Date().toLocaleString('ru-RU');
+        }
+
+        // ===== LIVE PREVIEW =====
+       function updatePreview() {
+    const page = document.getElementById('previewPageSelect').value;
+    let url = page;
+    if (page === 'index.html') {
+        url = 'index.html';
+    }
+    document.getElementById('previewFrame').src = url;
+}
+        function openInNewTab() {
+            window.open(document.getElementById('previewPageSelect').value, '_blank');
+        }
+
+        // ===== STUDENTS =====
+        function renderStudents() {
+            const search = (document.getElementById('studentSearch')?.value || '').toLowerCase();
+            const groupFilter = document.getElementById('studentGroupFilter')?.value || 'all';
+            
+            let filtered = usersData.filter(u => u.role === 'student');
+            if (search) filtered = filtered.filter(u => (u.fullName||'').toLowerCase().includes(search) || (u.email||'').toLowerCase().includes(search));
+            if (groupFilter !== 'all') filtered = filtered.filter(u => u.group_name === groupFilter);
+
+            const groups = [...new Set(usersData.filter(u => u.role === 'student').map(u => u.group_name).filter(Boolean))];
+            const groupSelect = document.getElementById('studentGroupFilter');
+            groupSelect.innerHTML = '<option value="all">Все группы</option>' + groups.map(g => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join('');
+
+            document.getElementById('studentsTableBody').innerHTML = filtered.map(u => `
+                <tr>
+                    <td>${u.id || ''}</td>
+                    <td>${escapeHtml(u.fullName || '')}</td>
+                    <td>${escapeHtml(u.email || '')}</td>
+                    <td>${escapeHtml(u.group_name || '')}</td>
+                    <td>${escapeHtml(u.rating || '')}</td>
+                    <td><span class="status-badge ${u.status === 'blocked' ? 'status-blocked' : 'status-active'}">${u.status === 'blocked' ? 'Заблокирован' : 'Активен'}</span></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-info btn-sm" onclick="openUserModal('student', ${u.id})">✏️</button>
+                            <button class="btn ${u.status === 'blocked' ? 'btn-success' : 'btn-warning'} btn-sm" onclick="toggleBlock(${u.id})">${u.status === 'blocked' ? '🔓' : '🚫'}</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUserById(${u.id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" style="text-align:center;">Нет студентов</td></tr>';
+        }
+
+        // ===== TEACHERS =====
+        function renderTeachers() {
+            const search = (document.getElementById('teacherSearch')?.value || '').toLowerCase();
+            let filtered = usersData.filter(u => u.role === 'teacher');
+            if (search) filtered = filtered.filter(u => (u.fullName||'').toLowerCase().includes(search) || (u.email||'').toLowerCase().includes(search));
+
+            document.getElementById('teachersTableBody').innerHTML = filtered.map(u => `
+                <tr>
+                    <td>${u.id || ''}</td>
+                    <td>${escapeHtml(u.fullName || '')}</td>
+                    <td>${escapeHtml(u.email || '')}</td>
+                    <td>${escapeHtml(u.specialization || u.group_name || '')}</td>
+                    <td><span class="status-badge ${u.status === 'blocked' ? 'status-blocked' : 'status-active'}">${u.status === 'blocked' ? 'Заблокирован' : 'Активен'}</span></td>
+                    <td>
+                        <div class="btn-group">
+                            <button class="btn btn-info btn-sm" onclick="openUserModal('teacher', ${u.id})">✏️</button>
+                            <button class="btn ${u.status === 'blocked' ? 'btn-success' : 'btn-warning'} btn-sm" onclick="toggleBlock(${u.id})">${u.status === 'blocked' ? '🔓' : '🚫'}</button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUserById(${u.id})">🗑️</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="6" style="text-align:center;">Нет преподавателей</td></tr>';
+        }
+
+        function openUserModal(type, id = null) {
+            const modal = document.getElementById('userModal');
+            document.getElementById('editUserType').value = type;
+            
+            if (id) {
+                const user = usersData.find(u => u.id === id);
+                if (user) {
+                    document.getElementById('editUserId').value = user.id;
+                    document.getElementById('userFullname').value = user.fullName || '';
+                    document.getElementById('userEmail').value = user.email || '';
+                    document.getElementById('userPassword').value = '';
+                    document.getElementById('userGroup').value = user.group_name || '';
+                    document.getElementById('userStatus').value = user.status || 'active';
+                    document.getElementById('userBlockUntil').value = user.blockUntil || '';
+                    document.getElementById('userModalTitle').innerText = '✏️ Редактировать';
+                    document.getElementById('deleteUserBtn').style.display = 'inline-flex';
+                }
+            } else {
+                document.getElementById('editUserId').value = '';
+                document.getElementById('userFullname').value = '';
+                document.getElementById('userEmail').value = '';
+                document.getElementById('userPassword').value = '';
+                document.getElementById('userGroup').value = '';
+                document.getElementById('userStatus').value = 'active';
+                document.getElementById('userBlockUntil').value = '';
+                document.getElementById('userModalTitle').innerText = '➕ Добавить';
+                document.getElementById('deleteUserBtn').style.display = 'none';
+            }
+            
+            document.getElementById('userGroupField').style.display = type === 'student' ? 'block' : 'none';
+            modal.classList.add('active');
+        }
+
+        async function saveUser() {
+    const id = document.getElementById('editUserId').value;
+    const type = document.getElementById('editUserType').value;
+    const fullName = document.getElementById('userFullname').value.trim();
+    const email = document.getElementById('userEmail').value.trim();
+    const password = document.getElementById('userPassword').value;
+    const group = document.getElementById('userGroup').value;
+    const status = document.getElementById('userStatus').value;
+    const blockUntil = document.getElementById('userBlockUntil').value;
+
+    if (!fullName || !email) {
+        showToast('Заполните обязательные поля', 'error');
+        return;
+    }
+
+    try {
+        let result;
+        
+        if (id) {
+            result = await fetch('/api/users/' + id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fullName: fullName,
+                    email: email,
+                    group_name: group,
+                    status: status,
+                    block_until: blockUntil,
+                    password: password || undefined
+                }),
+                credentials: 'include'
+            });
+        } else {
+            result = await fetch('/api/users', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fullName: fullName,
+                    email: email,
+                    password: password || '123456',
+                    role: type,
+                    group_name: group,
+                    status: status,
+                    block_until: blockUntil
+                }),
+                credentials: 'include'
+            });
+        }
+        
+        const data = await result.json();
+        
+        if (data.success) {
+            showToast('Пользователь сохранен', 'success');
+            closeModal('userModal');
+            await loadUsersFromServer();
+            renderStudents();
+            renderTeachers();
+        } else {
+            showToast(data.error || 'Ошибка сохранения', 'error');
+        }
+    } catch (err) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+
+        async function toggleBlock(id) {
+    try {
+        const result = await fetch('/api/users/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'blocked' }),
+            credentials: 'include'
+        });
+        const data = await result.json();
+        
+        if (data.success) {
+            showToast('Статус обновлен', 'success');
+            await loadUsersFromServer();
+            renderStudents();
+            renderTeachers();
+        } else {
+            showToast(data.error || 'Ошибка обновления', 'error');
+        }
+    } catch (err) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+
+async function deleteUserById(id) {
+    if (!confirm('Удалить пользователя навсегда?')) return;
+    
+    try {
+        const result = await fetch('/api/users/' + id, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await result.json();
+        
+        if (data.success) {
+            showToast('Пользователь удален', 'success');
+            await loadUsersFromServer();
+            renderStudents();
+            renderTeachers();
+        } else {
+            showToast(data.error || 'Ошибка удаления', 'error');
+        }
+    } catch (err) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+
+        function deleteUser() {
+            const id = document.getElementById('editUserId').value;
+            if (id) { closeModal('userModal'); deleteUserById(id); }
+        }
+
+        // ===== APPLICATIONS =====
+        function renderApplications() {
+    const filter = document.getElementById('appFilter')?.value || 'all';
+    let filtered = applicationsData;
+    if (filter !== 'all') {
+        filtered = applicationsData.filter(a => a.status === filter);
+    }
+
+    if (filtered.length === 0) {
+        document.getElementById('applicationsTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;">Нет заявок</td></tr>';
+        return;
+    }
+
+    document.getElementById('applicationsTableBody').innerHTML = filtered.map(a => `
+        <tr>
+            <td>${a.id}</td>
+            <td>${escapeHtml(a.sender_name || a.sender)}</td>
+            <td>${escapeHtml(a.type)}</td>
+            <td>${escapeHtml(a.content || '')}</td>
+            <td>${a.created_at ? new Date(a.created_at).toLocaleDateString() : (a.date || '-')}</td>
+            <td><span class="status-badge status-${a.status}">${a.status === 'pending' ? 'Ожидает' : a.status === 'accepted' ? 'Принято' : 'Отклонено'}</span></td>
+            <td>
+                <div class="btn-group">
+                    ${a.status === 'pending' ? `
+                        <button class="btn btn-success btn-sm" onclick="updateApplication(${a.id}, 'accepted')">Принять</button>
+                        <button class="btn btn-danger btn-sm" onclick="updateApplication(${a.id}, 'rejected')">Отклонить</button>
+                    ` : '<span class="text-muted">Обработано</span>'}
+                </div>
+            </td>
+        </tr>
+    `).join('');
+
+    updateApplicationBadge();
+}
+
+       async function updateApplication(id, status) {
+    try {
+        const response = await fetch(API_BASE + '/api/content/applications/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status, admin_comment: '' }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast(status === 'accepted' ? 'Заявка принята' : 'Заявка отклонена');
+            await loadApplicationsFromServer();
+            renderApplications();
+            renderDashboard();
+            logActivity(`Заявка #${id} ${status === 'accepted' ? 'принята' : 'отклонена'}`);
+        } else {
+            showToast(data.error || 'Ошибка обновления', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+        console.log('Update application error:', e);
+    }
+}
+        function updateApplicationBadge() {
+            const count = applicationsData.filter(a => a.status === 'pending').length;
+            const badge = document.getElementById('appBadge');
+            if (badge) {
+                badge.innerText = count;
+                badge.style.display = count > 0 ? 'inline' : 'none';
+            }
+        }
+
+        // ===== STREAMS =====
+        function renderStreams() {
+    const container = document.getElementById('streamsGrid');
+    if (!container) return;
+    
+    if (!streamsData || streamsData.length === 0) {
+        container.innerHTML = '<div class="card text-center"><p class="text-muted">Нет трансляций. Создайте первую трансляцию.</p></div>';
+        return;
+    }
+    
+    container.innerHTML = streamsData.map(s => `
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">${escapeHtml(s.title)}</h3>
+                <span class="status-badge ${s.status === 'active' ? 'status-active' : (s.status === 'planned' ? 'status-pending' : 'status-blocked')}">
+                    ${s.status === 'active' ? '🔴 В эфире' : (s.status === 'planned' ? '📅 Запланирована' : '⏹️ Завершена')}
+                </span>
+            </div>
+            <p><i class="fas fa-chalkboard-user"></i> ${escapeHtml(s.teacher_name || 'Преподаватель не указан')}</p>
+            ${s.course_name ? `<p><i class="fas fa-book"></i> ${escapeHtml(s.course_name)}</p>` : ''}
+            ${s.status === 'active' ? `<p><i class="fas fa-eye"></i> Зрителей: ${s.viewers || 0}</p>` : ''}
+            ${s.scheduled_for ? `<p><i class="fas fa-calendar"></i> ${new Date(s.scheduled_for).toLocaleString('ru-RU')}</p>` : ''}
+            <div class="btn-group mt-2">
+                <select class="select" style="width: auto; padding: 0.25rem 0.5rem;" onchange="updateStreamStatus(${s.id}, this.value)">
+                    <option value="planned" ${s.status === 'planned' ? 'selected' : ''}>Запланирована</option>
+                    <option value="active" ${s.status === 'active' ? 'selected' : ''}>В эфире</option>
+                    <option value="ended" ${s.status === 'ended' ? 'selected' : ''}>Завершена</option>
+                </select>
+                <button class="btn btn-sm btn-outline" onclick="editStreamOverlay(${s.id})"><i class="fas fa-text-height"></i> Наложить текст</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteStream(${s.id})"><i class="fas fa-trash"></i> Удалить</button>
+            </div>
+        </div>
+    `).join('');
+}
+async function openStreamModal() {
+    // Загружаем список преподавателей и курсов
+    const teachers = usersData.filter(u => u.role === 'teacher');
+    const teacherSelect = document.getElementById('streamTeacher');
+    teacherSelect.innerHTML = '<option value="">Выберите преподавателя</option>';
+    for (let teacher of teachers) {
+        teacherSelect.innerHTML += `<option value="${teacher.id}">${escapeHtml(teacher.fullName)}</option>`;
+    }
+    
+    const coursesResult = await fetch(API_BASE + '/api/courses', { credentials: 'include' });
+    const coursesData = await coursesResult.json();
+    const courseSelect = document.getElementById('streamCourse');
+    courseSelect.innerHTML = '<option value="">Выберите курс</option>';
+    if (coursesData.success && coursesData.courses) {
+        for (let course of coursesData.courses) {
+            courseSelect.innerHTML += `<option value="${course.id}">${escapeHtml(course.name)}</option>`;
+        }
+    }
+    
+    document.getElementById('streamTitle').value = '';
+    document.getElementById('streamDateTime').value = '';
+    document.getElementById('streamStatus').value = 'planned';
+    document.getElementById('streamModal').classList.add('active');
+}
+
+function closeStreamModal() {
+    document.getElementById('streamModal').classList.remove('active');
+}
+
+async function saveStream() {
+    const title = document.getElementById('streamTitle').value.trim();
+    const teacherId = document.getElementById('streamTeacher').value;
+    const courseId = document.getElementById('streamCourse').value;
+    const scheduledFor = document.getElementById('streamDateTime').value;
+    const status = document.getElementById('streamStatus').value;
+    
+    if (!title) {
+        showToast('Введите название трансляции', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch(API_BASE + '/api/streams', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                title, 
+                teacher_id: teacherId || null, 
+                course_id: courseId || null, 
+                scheduled_for: scheduledFor ? new Date(scheduledFor).toISOString() : null,
+                status: status
+            }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Трансляция создана', 'success');
+            closeStreamModal();
+            await loadStreamsFromServer();
+            renderStreams();
+            renderDashboard();
+        } else {
+            showToast(data.error || 'Ошибка создания', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+
+        function stopStream(id) {
+            const stream = streamsData.find(s => s.id === id);
+            if (stream && confirm('Остановить трансляцию?')) {
+                stream.status = 'planned';
+                saveAllToStorage();
+                renderStreams();
+                renderDashboard();
+                logActivity(`Остановлена трансляция: ${stream.title}`);
+            }
+        }
+
+       async function editStreamOverlay(id) {
+    const text = prompt('Текст для наложения на трансляцию:');
+    if (!text) return;
+    
+    try {
+        const response = await fetch(API_BASE + '/api/streams/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ overlay_text: text }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Текст наложен на трансляцию', 'success');
+            await loadStreamsFromServer();
+        } else {
+            showToast(data.error || 'Ошибка', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+async function deleteStream(id) {
+    if (!confirm('Удалить трансляцию?')) return;
+    
+    try {
+        const response = await fetch(API_BASE + '/api/streams/' + id, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Трансляция удалена', 'success');
+            await loadStreamsFromServer();
+            renderDashboard();
+        } else {
+            showToast(data.error || 'Ошибка удаления', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+
+        // ===== GAMES =====
+        function renderGames() {
+            const gc = gameConfigData;
+            document.getElementById('jumperSpeedEasy').value = gc.jumper?.speed?.easy || 3.2;
+            document.getElementById('jumperSpeedNormal').value = gc.jumper?.speed?.normal || 4.2;
+            document.getElementById('jumperSpeedHard').value = gc.jumper?.speed?.hard || 5.2;
+            document.getElementById('jumperQuestionInterval').value = gc.jumper?.questionInterval || 10;
+            document.getElementById('runnerSpeed').value = gc.runner?.speed || 3.8;
+            document.getElementById('runnerHealth').value = gc.runner?.health || 3;
+
+            const allQ = { ...(gc.jumper?.questions || {}) };
+            document.getElementById('jumperQuestionsList').innerHTML = ['easy','normal','hard'].map(diff => {
+                const qs = allQ[diff] || [];
+                return `<div class="mt-1"><strong>${diff === 'easy' ? '🟢 Лёгкий' : diff === 'normal' ? '🟡 Нормальный' : '🔴 Сложный'}</strong>: ${qs.length} вопросов</div>`;
+            }).join('');
+
+            document.getElementById('runnerObstaclesList').innerHTML = (gc.runner?.obstacles || []).map((o,i) => `
+                <div class="game-card">${o.symbol} ${o.name} — <button class="btn btn-danger btn-sm" onclick="deleteObstacle(${i})">🗑️</button></div>
+            `).join('') || '<p class="text-muted">Нет препятствий</p>';
+
+            document.getElementById('gameProgressTable').innerHTML = gameProgressData.map(p => `
+                <tr><td>${escapeHtml(p.player)}</td><td>${p.game}</td><td>🏆 ${p.highScore}</td><td>${p.questionsAnswered || 0}</td><td>${p.lastPlayed || '-'}</td></tr>
+            `).join('') || '<tr><td colspan="5" style="text-align:center;">Нет данных</td></tr>';
+        }
+
+        function saveGameConfig(game) {
+            if (game === 'jumper') {
+                gameConfigData.jumper = {
+                    ...gameConfigData.jumper,
+                    speed: {
+                        easy: parseFloat(document.getElementById('jumperSpeedEasy').value) || 3.2,
+                        normal: parseFloat(document.getElementById('jumperSpeedNormal').value) || 4.2,
+                        hard: parseFloat(document.getElementById('jumperSpeedHard').value) || 5.2
+                    },
+                    questionInterval: parseInt(document.getElementById('jumperQuestionInterval').value) || 10
+                };
+            } else if (game === 'runner') {
+                gameConfigData.runner = {
+                    ...gameConfigData.runner,
+                    speed: parseFloat(document.getElementById('runnerSpeed').value) || 3.8,
+                    health: parseInt(document.getElementById('runnerHealth').value) || 3
+                };
+            }
+            saveAllToStorage();
+            logActivity(`Сохранены настройки игры: ${game}`);
+            showToast('💾 Сохранено');
+        }
+
+        function addQuestion() {
+            document.getElementById('questionModal').classList.add('active');
+            document.getElementById('questionModalTitle').innerText = '➕ Добавить вопрос';
+        }
+
+        function saveQuestion() {
+            const game = document.getElementById('questionGame').value;
+            const difficulty = document.getElementById('questionDifficulty').value;
+            const text = document.getElementById('questionText').value.trim();
+            const options = [...document.querySelectorAll('#questionOptionsInputs input')].map(inp => ({
+                text: inp.value.trim(),
+                correct: inp.getAttribute('data-correct') === 'true'
+            }));
+
+            if (!text || options.some(o => !o.text)) {
+                showToast('Заполните все поля');
+                return;
+            }
+
+            if (!gameConfigData[game]) gameConfigData[game] = {};
+            if (!gameConfigData[game].questions) gameConfigData[game].questions = {};
+            if (!gameConfigData[game].questions[difficulty]) gameConfigData[game].questions[difficulty] = [];
+            
+            gameConfigData[game].questions[difficulty].push({ q: text, options, correct: options.findIndex(o => o.correct) });
+            saveAllToStorage();
+            closeModal('questionModal');
+            renderGames();
+            logActivity(`Добавлен вопрос в ${game} (${difficulty})`);
+            showToast('✅ Вопрос добавлен');
+        }
+
+        function deleteObstacle(index) {
+            if (confirm('Удалить препятствие?')) {
+                gameConfigData.runner.obstacles.splice(index, 1);
+                saveAllToStorage();
+                renderGames();
+            }
+        }
+
+        // ===== CHAT =====
+        function renderChat() {
+            const teachers = usersData.filter(u => u.role === 'teacher');
+            document.getElementById('chatTeacherList').innerHTML = teachers.map(t => `
+                <div class="chat-list-item" onclick="selectChatTeacher('${t.email}')" data-email="${t.email}">
+                    <span class="dot ${t.status === 'blocked' ? 'offline' : 'online'}"></span>
+                    <div>
+                        <strong>${escapeHtml(t.fullName || t.email)}</strong>
+                        <p style="font-size:0.7rem;color:var(--text-muted);">${escapeHtml(t.specialization || '')}</p>
+                    </div>
+                </div>
+            `).join('') || '<p class="text-muted" style="padding:1rem;">Нет преподавателей</p>';
+        }
+
+        function selectChatTeacher(email) {
+            document.querySelectorAll('.chat-list-item').forEach(el => el.classList.remove('active'));
+            document.querySelector(`.chat-list-item[data-email="${email}"]`)?.classList.add('active');
+            
+            window.activeChatTeacher = email;
+            const messages = chatMessagesData[email] || [];
+            document.getElementById('chatMessages').innerHTML = messages.map(m => `
+                <div class="chat-msg ${m.from === 'admin' ? 'sent' : 'received'}">
+                    ${escapeHtml(m.text)}
+                    <div class="time">${m.time || ''}</div>
+                </div>
+            `).join('') || '<p class="text-muted" style="text-align:center;">Нет сообщений. Напишите первым!</p>';
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            const teacherEmail = window.activeChatTeacher;
+
+            if (!text || !teacherEmail) {
+                if (!teacherEmail) showToast('Выберите преподавателя');
+                return;
+            }
+
+            if (!chatMessagesData[teacherEmail]) chatMessagesData[teacherEmail] = [];
+            chatMessagesData[teacherEmail].push({
+                from: 'admin',
+                text,
+                time: new Date().toLocaleTimeString()
+            });
+
+            saveAllToStorage();
+            input.value = '';
+            selectChatTeacher(teacherEmail);
+            updateChatBadge();
+            logActivity(`Отправлено сообщение преподавателю: ${teacherEmail}`);
+        }
+
+        function updateChatBadge() {
+            const badge = document.getElementById('chatBadge');
+            let count = 0;
+            for (const msgs of Object.values(chatMessagesData)) {
+                count += msgs.filter(m => m.from !== 'admin').length;
+            }
+            if (badge) {
+                badge.innerText = count;
+                badge.style.display = count > 0 ? 'inline' : 'none';
+            }
+        }
+
+        function setupSocketIO() {
+            const socket = io();
+            socket.on('connect', () => {
+                document.getElementById('chatStatus').innerHTML = '🟢 Подключён';
+                socket.emit('user-online', 'admin');
+            });
+            socket.on('disconnect', () => {
+                document.getElementById('chatStatus').innerHTML = '🔴 Отключён';
+            });
+            socket.on('chat-message', (data) => {
+                if (data.to === 'admin') {
+                    const teacherEmail = data.from;
+                    if (!chatMessagesData[teacherEmail]) chatMessagesData[teacherEmail] = [];
+                    chatMessagesData[teacherEmail].push({ from: teacherEmail, text: data.text, time: new Date().toLocaleTimeString() });
+                    saveAllToStorage();
+                    updateChatBadge();
+                    if (window.activeChatTeacher === teacherEmail) selectChatTeacher(teacherEmail);
+                }
+            });
+        }
+
+        // ===== COURSES =====
+       function renderCourses() {
+    const container = document.getElementById('coursesGrid');
+    if (!container) return;
+    
+    if (coursesSlider.length === 0) {
+        container.innerHTML = '<div class="card text-center">Нет курсов. Добавьте первый курс</div>';
+        return;
+    }
+    
+    container.innerHTML = coursesSlider.map((c, i) => `
+        <div class="card">
+            <img src="${c.img || '/foto/course-default.jpg'}" style="width:100%;height:160px;object-fit:cover;border-radius:0.5rem;margin-bottom:0.75rem;" onerror="this.src='/foto/course-default.jpg'">
+            <input type="text" class="form-input mb-1" value="${escapeHtml(c.title)}" placeholder="Название" data-index="${i}" data-field="title" onchange="updateCourseField(this)">
+            <textarea class="form-textarea mb-1" rows="2" placeholder="Описание" data-index="${i}" data-field="description" onchange="updateCourseField(this)">${escapeHtml(c.description || '')}</textarea>
+            <input type="text" class="form-input mb-1" value="${c.img || ''}" placeholder="URL картинки (/foto/...)" data-index="${i}" data-field="img" onchange="updateCourseField(this)">
+            <input type="text" class="form-input mb-1" value="${c.link || '#'}" placeholder="Ссылка" data-index="${i}" data-field="link" onchange="updateCourseField(this)">
+            <select class="form-select mb-1" data-index="${i}" data-field="level" onchange="updateCourseField(this)">
+                <option value="beginner" ${c.level === 'beginner' ? 'selected' : ''}>Начинающий</option>
+                <option value="intermediate" ${c.level === 'intermediate' ? 'selected' : ''}>Средний</option>
+                <option value="advanced" ${c.level === 'advanced' ? 'selected' : ''}>Продвинутый</option>
+            </select>
+            <div class="flex gap-1">
+                <input type="number" class="form-input" value="${c.sort_order || i}" placeholder="Порядок" data-index="${i}" data-field="sort_order" onchange="updateCourseField(this)" style="width:80px;">
+                <button class="btn btn-danger btn-sm" onclick="removeCourseFromSlider(${i})">Удалить</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+        async function updateCourseField(input) {
+    const index = parseInt(input.dataset.index);
+    const field = input.dataset.field;
+    let value = input.value;
+    
+    if (field === 'sort_order') {
+        value = parseInt(value) || 0;
+    }
+    
+    coursesSlider[index][field] = value;
+    saveAllToStorage();
+    
+    const response = await fetch(API_BASE + '/api/content/slider-courses', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(coursesSlider),
+        credentials: 'include'
+    });
+    
+    const data = await response.json();
+    if (data.success) {
+        showToast('Сохранено');
+    } else {
+        showToast('Ошибка сохранения', 'error');
+    }
+}
+
+        async function addCourseCard() {
+    const newCourse = {
+        title: 'Новый курс',
+        description: 'Описание курса',
+        img: '/foto/course-default.jpg',
+        link: '#',
+        sort_order: coursesSlider.length
+    };
+    coursesSlider.push(newCourse);
+    saveAllToStorage();
+    
+    const response = await fetch(API_BASE + '/api/content/slider-courses', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(coursesSlider),
+        credentials: 'include'
+    });
+    
+    const data = await response.json();
+    if (data.success) {
+        renderCourses();
+        renderDashboard();
+        showToast('Курс добавлен');
+    } else {
+        showToast('Ошибка добавления', 'error');
+    }
+}
+function removeCourse(index) {
+    if (!confirm('Удалить курс?')) return;
+    coursesSlider.splice(index, 1);
+    
+    for (let i = 0; i < coursesSlider.length; i++) {
+        coursesSlider[i].sort_order = i;
+    }
+    
+    saveAllToStorage();
+    
+    fetch(API_BASE + '/api/content/slider-courses', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(coursesSlider),
+        credentials: 'include'
+    }).then(response => response.json()).then(data => {
+        if (data.success) {
+            renderCourses();
+            renderDashboard();
+            showToast('Курс удален');
+        } else {
+            showToast('Ошибка удаления', 'error');
+        }
+    }).catch(() => {
+        showToast('Ошибка сети', 'error');
+    });
+}
+
+        // ===== SITE CONTENT =====
+        function renderSiteContent() {
+            const fields = [
+                { key: 'mainTitle', label: 'Заголовок H1' },
+                { key: 'mainDesc1', label: 'Первый абзац', type: 'textarea' },
+                { key: 'mainDesc2', label: 'Второй абзац', type: 'textarea' },
+                { key: 'videoPopupText', label: 'Текст видео-попапа' },
+                { key: 'projectsTitle', label: 'Заголовок "Обучаем на задачах"' },
+                { key: 'teachersSectionTitle', label: 'Заголовок секции преподавателей' },
+                { key: 'teachersSub', label: 'Подзаголовок преподавателей' },
+                { key: 'diplomaText', label: 'Текст о дипломах', type: 'textarea' },
+                { key: 'licenseText', label: 'Текст лицензии' }
+            ];
+            document.getElementById('siteContentEditor').innerHTML = fields.map(f => `
+                <div class="form-group">
+                    <label>${f.label}</label>
+                    ${f.type === 'textarea' 
+                        ? `<textarea class="form-textarea" data-content-key="${f.key}">${escapeHtml(siteContentData[f.key] || '')}</textarea>`
+                        : `<input type="text" class="form-input" data-content-key="${f.key}" value="${escapeHtml(siteContentData[f.key] || '')}">`
+                    }
+                </div>
+            `).join('');
+        }
+
+        function saveSiteContent() {
+            document.querySelectorAll('[data-content-key]').forEach(el => {
+                siteContentData[el.getAttribute('data-content-key')] = el.value;
+            });
+            saveAllToStorage();
+            syncContentToServer();
+            logActivity('Сохранён контент сайта');
+            showToast('💾 Контент сохранён');
+        }
+
+        // ===== PARTNERS =====
+        function renderPartners() {
+            document.getElementById('partnersGrid').innerHTML = partnersList.map((p, i) => `
+                <div class="card">
+                    <img src="${p.img}" style="width:100%;height:120px;object-fit:cover;border-radius:0.5rem;margin-bottom:0.5rem;" onerror="this.src='https://picsum.photos/200/200'">
+                    <input type="text" class="form-input mb-1" value="${escapeHtml(p.name)}" placeholder="Название" onchange="updatePartnerField(${i},'name',this.value)">
+                    <input type="text" class="form-input mb-1" value="${p.img}" placeholder="URL картинки" onchange="updatePartnerField(${i},'img',this.value)">
+                    <input type="text" class="form-input mb-1" value="${p.link}" placeholder="Ссылка" onchange="updatePartnerField(${i},'link',this.value)">
+                    <button class="btn btn-danger btn-sm" onclick="removePartner(${i})">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function updatePartnerField(index, field, value) {
+            partnersList[index][field] = value;
+            saveAllToStorage();
+            syncPartnersToServer();
+        }
+
+        function addPartner() {
+            partnersList.push({ name: 'Новый партнёр', img: 'https://picsum.photos/id/20/200/200', link: '#' });
+            saveAllToStorage();
+            renderPartners();
+            logActivity('Добавлен партнёр');
+        }
+
+        function removePartner(index) {
+            if (confirm('Удалить партнёра?')) {
+                partnersList.splice(index, 1);
+                saveAllToStorage();
+                renderPartners();
+                logActivity('Удалён партнёр');
+            }
+        }
+
+        // ===== SYNC TO SERVER =====
+        // Синхронизация пользователей с сервером
+async function syncToServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/admin/users', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ users: usersData }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (!data.success) console.error('Sync failed:', data.error);
+    } catch(e) { console.log('Sync users failed:', e); }
+}
+
+// Загрузка пользователей с сервера
+async function loadUsersFromServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/users', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success) {
+            usersData = data.users;
+            saveAllToStorage();
+            renderStudents();
+            renderTeachers();
+            renderDashboard();
+        }
+    } catch(e) { console.log('Load users failed:', e); }
+}
+
+// Загрузка курсов с сервера
+async function loadCoursesFromServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/content/slider-courses', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success && data.courses) {
+            coursesSlider = data.courses;
+            saveAllToStorage();
+            renderCourses();
+        }
+    } catch(e) { console.log('Load courses failed:', e); }
+}
+
+// Загрузка партнёров с сервера
+async function loadPartnersFromServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/partners', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success && data.partners) {
+            partnersList = data.partners;
+            saveAllToStorage();
+            renderPartners();
+        }
+    } catch(e) { console.log('Load partners failed:', e); }
+}
+
+// Загрузка контента с сервера
+async function loadContentFromServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/site-content', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        if (data.success && data.content) {
+            siteContentData = data.content;
+            saveAllToStorage();
+            renderSiteContent();
+        }
+    } catch(e) { console.log('Load content failed:', e); }
+}
+
+// Загрузка заявок с сервера
+async function loadApplicationsFromServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/content/applications', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        console.log('Applications loaded:', data);
+        
+        if (data.success) {
+            applicationsData = data.applications;
+            saveAllToStorage();
+            renderApplications();
+            updateApplicationBadge();
+        } else {
+            console.error('Failed to load applications:', data.error);
+        }
+    } catch(e) { 
+        console.log('Load applications failed:', e); 
+    }
+}
+
+// Загрузка трансляций с сервера
+async function loadStreamsFromServer() {
+    try {
+        const response = await fetch(API_BASE + '/api/streams', {
+            credentials: 'include'
+        });
+        const data = await response.json();
+        console.log('Streams loaded:', data);
+        
+        if (data.success) {
+            streamsData = data.streams;
+            saveAllToStorage();
+            renderStreams();
+        } else {
+            console.error('Failed to load streams:', data.error);
+        }
+    } catch(e) { 
+        console.log('Load streams failed:', e); 
+    }
+}
+
+// Обновлённая инициализация
+async function init() {
+    loadAllFromStorage();
+    
+    // Загружаем все данные с сервера
+    await Promise.all([
+        loadUsersFromServer(),
+        loadCoursesFromServer(),
+        loadPartnersFromServer(),
+        loadContentFromServer(),
+        loadApplicationsFromServer(),
+        loadStreamsFromServer()
+    ]);
+    
+    setupNavigation();
+    renderDashboard();
+    updateDateTime();
+    setInterval(updateDateTime, 30000);
+    updateApplicationBadge();
+    updateChatBadge();
+}
+async function updateStreamStatus(id, status) {
+    try {
+        const response = await fetch(API_BASE + '/api/streams/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status }),
+            credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+            showToast('Статус обновлен', 'success');
+            await loadStreamsFromServer();
+            renderDashboard();
+        } else {
+            showToast(data.error || 'Ошибка обновления', 'error');
+        }
+    } catch(e) {
+        showToast('Ошибка сети', 'error');
+    }
+}
+// Создание пользователя через API
+async function createUserOnServer(userData) {
+    try {
+        const response = await fetch(API_BASE + '/api/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(userData),
+            credentials: 'include'
+        });
+        return await response.json();
+    } catch(e) { return { success: false }; }
+}
+
+        // ===== UTILS =====
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+        }
+async function logout() {
+    try {
+        await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+        });
+    } catch(e) {
+        console.log('Logout error:', e);
+    }
+    
+    localStorage.removeItem('consPress_current_complete');
+    localStorage.removeItem('admin_users');
+    localStorage.removeItem('admin_courses_slider');
+    localStorage.removeItem('admin_partners_list');
+    localStorage.removeItem('admin_site_content');
+    localStorage.removeItem('admin_applications');
+    localStorage.removeItem('admin_streams');
+    localStorage.removeItem('admin_game_config');
+    localStorage.removeItem('admin_game_progress');
+    localStorage.removeItem('admin_chat_messages');
+    localStorage.removeItem('admin_activity_log');
+    
+    window.location.href = '/';
+}
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                const shortcuts = {
+                    '1': 'dashboard', '2': 'live-preview', '3': 'students',
+                    '4': 'teachers', '5': 'applications', '6': 'courses',
+                    '7': 'streams', '8': 'games', '9': 'chat',
+                    '0': 'site-content'
+                };
+                if (shortcuts[e.key]) {
+                    e.preventDefault();
+                    navigateTo(shortcuts[e.key]);
+                }
+            }
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+            }
+        });
+
+        // ===== START =====
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+            for(let registration of registrations) {
+                registration.unregister();
+            }
+        });
+    }
+    document.getElementById('saveStreamBtn').addEventListener('click', saveStream);
+</script>
+
+</body>
+</html>

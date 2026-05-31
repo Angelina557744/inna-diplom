@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>КонсПресс - Панель преподавателя</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/components.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+    <style>
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.2s, opacity 0.2s;
+        }
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.2);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .submission-card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            transition: box-shadow 0.2s;
+        }
+        .submission-card:hover {
+            box-shadow: var(--shadow);
+        }
+        .submission-card.pending {
+            border-left: 4px solid var(--warning);
+        }
+        .submission-card.checked {
+            border-left: 4px solid var(--success);
+        }
+        .grade-input {
+            width: 100px;
+        }
+        .file-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+        .file-link:hover {
+            text-decoration: underline;
+        }
+        .comment-text {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+            border-top: 1px dashed var(--border);
+        }
+        .btn-sm {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.75rem;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 1rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+     .start-stream-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border: none;
+    padding: 0.35rem 1rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    letter-spacing: 0.3px;
+}
+.start-stream-btn {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 0.35rem 0,5rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.start-stream-btn:hover {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 10px rgba(220,38,38,0.3);
+}
+
+.start-stream-btn:active {
+    transform: translateY(0);
+}
+
+.start-stream-btn i {
+    font-size: 0.6rem;
+}
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stream-preview {
+    position: relative;
+    background: #000;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+}
+
+.stream-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.stream-controls-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: linear-gradient(transparent, rgba(0,0,0,0.7));
+}
+
+.stream-placeholder {
+    text-align: center;
+    padding: 3rem;
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    border: 2px dashed #cbd5e1;
+}
+
+.stream-placeholder i {
+    font-size: 3rem;
+    color: #94a3b8;
+    margin-bottom: 1rem;
+}
+
+.stream-placeholder p {
+    margin: 0.25rem 0;
+    color: #64748b;
+}
+
+.stream-settings {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.badge-info {
+    background: #dbeafe;
+    color: #1e40af;
+}
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <div class="logo-box">&lt;/&gt;</div>
+                <span class="logo-text">КонсПресс</span>
+            </a>
+            <nav class="nav">
+                <a href="/" class="nav-link">Главная</a>
+                <a href="/kurs.html" class="nav-link">Курсы</a>
+                <a href="/spesial.html" class="nav-link">Специализация</a>
+                <a href="/lickab.html" class="nav-link">Личный кабинет</a>
+            </nav>
+            <div class="profile-icon" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/">Главная</a>
+                <span>/</span>
+                <span>Панель преподавателя</span>
+            </div>
+
+            <div class="flex justify-between items-center mb-5">
+                <div>
+                    <h1><i class="fas fa-chalkboard-user"></i> Панель преподавателя</h1>
+                    <p id="teacherName" class="text-gray">Загрузка...</p>
+                </div>
+                <div class="flex gap-2">
+                    <span id="onlineCount" class="badge badge-success"><i class="fas fa-circle"></i> Онлайн: 0</span>
+                </div>
+            </div>
+
+            <div class="grid grid-2" style="gap: 1.5rem;">
+                <div class="card">
+                    <h3 class="card-title mb-3"><i class="fas fa-book"></i> Мои курсы</h3>
+                    <div id="myCoursesList">
+                        <div class="skeleton" style="height: 60px; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton" style="height: 60px;"></div>
+                    </div>
+                    <button id="addCourseBtn" class="btn btn-outline btn-block mt-3"><i class="fas fa-plus"></i> Добавить курс</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title mb-3"><i class="fas fa-users"></i> Мои группы</h3>
+                    <div id="myGroupsList">
+                        <div class="skeleton" style="height: 60px; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton" style="height: 60px;"></div>
+                    </div>
+                    <button id="addGroupBtn" class="btn btn-outline btn-block mt-3"><i class="fas fa-plus"></i> Добавить группу</button>
+                </div>
+            </div>
+
+            <div class="card mt-5">
+    <div class="card-header">
+        <h3 class="card-title">
+            <i class="fas fa-video"></i> Прямая трансляция
+        </h3>
+        <div class="flex gap-2">
+            <span id="streamStatus" class="badge badge-warning"><i class="fas fa-circle"></i> Не в эфире</span>
+            <span id="streamViewerCount" class="badge badge-info" style="display: none;"><i class="fas fa-eye"></i> 0 зрителей</span>
+        </div>
+    </div>
+    
+    <div id="streamPreview" class="stream-preview" style="display: none;">
+        <video id="streamVideo" class="stream-video" autoplay muted playsinline></video>
+        <div class="stream-controls-overlay">
+            <button id="stopStreamBtn" class="btn btn-danger btn-sm">
+                <i class="fas fa-stop"></i> Остановить трансляцию
+            </button>
+        </div>
+    </div>
+    
+    <div id="streamPlaceholder" class="stream-placeholder">
+        <i class="fas fa-video-slash"></i>
+        <p>Трансляция не активна</p>
+        <p class="text-sm text-gray">Нажмите "Начать трансляцию" чтобы подключить камеру</p>
+<button id="startStreamBtn" class="btn btn-primary start-stream-btn">
+    <i class="fas fa-video"></i> Начать трансляцию
+</button>
+    </div>
+    
+    <div id="streamSettings" class="stream-settings">
+        <div class="flex gap-3">
+            <label class="flex items-center gap-2">
+                <input type="checkbox" id="streamAudioCheckbox" checked>
+                <span class="text-sm">Микрофон</span>
+            </label>
+            <label class="flex items-center gap-2">
+                <input type="checkbox" id="streamCameraCheckbox" checked>
+                <span class="text-sm">Камера</span>
+            </label>
+            <select id="cameraSelect" class="select" style="width: auto; padding: 0.25rem 1.5rem 0.25rem 0.5rem;">
+                <option value="">Выбор камеры</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+            <div class="card mt-5">
+                <div class="card-header">
+                    <h3 class="card-title"><i class="fas fa-file-alt"></i> Работы студентов</h3>
+                    <div class="flex gap-2">
+                        <select id="filterCourseSelect" class="select" style="width: auto;">
+                            <option value="all">Все курсы</option>
+                        </select>
+                        <button id="refreshSubmissionsBtn" class="btn btn-sm btn-outline"><i class="fas fa-sync-alt"></i> Обновить</button>
+                    </div>
+                </div>
+                <div id="submissionsList">
+                    <div class="skeleton" style="height: 80px; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton" style="height: 80px;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Модальное окно добавления курса -->
+    <div id="courseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="font-bold">Новый курс</h3>
+                <button class="modal-close" onclick="closeCourseModal()">&times;</button>
+            </div>
+            <input type="text" id="courseNameInput" class="input mb-3" placeholder="Название курса">
+            <textarea id="courseDescInput" class="textarea mb-3" rows="3" placeholder="Описание курса"></textarea>
+            <button id="saveCourseBtn" class="btn btn-primary btn-block">Сохранить</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления группы -->
+    <div id="groupModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="font-bold">Новая группа</h3>
+                <button class="modal-close" onclick="closeGroupModal()">&times;</button>
+            </div>
+            <input type="text" id="groupNameInput" class="input mb-3" placeholder="Название группы">
+            <select id="groupCourseSelect" class="select mb-3">
+                <option value="">Выберите курс</option>
+            </select>
+            <button id="saveGroupBtn" class="btn btn-primary btn-block">Сохранить</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно оценки работы -->
+    <div id="gradeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="font-bold"><i class="fas fa-star"></i> Оценить работу</h3>
+                <button class="modal-close" onclick="closeGradeModal()">&times;</button>
+            </div>
+            <p id="gradeStudentName" class="mb-2 font-semibold"></p>
+            <p id="gradeWorkTitle" class="text-sm text-gray mb-3"></p>
+            <div class="mb-3">
+                <label class="text-sm text-gray">Оценка (0-100)</label>
+                <input type="number" id="gradeValue" class="input grade-input" min="0" max="100" step="1">
+            </div>
+            <div class="mb-3">
+                <label class="text-sm text-gray">Комментарий к работе</label>
+                <textarea id="gradeComment" class="textarea" rows="3" placeholder="Напишите замечания или похвалу..."></textarea>
+            </div>
+            <button id="submitGradeBtn" class="btn btn-primary btn-block"><i class="fas fa-save"></i> Сохранить оценку</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 КонсПресс Университет. Панель преподавателя.</p>
+        </div>
+    </footer>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+        const API_URL = window.location.origin;
+        let currentUser = null;
+        let currentSubmissions = [];
+        let currentCourses = [];
+        let currentGroups = [];
+        let currentGradeSubId = null;
+
+        async function apiRequest(url, options = {}) {
+            try {
+                const response = await fetch(API_URL + url, {
+                    ...options,
+                    headers: { 'Content-Type': 'application/json', ...options.headers },
+                    credentials: 'include'
+                });
+                return await response.json();
+            } catch (error) {
+                console.error('API error:', error);
+                return { success: false, error: 'Ошибка сети' };
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show';
+            if (type === 'success') toast.classList.add('toast-success');
+            if (type === 'error') toast.classList.add('toast-error');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function escapeQuotes(str) {
+            if (!str) return '';
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        async function getCurrentUser() {
+            return apiRequest('/api/auth/me');
+        }
+
+        async function getAllCourses() {
+            return apiRequest('/api/courses');
+        }
+
+        async function createCourse(data) {
+            return apiRequest('/api/courses', { method: 'POST', body: JSON.stringify(data) });
+        }
+
+        async function getAllGroups() {
+            return apiRequest('/api/groups');
+        }
+
+        async function createGroup(data) {
+            return apiRequest('/api/groups', { method: 'POST', body: JSON.stringify(data) });
+        }
+
+        async function getAllSubmissions() {
+            return apiRequest('/api/submissions');
+        }
+
+        async function gradeSubmission(id, grade, comment) {
+            return apiRequest(`/api/submissions/${id}/grade`, {
+                method: 'PUT',
+                body: JSON.stringify({ grade: grade, comment: comment })
+            });
+        }
+
+        async function loadUserData() {
+            const result = await getCurrentUser();
+            if (result.success && result.user) {
+                currentUser = result.user;
+                if (currentUser.role !== 'teacher' && currentUser.role !== 'admin') {
+                    window.location.href = '/lickab.html';
+                    return false;
+                }
+                document.getElementById('teacherName').textContent = currentUser.fullName || 'Преподаватель';
+                return true;
+            }
+            window.location.href = '/lickab.html';
+            return false;
+        }
+
+        async function loadCourses() {
+            const result = await getAllCourses();
+            const container = document.getElementById('myCoursesList');
+            const filterSelect = document.getElementById('filterCourseSelect');
+            
+            if (result.success && result.courses) {
+                currentCourses = result.courses;
+                if (currentCourses.length === 0) {
+                    container.innerHTML = '<p class="text-gray text-center">Нет курсов. Создайте первый курс.</p>';
+                } else {
+                    container.innerHTML = currentCourses.map(function(course) {
+                        return '<div class="flex justify-between items-center p-3 border-bottom">' +
+                            '<div>' +
+                                '<div class="font-bold">' + escapeHtml(course.name) + '</div>' +
+                                '<div class="text-xs text-gray">' + escapeHtml(course.description || '') + '</div>' +
+                            '</div>' +
+                            '<button onclick="deleteCourse(' + course.id + ')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>' +
+                        '</div>';
+                    }).join('');
+                }
+                filterSelect.innerHTML = '<option value="all">Все курсы</option>' + currentCourses.map(function(c) {
+                    return '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>';
+        }).join('');
+            }
+        }
+
+        async function loadGroups() {
+            const result = await getAllGroups();
+            const container = document.getElementById('myGroupsList');
+            const groupCourseSelect = document.getElementById('groupCourseSelect');
+            
+            if (result.success && result.groups) {
+                currentGroups = result.groups;
+                if (currentGroups.length === 0) {
+                    container.innerHTML = '<p class="text-gray text-center">Нет групп. Создайте первую группу.</p>';
+                } else {
+                    container.innerHTML = currentGroups.map(function(group) {
+                        return '<div class="flex justify-between items-center p-3 border-bottom">' +
+                            '<div>' +
+                                '<div class="font-bold">' + escapeHtml(group.name) + '</div>' +
+                                '<div class="text-xs text-gray">' + escapeHtml(group.course_name || 'Без курса') + '</div>' +
+                            '</div>' +
+                            '<button onclick="deleteGroup(' + group.id + ')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></button>' +
+                        '</div>';
+                    }).join('');
+                }
+                groupCourseSelect.innerHTML = '<option value="">Выберите курс</option>' + currentCourses.map(function(c) {
+                    return '<option value="' + c.id + '">' + escapeHtml(c.name) + '</option>';
+                }).join('');
+            }
+        }
+
+        // Добавьте эту функцию перед loadSubmissions
+function escapeForOnClick(str) {
+    if (!str) return '';
+    return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+}
+
+async function loadSubmissions() {
+    const filterCourse = document.getElementById('filterCourseSelect').value;
+    const result = await getAllSubmissions();
+    const container = document.getElementById('submissionsList');
+    
+    if (result.success && result.submissions) {
+        let filtered = result.submissions;
+        if (filterCourse !== 'all') {
+            filtered = filtered.filter(s => s.course_id == filterCourse);
+        }
+        currentSubmissions = filtered;
+        
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="text-center text-gray p-5">Нет работ для проверки</div>';
+            return;
+        }
+        
+        // Очищаем контейнер
+        container.innerHTML = '';
+        
+        filtered.forEach(sub => {
+            const card = document.createElement('div');
+            card.className = `submission-card ${sub.status}`;
+            
+            const flexDiv = document.createElement('div');
+            flexDiv.className = 'flex justify-between items-start flex-wrap gap-2';
+            
+            // Левая часть
+            const leftDiv = document.createElement('div');
+            leftDiv.style.flex = '1';
+            leftDiv.innerHTML = `
+                <div class="font-bold">${escapeHtml(sub.student_name || sub.student_fullname || 'Студент')}</div>
+                <div class="text-sm"><strong>${escapeHtml(sub.title)}</strong></div>
+                <div class="text-xs text-gray"><i class="far fa-calendar-alt"></i> ${new Date(sub.submitted_at).toLocaleString('ru-RU')}</div>
+                ${sub.file_data ? `<a href="${escapeHtml(sub.file_data)}" class="file-link" download><i class="fas fa-download"></i> Скачать файл</a>` : ''}
+                ${sub.comment ? `<div class="comment-text"><i class="fas fa-comment"></i> ${escapeHtml(sub.comment)}</div>` : ''}
+            `;
+            
+            // Правая часть
+            const rightDiv = document.createElement('div');
+            rightDiv.className = 'text-right';
+            const gradeBadge = sub.grade !== null 
+                ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Оценка: ${sub.grade}</span>`
+                : '<span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> На проверке</span>';
+            rightDiv.innerHTML = gradeBadge;
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-sm btn-primary mt-1';
+            btn.innerHTML = '<i class="fas fa-star"></i> Оценить';
+            // Безопасное сохранение данных в dataset
+            btn.dataset.id = sub.id;
+            btn.dataset.student = sub.student_name || sub.student_fullname || 'Студент';
+            btn.dataset.title = sub.title;
+            btn.dataset.grade = sub.grade !== null ? sub.grade : '';
+            btn.dataset.comment = sub.comment || '';
+            btn.onclick = function() {
+                openGradeModal(
+                    this.dataset.id,
+                    this.dataset.student,
+                    this.dataset.title,
+                    this.dataset.grade,
+                    this.dataset.comment
+                );
+            };
+            rightDiv.appendChild(btn);
+            
+            flexDiv.appendChild(leftDiv);
+            flexDiv.appendChild(rightDiv);
+            card.appendChild(flexDiv);
+            container.appendChild(card);
+        });
+    } else {
+        container.innerHTML = '<div class="text-center text-gray p-5">Ошибка загрузки работ</div>';
+    }
+}
+
+       async function loadSubmissions() {
+    const filterCourse = document.getElementById('filterCourseSelect').value;
+    const result = await getAllSubmissions();
+    const container = document.getElementById('submissionsList');
+    
+    if (result.success && result.submissions) {
+        let filtered = result.submissions;
+        if (filterCourse !== 'all') {
+            filtered = filtered.filter(s => s.course_id == filterCourse);
+        }
+        currentSubmissions = filtered;
+        
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="text-center text-gray p-5">Нет работ для проверки</div>';
+            return;
+        }
+        
+        // Очищаем контейнер
+        container.innerHTML = '';
+        
+        filtered.forEach(sub => {
+            const card = document.createElement('div');
+            card.className = `submission-card ${sub.status}`;
+            
+            const flexDiv = document.createElement('div');
+            flexDiv.className = 'flex justify-between items-start flex-wrap gap-2';
+            
+            // Левая часть
+            const leftDiv = document.createElement('div');
+            leftDiv.style.flex = '1';
+            const studentName = escapeHtml(sub.student_name || sub.student_fullname || 'Студент');
+            const title = escapeHtml(sub.title);
+            const date = new Date(sub.submitted_at).toLocaleString('ru-RU');
+            let leftHtml = `
+                <div class="font-bold">${studentName}</div>
+                <div class="text-sm"><strong>${title}</strong></div>
+                <div class="text-xs text-gray"><i class="far fa-calendar-alt"></i> ${date}</div>
+            `;
+            if (sub.file_data) {
+                leftHtml += `<a href="${escapeHtml(sub.file_data)}" class="file-link" download><i class="fas fa-download"></i> Скачать файл</a>`;
+            }
+            if (sub.comment) {
+                leftHtml += `<div class="comment-text"><i class="fas fa-comment"></i> ${escapeHtml(sub.comment)}</div>`;
+            }
+            leftDiv.innerHTML = leftHtml;
+            
+            // Правая часть
+            const rightDiv = document.createElement('div');
+            rightDiv.className = 'text-right';
+            const gradeBadge = sub.grade !== null 
+                ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Оценка: ${sub.grade}</span>`
+                : '<span class="badge badge-warning"><i class="fas fa-hourglass-half"></i> На проверке</span>';
+            rightDiv.innerHTML = gradeBadge;
+            
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-sm btn-primary mt-1';
+            btn.innerHTML = '<i class="fas fa-star"></i> Оценить';
+            // Сохраняем данные в dataset, чтобы избежать проблем с кавычками
+            btn.dataset.id = sub.id;
+            btn.dataset.student = sub.student_name || sub.student_fullname || 'Студент';
+            btn.dataset.title = sub.title;
+            btn.dataset.grade = sub.grade !== null ? sub.grade : '';
+            btn.dataset.comment = sub.comment || '';
+            btn.onclick = function(e) {
+                openGradeModal(
+                    parseInt(this.dataset.id),
+                    this.dataset.student,
+                    this.dataset.title,
+                    this.dataset.grade,
+                    this.dataset.comment
+                );
+            };
+            rightDiv.appendChild(btn);
+            
+            flexDiv.appendChild(leftDiv);
+            flexDiv.appendChild(rightDiv);
+            card.appendChild(flexDiv);
+            container.appendChild(card);
+        });
+    } else {
+        container.innerHTML = '<div class="text-center text-gray p-5">Ошибка загрузки работ</div>';
+    }
+}
+
+        window.openGradeModal = function(id, studentName, title, currentGrade, currentComment) {
+            currentGradeSubId = id;
+            document.getElementById('gradeStudentName').innerHTML = '<i class="fas fa-user-graduate"></i> ' + studentName;
+            document.getElementById('gradeWorkTitle').innerHTML = '<i class="fas fa-file-alt"></i> ' + title;
+            document.getElementById('gradeValue').value = currentGrade || '';
+            document.getElementById('gradeComment').value = currentComment || '';
+            document.getElementById('gradeModal').classList.add('active');
+        };
+
+        function closeGradeModal() {
+            document.getElementById('gradeModal').classList.remove('active');
+            currentGradeSubId = null;
+        }
+
+        document.getElementById('submitGradeBtn').addEventListener('click', async function() {
+            var grade = parseInt(document.getElementById('gradeValue').value);
+            var comment = document.getElementById('gradeComment').value.trim();
+            if (isNaN(grade) || grade < 0 || grade > 100) {
+                showToast('Оценка должна быть числом от 0 до 100', 'error');
+                return;
+            }
+            if (!currentGradeSubId) {
+                showToast('Ошибка: работа не выбрана', 'error');
+                return;
+            }
+            var result = await gradeSubmission(currentGradeSubId, grade, comment);
+            if (result.success) {
+                showToast('Оценка сохранена!', 'success');
+                closeGradeModal();
+                await loadSubmissions();
+            } else {
+                showToast(result.error || 'Ошибка сохранения оценки', 'error');
+            }
+        });
+
+        document.getElementById('gradeModal').addEventListener('click', function(e) {
+            if (e.target === document.getElementById('gradeModal') || e.target.classList.contains('modal-close')) {
+                closeGradeModal();
+            }
+        });
+
+        function openCourseModal() {
+            document.getElementById('courseModal').classList.add('active');
+        }
+
+        function closeCourseModal() {
+            document.getElementById('courseModal').classList.remove('active');
+            document.getElementById('courseNameInput').value = '';
+            document.getElementById('courseDescInput').value = '';
+        }
+
+        document.getElementById('saveCourseBtn').addEventListener('click', async function() {
+            var name = document.getElementById('courseNameInput').value.trim();
+            var description = document.getElementById('courseDescInput').value;
+            if (!name) {
+                showToast('Введите название курса', 'error');
+                return;
+            }
+            var result = await createCourse({ name: name, description: description });
+            if (result.success) {
+                showToast('Курс создан!', 'success');
+                closeCourseModal();
+                await loadCourses();
+                await loadGroups();
+            } else {
+                showToast(result.error || 'Ошибка создания', 'error');
+            }
+        });
+
+        function openGroupModal() {
+            document.getElementById('groupModal').classList.add('active');
+        }
+
+        function closeGroupModal() {
+            document.getElementById('groupModal').classList.remove('active');
+            document.getElementById('groupNameInput').value = '';
+        }
+
+        document.getElementById('saveGroupBtn').addEventListener('click', async function() {
+            var name = document.getElementById('groupNameInput').value.trim();
+            var courseId = document.getElementById('groupCourseSelect').value;
+            if (!name) {
+                showToast('Введите название группы', 'error');
+                return;
+            }
+            if (!courseId) {
+                showToast('Выберите курс', 'error');
+                return;
+            }
+            var result = await createGroup({ name: name, course_id: parseInt(courseId) });
+            if (result.success) {
+                showToast('Группа создана!', 'success');
+                closeGroupModal();
+                await loadGroups();
+            } else {
+                showToast(result.error || 'Ошибка создания', 'error');
+            }
+        });
+
+        window.deleteCourse = async function(id) {
+            if (!confirm('Удалить курс? Все связанные группы и работы останутся без привязки.')) return;
+            showToast('Функция удаления курса в разработке', 'info');
+        };
+
+        window.deleteGroup = async function(id) {
+            if (!confirm('Удалить группу?')) return;
+            showToast('Функция удаления группы в разработке', 'info');
+        };
+
+        document.getElementById('addCourseBtn').addEventListener('click', openCourseModal);
+        document.getElementById('addGroupBtn').addEventListener('click', openGroupModal);
+        document.getElementById('refreshSubmissionsBtn').addEventListener('click', loadSubmissions);
+        document.getElementById('filterCourseSelect').addEventListener('change', loadSubmissions);
+        document.getElementById('logoutBtn').addEventListener('click', async function() {
+            await apiRequest('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/lickab.html';
+        });
+
+        async function init() {
+            var loggedIn = await loadUserData();
+            if (loggedIn) {
+                await loadCourses();
+                await loadGroups();
+                await loadSubmissions();
+            }
+        }
+
+        init();
+
+        // Трансляция
+let localStream = null;
+let isStreaming = false;
+let streamInterval = null;
+let viewerCount = 0;
+
+async function startStream() {
+    try {
+        const audioEnabled = document.getElementById('streamAudioCheckbox').checked;
+        const videoEnabled = document.getElementById('streamCameraCheckbox').checked;
+        
+        const constraints = {
+            video: videoEnabled ? { width: { ideal: 1280 }, height: { ideal: 720 } } : false,
+            audio: audioEnabled
+        };
+        
+        localStream = await navigator.mediaDevices.getUserMedia(constraints);
+        
+        const video = document.getElementById('streamVideo');
+        video.srcObject = localStream;
+        
+        isStreaming = true;
+        
+        document.getElementById('streamPlaceholder').style.display = 'none';
+        document.getElementById('streamPreview').style.display = 'block';
+        document.getElementById('streamStatus').className = 'badge badge-danger';
+        document.getElementById('streamStatus').innerHTML = '<i class="fas fa-circle"></i> В эфире';
+        document.getElementById('streamViewerCount').style.display = 'inline-block';
+        
+        viewerCount = 0;
+        updateViewerCount();
+        
+        streamInterval = setInterval(() => {
+            if (isStreaming) {
+                viewerCount = Math.floor(Math.random() * 20) + 5;
+                updateViewerCount();
+            }
+        }, 10000);
+        
+        showToast('Трансляция начата!', 'success');
+        
+    } catch (err) {
+        console.error('Stream error:', err);
+        let errorMsg = 'Не удалось получить доступ к камере/микрофону';
+        if (err.name === 'NotAllowedError') {
+            errorMsg = 'Доступ к камере запрещён. Разрешите доступ в браузере.';
+        } else if (err.name === 'NotFoundError') {
+            errorMsg = 'Камера не найдена. Подключите устройство.';
+        }
+        showToast(errorMsg, 'error');
+    }
+}
+
+function stopStream() {
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+    }
+    
+    if (streamInterval) {
+        clearInterval(streamInterval);
+        streamInterval = null;
+    }
+    
+    isStreaming = false;
+    
+    const video = document.getElementById('streamVideo');
+    video.srcObject = null;
+    
+    document.getElementById('streamPlaceholder').style.display = 'block';
+    document.getElementById('streamPreview').style.display = 'none';
+    document.getElementById('streamStatus').className = 'badge badge-warning';
+    document.getElementById('streamStatus').innerHTML = '<i class="fas fa-circle"></i> Не в эфире';
+    document.getElementById('streamViewerCount').style.display = 'none';
+    
+    showToast('Трансляция остановлена', 'info');
+}
+
+function updateViewerCount() {
+    document.getElementById('streamViewerCount').innerHTML = '<i class="fas fa-eye"></i> ' + viewerCount + ' зрителей';
+}
+
+async function getCameraDevices() {
+    try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const select = document.getElementById('cameraSelect');
+        
+        select.innerHTML = '<option value="">Выбор камеры</option>';
+        videoDevices.forEach((device, index) => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.textContent = device.label || `Камера ${index + 1}`;
+            select.appendChild(option);
+        });
+        
+        if (videoDevices.length > 0 && videoDevices[0].deviceId) {
+            select.value = videoDevices[0].deviceId;
+        }
+    } catch (err) {
+        console.log('Cannot enumerate devices:', err);
+    }
+}
+
+document.getElementById('startStreamBtn').addEventListener('click', startStream);
+document.getElementById('stopStreamBtn').addEventListener('click', stopStream);
+
+document.getElementById('streamCameraCheckbox').addEventListener('change', async function(e) {
+    if (isStreaming) {
+        showToast('Остановите трансляцию, чтобы изменить настройки', 'warning');
+        e.target.checked = !e.target.checked;
+    }
+});
+
+document.getElementById('streamAudioCheckbox').addEventListener('change', async function(e) {
+    if (isStreaming) {
+        showToast('Остановите трансляцию, чтобы изменить настройки', 'warning');
+        e.target.checked = !e.target.checked;
+    }
+});
+
+document.getElementById('cameraSelect').addEventListener('change', function() {
+    if (isStreaming) {
+        showToast('Остановите трансляцию, чтобы сменить камеру', 'warning');
+    }
+});
+
+if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+    navigator.mediaDevices.enumerateDevices().then(() => {
+        getCameraDevices();
+    });
+    navigator.mediaDevices.addEventListener('devicechange', getCameraDevices);
+}
+
+window.addEventListener('beforeunload', function() {
+    if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+    }
+});
+
+    </script>
+</body>
+</html>
